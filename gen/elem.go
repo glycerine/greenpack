@@ -160,7 +160,7 @@ var primitives = map[string]Primitive{
 // map to the type clues
 var prim2clue = map[Primitive]string{
 	Bytes:      "sby", // slice of bytes
-	String:     "sng", // avoid "str" since it is ambiguous with struct
+	String:     "str", // "str" is for string, "rct" is for struct
 	Float32:    "f32",
 	Float64:    "f64",
 	Complex64:  "c64",

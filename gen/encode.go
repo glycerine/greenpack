@@ -177,10 +177,10 @@ func (e *encodeGen) structmap(s *Struct) {
 			// proceed
 			data = msgp.AppendInt64(nil, s.Fields[i].ZebraId)
 			e.p.printf("\n// zid %v for %q", s.Fields[i].ZebraId,
-				s.Fields[i].FieldTag)
+				s.Fields[i].FieldTagZidClue)
 		} else {
-			data = msgp.AppendString(nil, s.Fields[i].FieldTag)
-			e.p.printf("\n// write %q", s.Fields[i].FieldTag)
+			data = msgp.AppendString(nil, s.Fields[i].FieldTagZidClue)
+			e.p.printf("\n// write %q", s.Fields[i].FieldTagZidClue)
 		}
 		e.Fuse(data)
 		next(e, s.Fields[i].FieldElem)

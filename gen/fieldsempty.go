@@ -82,7 +82,7 @@ func (e *fieldsEmpty) gStruct(s *Struct) {
 			next(om, s.Fields[i].FieldElem)
 
 			e.p.printf("if isempty[%d] { fieldsInUse-- ; }\n", i)
-			//or: e.p.printf("if isempty[%d] { fieldsInUse-- ; fmt.Printf(\"\\n %s is not in use!\\n \")}\n", i, s.Fields[i].FieldTag)
+			//or: e.p.printf("if isempty[%d] { fieldsInUse-- ; fmt.Printf(\"\\n %s is not in use!\\n \")}\n", i, s.Fields[i].FieldTagZidClue)
 		}
 	}
 	//e.p.printf("\n fmt.Printf(\"\\n\\n fieldsInUse=%%v\", fieldsInUse) \n\n")

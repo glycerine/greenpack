@@ -161,16 +161,16 @@ func (m *marshalGen) mapstruct(s *Struct) {
 
 			data = msgp.AppendInt64(nil, s.Fields[i].ZebraId)
 			m.p.printf("\n// zid %v for %q", s.Fields[i].ZebraId,
-				s.Fields[i].FieldTag)
+				s.Fields[i].FieldTagZidClue)
 		} else {
 			switch s.KeyTyp {
 			case "Int64":
 				data = msgp.AppendInt64(nil, s.Fields[i].ZebraId)
 			default:
-				data = msgp.AppendString(nil, s.Fields[i].FieldTag)
+				data = msgp.AppendString(nil, s.Fields[i].FieldTagZidClue)
 			}
 
-			m.p.printf("\n// string %q", s.Fields[i].FieldTag)
+			m.p.printf("\n// string %q", s.Fields[i].FieldTagZidClue)
 		}
 		m.Fuse(data)
 		next(m, s.Fields[i].FieldElem)

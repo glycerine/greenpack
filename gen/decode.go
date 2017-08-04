@@ -194,7 +194,7 @@ func (d *decodeGen) structAsMap(s *Struct) {
 		} else {
 			fieldSkip += fmt.Sprintf("false,")
 		}
-		fieldOrder += fmt.Sprintf("%q,", s.Fields[i].FieldTag)
+		fieldOrder += fmt.Sprintf("%q,", s.Fields[i].FieldTagZidClue)
 	}
 	fieldOrder += "}\n"
 	fieldSkip += "}\n"
@@ -218,13 +218,13 @@ func (d *decodeGen) structAsMap(s *Struct) {
 		if fast {
 			d.p.printf("\ncase %v:", s.Fields[i].ZebraId)
 			d.p.printf("\n// zid %v for %q", s.Fields[i].ZebraId,
-				s.Fields[i].FieldTag)
+				s.Fields[i].FieldTagZidClue)
 			d.p.printf("\n%s[%d]=true;", found, i)
 		} else {
-			d.p.printf("\ncase \"%s\":", s.Fields[i].FieldTag)
+			d.p.printf("\ncase \"%s\":", s.Fields[i].FieldTagZidClue)
 			d.p.printf("\n%s[%d]=true;", found, i)
 		}
-		//d.p.printf("\n fmt.Printf(\"I found field '%s' at depth=%d. dc.AlwaysNil = %%v\", dc.AlwaysNil);\n", s.Fields[i].FieldTag, d.depth)
+		//d.p.printf("\n fmt.Printf(\"I found field '%s' at depth=%d. dc.AlwaysNil = %%v\", dc.AlwaysNil);\n", s.Fields[i].FieldTagZidClue, d.depth)
 		d.depth++
 		next(d, s.Fields[i].FieldElem)
 		d.depth--

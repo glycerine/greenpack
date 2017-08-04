@@ -131,7 +131,7 @@ func (s *sizeGen) gStruct(st *Struct) {
 				recv := imutMethodReceiver(st)
 				data = msgp.AppendNegativeOneAndStringAsBytes(data, []byte(recv))
 			} else {
-				data = msgp.AppendString(data, st.Fields[i].FieldTag)
+				data = msgp.AppendString(data, st.Fields[i].FieldTagZidClue)
 			}
 			s.addConstant(strconv.Itoa(len(data)))
 			next(s, st.Fields[i].FieldElem)
@@ -276,7 +276,7 @@ func fixedsizeExpr(e Elem) (string, bool) {
 		for _, f := range e.Fields {
 			if !f.Skip {
 
-				strbody = msgp.AppendString(strbody[:0], f.FieldTag)
+				strbody = msgp.AppendString(strbody[:0], f.FieldTagZidClue)
 				hdrlen += len(strbody)
 			}
 		}
