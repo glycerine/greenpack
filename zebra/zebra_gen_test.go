@@ -1,7 +1,7 @@
 package zebra
 
 // NOTE: THIS FILE WAS PRODUCED BY THE
-// ZEBRAPACK CODE GENERATION TOOL (github.com/glycerine/zebrapack)
+// GREENPACK CODE GENERATION TOOL (github.com/glycerine/greenpack)
 // DO NOT EDIT
 
 import (

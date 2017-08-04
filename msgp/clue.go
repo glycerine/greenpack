@@ -7,7 +7,11 @@ import (
 )
 
 func Clue2Field(name string, clue string, zid int64) string {
-	return fmt.Sprintf("%s_zid%02d_%s", name, zid, clue)
+	if zid >= 0 {
+		return fmt.Sprintf("%s_zid%02d_%s", name, zid, clue)
+	}
+	// handle the missing zid, and don't write -1 as the zid.
+	return fmt.Sprintf("%s__%s", name, clue)
 }
 
 func Field2Clue(fieldname string) (name string, clue string, zid int64, err error) {
