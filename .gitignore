@@ -6,8 +6,7 @@ msgp/defgen_test.go
 msgp/nestedgen_test.go
 msgp/cover.out
 *~
-zebrapack
-zebrapack2
+greenpack
 testdata/my.z
 testdata/my.z.json
 testdata/my_gen.go

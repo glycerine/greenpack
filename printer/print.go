@@ -52,7 +52,7 @@ func PrintFile(
 		fn := path.Base(file)
 
 		fileStructName := fileNameToStructName(fn)
-		_, err = fmt.Fprintf(out, "\n// %s holds ZebraPack"+
+		_, err = fmt.Fprintf(out, "\n// %s holds Greenpack"+
 			" schema from file '%s'\n"+
 			"type %s struct{}\n",
 			fileStructName, pathToGoSource, fileStructName)
@@ -61,7 +61,7 @@ func PrintFile(
 		}
 
 		_, err = fmt.Fprintf(out, "\n// %sZebraSchemaInMsgpack2Format "+
-			"provides the ZebraPack Schema in msgpack2 format, length "+
+			"provides the Greenpack Schema in msgpack2 format, length "+
 			"%v bytes\nfunc (%s) %sZebraSchemaInMsgpack2Format() []byte {return "+
 			" []byte{",
 			pre,
@@ -96,7 +96,7 @@ func PrintFile(
 		jby := compactJson.Bytes()
 
 		_, err = fmt.Fprintf(out, "\n// %sZebraSchemaInJsonCompact "+
-			"provides the ZebraPack Schema in compact JSON format, length "+
+			"provides the Greenpack Schema in compact JSON format, length "+
 			"%v bytes\nfunc (%s) %sZebraSchemaInJsonCompact() []byte {return "+
 			" []byte(`%s`)}",
 			pre, len(jby), fileStructName, pre, string(jby))
@@ -111,7 +111,7 @@ func PrintFile(
 
 		pby := pretty.Bytes()
 		_, err = fmt.Fprintf(out, "\n// %sZebraSchemaInJsonPretty "+
-			"provides the ZebraPack Schema in pretty JSON format, length "+
+			"provides the Greenpack Schema in pretty JSON format, length "+
 			"%v bytes\nfunc (%s) %sZebraSchemaInJsonPretty() []byte {return "+
 			" []byte(`%s`)}",
 			pre, len(pby), fileStructName, pre, string(pby))
@@ -209,7 +209,7 @@ func writePkgHeader(b *bytes.Buffer, name string) {
 	b.WriteString("package ")
 	b.WriteString(name)
 	b.WriteByte('\n')
-	b.WriteString("// NOTE: THIS FILE WAS PRODUCED BY THE\n// ZEBRAPACK CODE GENERATION TOOL (github.com/glycerine/zebrapack)\n// DO NOT EDIT\n\n")
+	b.WriteString("// NOTE: THIS FILE WAS PRODUCED BY THE\n// GREENPACK CODE GENERATION TOOL (github.com/glycerine/greenpack)\n// DO NOT EDIT\n\n")
 }
 
 func writeImportHeader(b *bytes.Buffer, imports ...string) {
