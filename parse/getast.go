@@ -899,14 +899,14 @@ func (fs *FileSet) getZebraSchemaId(f *ast.File) {
 				case *ast.ValueSpec:
 
 					if len(ts.Names) > 0 && len(ts.Values) > 0 {
-						if ts.Names[0].Name == "zebraSchemaId64" {
+						if ts.Names[0].Name == "greenSchemaId64" {
 							switch specid := ts.Values[0].(type) {
 							case *ast.BasicLit:
 
 								//fmt.Printf("\n !!!!! \n got a BasicLit %T/%#v\n", specid, specid)
 								n, err := strconv.ParseInt(specid.Value, 0, 64)
 								if err != nil {
-									panic(fmt.Errorf("could not convert to integer this zebraSchemaId64 value: '%v': %v", specid.Value, err))
+									panic(fmt.Errorf("could not convert to integer this greenSchemaId64 value: '%v': %v", specid.Value, err))
 								}
 								fs.ZebraSchemaId = int64(n)
 								return

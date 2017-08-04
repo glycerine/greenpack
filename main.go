@@ -28,7 +28,7 @@
 //      is set by the go generate command.
 //
 //   -genid
-//     	generate a fresh random zebraSchemaId64 value to
+//     	generate a fresh random greenSchemaId64 value to
 //      include in your Go source schema
 //
 //   -io
@@ -114,10 +114,10 @@ func main() {
 		cryptorand.Read(by[:])
 		n := binary.LittleEndian.Uint64(by[:])
 		n &= 0x0001ffffffffffff // restrict to 53 bits so R and js work
-		fmt.Printf("\n// This crypto-randomly generated zebraSchemaId64 is a 53-bit\n"+
+		fmt.Printf("\n// This crypto-randomly generated greenSchemaId64 is a 53-bit\n"+
 			"// integer that identifies your namespace.\n"+
 			"// Paste it into your Go source.\n"+
-			"  const zebraSchemaId64 int64 = 0x%x // %v\n\n", n, n)
+			"  const greenSchemaId64 int64 = 0x%x // %v\n\n", n, n)
 		os.Exit(0)
 	}
 
