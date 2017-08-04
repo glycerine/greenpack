@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/msgp"
 )
 
 func ZkindFromString(s string) Zkind {

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	cv "github.com/glycerine/goconvey/convey"
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/msgp"
 )
 
 func Test010StructReuseDoesNotAllocat(t *testing.T) {

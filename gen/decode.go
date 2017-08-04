@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/glycerine/zebrapack/cfg"
+	"github.com/glycerine/zebrapack2/cfg"
 )
 
 func decode(w io.Writer, cfg *cfg.ZebraConfig) *decodeGen {

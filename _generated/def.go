@@ -1,12 +1,12 @@
 package _generated
 
 import (
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/msgp"
 	"os"
 	"time"
 )
 
-//go:generate zebrapack -msgp -o generated.go
+//go:generate zebrapack2 -msgp -o generated.go
 
 // All of the struct
 // definitions in this

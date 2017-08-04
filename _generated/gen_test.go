@@ -2,7 +2,7 @@ package _generated
 
 import (
 	"bytes"
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/msgp"
 	"reflect"
 	"testing"
 	"time"

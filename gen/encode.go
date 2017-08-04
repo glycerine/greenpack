@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/glycerine/zebrapack/cfg"
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/cfg"
+	"github.com/glycerine/zebrapack2/msgp"
 )
 
 func encode(w io.Writer, cfg *cfg.ZebraConfig) *encodeGen {

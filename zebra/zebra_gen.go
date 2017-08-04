@@ -5,7 +5,7 @@ package zebra
 // DO NOT EDIT
 
 import (
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/msgp"
 )
 
 // DecodeMsg implements msgp.Decodable

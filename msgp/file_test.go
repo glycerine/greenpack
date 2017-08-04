@@ -5,7 +5,7 @@ package msgp_test
 import (
 	"bytes"
 	"crypto/rand"
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/msgp"
 	prand "math/rand"
 	"os"
 	"testing"

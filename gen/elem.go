@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/glycerine/zebrapack/zebra"
+	"github.com/glycerine/zebrapack2/zebra"
 )
 
 const (
@@ -157,6 +157,31 @@ var primitives = map[string]Primitive{
 	"msgp.Extension": Ext,
 }
 
+// map to the type clues
+var prim2clue = map[Primitive]string{
+	Bytes:      "sby", // slice of bytes
+	String:     "sng", // avoid "str" since it is ambiguous with struct
+	Float32:    "f32",
+	Float64:    "f64",
+	Complex64:  "c64",
+	Complex128: "c28",
+	Uint:       "unt",
+	Uint8:      "u08",
+	Uint16:     "u16",
+	Uint32:     "u32",
+	Uint64:     "u64",
+	Byte:       "byt",
+	Int:        "int",
+	Int8:       "i08",
+	Int16:      "i16",
+	Int32:      "i32",
+	Int64:      "i64",
+	Bool:       "boo",
+	Intf:       "ifc",
+	Time:       "tim",
+	Ext:        "ext",
+}
+
 // types built into the library
 // that satisfy all of the
 // interfaces.
@@ -244,6 +269,17 @@ type Elem interface {
 	MethodPrefix() string
 	SetHasMethodPrefix(hmp HasMethodPrefix)
 
+	// The clue is a 3-character string added
+	// to on-the-wire field name
+	// to salvage the uint -> int fiasco of classic msgpack
+	// implementations.
+	//
+	// The clue and the version together prevent gross
+	// decoding type and version mismatches.
+	// Avoid Knight Capital like meltdowns and never
+	// change a field without bumping the version number.
+	TypeClue() string
+
 	hidden()
 }
 
@@ -265,6 +301,10 @@ type Array struct {
 	SizeNamed    string // array size
 	SizeResolved string // array size
 	Els          Elem   // child
+}
+
+func (a *Array) TypeClue() string {
+	return "ary"
 }
 
 func (a *Array) ZeroLiteral(v string) string {
@@ -333,6 +373,10 @@ type Map struct {
 	KeyDeclTyp string
 }
 
+func (m *Map) TypeClue() string {
+	return "map"
+}
+
 func (m *Map) GetZtype() (r zebra.Ztype) {
 
 	r.Kind = zebra.MapCat
@@ -393,6 +437,10 @@ type Slice struct {
 	Els   Elem // The type of each element
 }
 
+func (a *Slice) TypeClue() string {
+	return "slc"
+}
+
 func (a *Slice) ZeroLiteral(v string) string {
 	return fmt.Sprintf(`%s = %s[:0]`, v, v)
 }
@@ -438,6 +486,10 @@ func (s *Slice) Complexity() int {
 type Ptr struct {
 	common
 	Value Elem
+}
+
+func (s *Ptr) TypeClue() string {
+	return "ptr"
 }
 
 func (s *Ptr) GetZtype() (r zebra.Ztype) {
@@ -518,6 +570,10 @@ type Struct struct {
 	KeyTyp           string
 
 	SkipCount int
+}
+
+func (s *Struct) TypeClue() string {
+	return "rct"
 }
 
 func (s *Struct) GetZtype() (r zebra.Ztype) {
@@ -754,6 +810,10 @@ func (s *BaseElem) ZeroLiteral(v string) string {
 	default:
 		return fmt.Sprintf("/*don't know how to zero value '%s' from BaseElem:'%#v'.*/", s.Value, s)
 	}
+}
+
+func (s *BaseElem) TypeClue() string {
+	return prim2clue[s.Value]
 }
 
 func (k Primitive) String() string {

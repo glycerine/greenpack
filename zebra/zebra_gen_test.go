@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/msgp"
 )
 
 func TestMarshalUnmarshalField(t *testing.T) {

@@ -95,11 +95,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/glycerine/zebrapack/cfg"
-	"github.com/glycerine/zebrapack/gen"
-	"github.com/glycerine/zebrapack/parse"
-	"github.com/glycerine/zebrapack/printer"
-	"github.com/glycerine/zebrapack/zebra"
+	"github.com/glycerine/zebrapack2/cfg"
+	"github.com/glycerine/zebrapack2/gen"
+	"github.com/glycerine/zebrapack2/parse"
+	"github.com/glycerine/zebrapack2/printer"
+	"github.com/glycerine/zebrapack2/zebra"
 )
 
 func main() {

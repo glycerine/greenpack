@@ -8,7 +8,7 @@ import (
 	"os"
 
 	//"github.com/tinylib/msgp/msgp"
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/msgp"
 )
 
 func (fs *FileSet) SaveMsgpackFile(parsedPath, path string) error {

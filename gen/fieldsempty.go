@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/glycerine/zebrapack/cfg"
+	"github.com/glycerine/zebrapack2/cfg"
 )
 
 func fieldsempty(w io.Writer, cfg *cfg.ZebraConfig) *fieldsEmpty {

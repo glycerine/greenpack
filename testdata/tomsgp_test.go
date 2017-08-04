@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/glycerine/zebrapack/msgp"
-	"github.com/glycerine/zebrapack/zebra"
+	"github.com/glycerine/zebrapack2/msgp"
+	"github.com/glycerine/zebrapack2/zebra"
 
 	cv "github.com/glycerine/goconvey/convey"
 )

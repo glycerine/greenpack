@@ -3,8 +3,8 @@ package parse
 import (
 	"fmt"
 
-	"github.com/glycerine/zebrapack/gen"
-	"github.com/glycerine/zebrapack/zebra"
+	"github.com/glycerine/zebrapack2/gen"
+	"github.com/glycerine/zebrapack2/zebra"
 	//"github.com/shurcooL/go-goon"
 )
 

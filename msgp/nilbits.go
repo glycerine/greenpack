@@ -74,7 +74,7 @@ func (r *NilBitsStack) PushAlwaysNil(bts []byte) []byte {
 	// save current state
 
 	if r.LifoAlwaysNil == MaxNestedStructPointerDepth {
-		panic(fmt.Sprintf("we hit our maximum nested struct-inside-struct depth! you must recompile msgp with github.com/glycerine/zebrapack/msgp/nilbits.go: MaxNestedStructPointerDepth set to greater than the current value of %v, and then regenerate your msgp Unmarshaling code.", MaxNestedStructPointerDepth))
+		panic(fmt.Sprintf("we hit our maximum nested struct-inside-struct depth! you must recompile msgp with github.com/glycerine/zebrapack2/msgp/nilbits.go: MaxNestedStructPointerDepth set to greater than the current value of %v, and then regenerate your msgp Unmarshaling code.", MaxNestedStructPointerDepth))
 	}
 
 	r.LifoBts[r.LifoAlwaysNil] = bts

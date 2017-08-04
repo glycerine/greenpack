@@ -5,8 +5,8 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/glycerine/zebrapack/cfg"
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/cfg"
+	"github.com/glycerine/zebrapack2/msgp"
 )
 
 type sizeState uint8

@@ -16,8 +16,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/glycerine/zebrapack/cfg"
-	"github.com/glycerine/zebrapack/gen"
+	"github.com/glycerine/zebrapack2/cfg"
+	"github.com/glycerine/zebrapack2/gen"
 	//	"github.com/shurcooL/go-goon"
 	"golang.org/x/tools/go/loader"
 )

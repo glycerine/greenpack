@@ -6,7 +6,7 @@ import (
 	"os"
 
 	cv "github.com/glycerine/goconvey/convey"
-	"github.com/glycerine/zebrapack/cfg"
+	"github.com/glycerine/zebrapack2/cfg"
 	"testing"
 )
 

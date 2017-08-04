@@ -1,12 +1,12 @@
 package testdata
 
 import (
-	"github.com/glycerine/zebrapack/msgp"
+	"github.com/glycerine/zebrapack2/msgp"
 	"time"
 )
 
-//go:generate zebrapack
-//go:generate zebrapack -msgp -o my_msgp_gen.go -method-prefix=MSGP -io=false -tests=false
+//go:generate zebrapack2
+//go:generate zebrapack2 -msgp -o my_msgp_gen.go -method-prefix=MSGP -io=false -tests=false
 
 const zebraSchemaId64 = 0x6eb25cc0f9a3e
 
