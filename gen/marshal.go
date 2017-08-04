@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/glycerine/zebrapack2/cfg"
-	"github.com/glycerine/zebrapack2/msgp"
+	"github.com/glycerine/greenpack/cfg"
+	"github.com/glycerine/greenpack/msgp"
 )
 
 func marshal(w io.Writer, cfg *cfg.ZebraConfig) *marshalGen {
@@ -110,7 +110,7 @@ func (m *marshalGen) tuple(s *Struct) {
 
 func (m *marshalGen) mapstruct(s *Struct) {
 	data := make([]byte, 0, 64)
-	fast := !m.cfg.UseMsgp2
+	fast := false // !m.cfg.UseMsgp2
 	nfields := len(s.Fields) - s.SkipCount
 	// if fast, then always omit-empty.
 	if fast || s.hasOmitEmptyTags {

@@ -5,8 +5,8 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/glycerine/zebrapack2/cfg"
-	"github.com/glycerine/zebrapack2/msgp"
+	"github.com/glycerine/greenpack/cfg"
+	"github.com/glycerine/greenpack/msgp"
 )
 
 type sizeState uint8
@@ -100,7 +100,7 @@ func (s *sizeGen) gStruct(st *Struct) {
 	if !s.p.ok() {
 		return
 	}
-	fast := !s.cfg.UseMsgp2
+	fast := false // !s.cfg.UseMsgp2
 	nfields := uint32(len(st.Fields) - st.SkipCount)
 
 	if st.AsTuple {

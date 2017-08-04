@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/glycerine/zebrapack2/cfg"
+	"github.com/glycerine/greenpack/cfg"
 )
 
 func decode(w io.Writer, cfg *cfg.ZebraConfig) *decodeGen {
@@ -183,7 +183,7 @@ func (d *decodeGen) structAsMap(s *Struct) {
 	d.needsField()
 
 	k := genSerial()
-	fast := !d.cfg.UseMsgp2
+	fast := false // !d.cfg.UseMsgp2
 	tmpl, nStr := genDecodeMsgTemplate(k, fast)
 
 	fieldOrder := fmt.Sprintf("\n var decodeMsgFieldOrder%s = []string{", nStr)

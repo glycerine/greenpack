@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/glycerine/zebrapack2/cfg"
+	"github.com/glycerine/greenpack/cfg"
 )
 
 func unmarshal(w io.Writer, cfg *cfg.ZebraConfig) *unmarshalGen {
@@ -128,7 +128,7 @@ func (u *unmarshalGen) mapstruct(s *Struct) {
 	}
 	u.needsField()
 	k := genSerial()
-	fast := !u.cfg.UseMsgp2
+	fast := false // !u.cfg.UseMsgp2
 	tmpl, nStr := genUnmarshalMsgTemplate(k, fast)
 
 	fieldOrder := fmt.Sprintf("\n var unmarshalMsgFieldOrder%s = []string{", nStr)

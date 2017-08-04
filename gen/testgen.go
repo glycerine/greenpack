@@ -1,7 +1,7 @@
 package gen
 
 import (
-	"github.com/glycerine/zebrapack2/cfg"
+	"github.com/glycerine/greenpack/cfg"
 	"io"
 	"text/template"
 )

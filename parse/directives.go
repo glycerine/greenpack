@@ -2,7 +2,7 @@ package parse
 
 import (
 	"fmt"
-	"github.com/glycerine/zebrapack2/gen"
+	"github.com/glycerine/greenpack/gen"
 	"go/ast"
 	"strings"
 )

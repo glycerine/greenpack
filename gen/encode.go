@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/glycerine/zebrapack2/cfg"
-	"github.com/glycerine/zebrapack2/msgp"
+	"github.com/glycerine/greenpack/cfg"
+	"github.com/glycerine/greenpack/msgp"
 )
 
 func encode(w io.Writer, cfg *cfg.ZebraConfig) *encodeGen {
@@ -116,7 +116,7 @@ func (e *encodeGen) appendraw(bts []byte) {
 func (e *encodeGen) structmap(s *Struct) {
 	nfields := len(s.Fields) - s.SkipCount
 	var data []byte
-	fast := !e.cfg.UseMsgp2
+	fast := false // !e.cfg.UseMsgp2
 	empty := "empty_" + randIdent()
 	inUse := "fieldsInUse_" + randIdent()
 	// if fast, then always omit-empty.

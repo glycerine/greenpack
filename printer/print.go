@@ -9,10 +9,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/glycerine/zebrapack2/cfg"
-	"github.com/glycerine/zebrapack2/gen"
-	"github.com/glycerine/zebrapack2/msgp"
-	"github.com/glycerine/zebrapack2/parse"
+	"github.com/glycerine/greenpack/cfg"
+	"github.com/glycerine/greenpack/gen"
+	"github.com/glycerine/greenpack/msgp"
+	"github.com/glycerine/greenpack/parse"
 	"golang.org/x/tools/imports"
 )
 
@@ -35,7 +35,7 @@ func PrintFile(
 		return err
 	}
 
-	if !cfg.NoEmbeddedSchema && !cfg.UseMsgp2 {
+	if !cfg.NoEmbeddedSchema {
 		// add the serialized msgpack2 zebra schema
 		tr, err := parse.TranslateToZebraSchema(pathToGoSource, f)
 		if err != nil {
@@ -178,7 +178,7 @@ func generate(f *parse.FileSet, mode gen.Method, cfg *cfg.ZebraConfig) (*bytes.B
 	writePkgHeader(outbuf, f.Package)
 
 	myImports := []string{"fmt"}
-	myImports = append(myImports, "github.com/glycerine/zebrapack2/msgp")
+	myImports = append(myImports, "github.com/glycerine/greenpack/msgp")
 	for _, imp := range f.Imports {
 		if imp.Name != nil {
 			// have an alias, include it.
@@ -196,9 +196,9 @@ func generate(f *parse.FileSet, mode gen.Method, cfg *cfg.ZebraConfig) (*bytes.B
 		testbuf = bytes.NewBuffer(make([]byte, 0, 4096))
 		writePkgHeader(testbuf, f.Package)
 		if mode&(gen.Encode|gen.Decode) != 0 {
-			writeImportHeader(testbuf, "bytes", "github.com/glycerine/zebrapack2/msgp", "testing")
+			writeImportHeader(testbuf, "bytes", "github.com/glycerine/greenpack/msgp", "testing")
 		} else {
-			writeImportHeader(testbuf, "github.com/glycerine/zebrapack2/msgp", "testing")
+			writeImportHeader(testbuf, "github.com/glycerine/greenpack/msgp", "testing")
 		}
 		testwr = testbuf
 	}

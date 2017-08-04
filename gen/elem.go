@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/glycerine/zebrapack2/zebra"
+	"github.com/glycerine/greenpack/zebra"
 )
 
 const (

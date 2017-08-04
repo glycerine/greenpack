@@ -6,8 +6,8 @@ import (
 	"go/parser"
 	"go/token"
 
-	"github.com/glycerine/zebrapack2/cfg"
-	"github.com/glycerine/zebrapack2/gen"
+	"github.com/glycerine/greenpack/cfg"
+	"github.com/glycerine/greenpack/gen"
 )
 
 // FileNoLoad parses a file at the relative path

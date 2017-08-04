@@ -1,6 +1,6 @@
-// zebrapack is a code generation tool for
+// greenpack is a code generation tool for
 // creating methods to serialize and de-serialize
-// Go data structures to and from ZebraPack (a
+// Go data structures to and from Greenpack (a
 // schema-based serialization format that is derived
 // from MessagePack2).
 //
@@ -8,20 +8,15 @@
 // To use it, include the following directive in a
 // go source file with types requiring source generation:
 //
-//     //go:generate zebrapack
+//     //go:generate greenpack
 //
 // The go generate tool should set the proper environment variables for
 // the generator to execute without any command-line flags. However, the
-// following options are supported, if you need them (See zebrapack -h):
+// following options are supported, if you need them (See greenpack -h):
 //
-//   $ zebrapack -h
+//   $ greenpack -h
 //
-//   Usage of zebrapack:
-//
-//  -msgp
-//    	generate msgpack2 serializers instead of ZebraPack;
-//      for backward compatiblity or serializing the zebra
-//      schema itself.
+//   Usage of greenpack:
 //
 //   -fast-strings
 //     	for speed when reading a string in a message that won't be
@@ -54,13 +49,13 @@
 //
 //  -no-structnames-onwire
 //    	don't embed the name of the struct in the
-//      serialized zebrapack. Skipping the embedded
+//      serialized greenpack. Skipping the embedded
 //      struct names saves time and space and matches
 //      what protocol buffers/thrift/capnproto/msgpack do.
 //      You must know the type on the wire you expect;
 //      or embed a type tag in one universal wrapper
 //      struct. Embedded struct names are a feature
-//      of ZebraPack to help with dynamic language
+//      of Greenpack to help with dynamic language
 //      bindings.
 //
 //   -o string
@@ -81,7 +76,7 @@
 // 		write schema header to this file; - for stdout
 //
 //
-// For more information, please read README.md, and the wiki at github.com/glycerine/zebrapack
+// For more information, please read README.md, and the wiki at github.com/glycerine/greenpack
 //
 package main
 
@@ -95,22 +90,22 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/glycerine/zebrapack2/cfg"
-	"github.com/glycerine/zebrapack2/gen"
-	"github.com/glycerine/zebrapack2/parse"
-	"github.com/glycerine/zebrapack2/printer"
-	"github.com/glycerine/zebrapack2/zebra"
+	"github.com/glycerine/greenpack/cfg"
+	"github.com/glycerine/greenpack/gen"
+	"github.com/glycerine/greenpack/parse"
+	"github.com/glycerine/greenpack/printer"
+	"github.com/glycerine/greenpack/zebra"
 )
 
 func main() {
-	myflags := flag.NewFlagSet("zebrapack", flag.ExitOnError)
+	myflags := flag.NewFlagSet("greenpack", flag.ExitOnError)
 	c := &cfg.ZebraConfig{}
 	c.DefineFlags(myflags)
 
 	err := myflags.Parse(os.Args[1:])
 	err = c.ValidateConfig()
 	if err != nil {
-		fmt.Printf("zebrapack command line flag error: '%s'\n", err)
+		fmt.Printf("greenpack command line flag error: '%s'\n", err)
 		os.Exit(1)
 	}
 
@@ -170,7 +165,7 @@ func Run(mode gen.Method, c *cfg.ZebraConfig) error {
 	if mode&^gen.Test == 0 {
 		return nil
 	}
-	fmt.Println("======== ZebraPack Code Generator  =======")
+	fmt.Println("======== Greenpack Code Generator  =======")
 	fmt.Printf(">>> Input: \"%s\"\n", c.GoFile)
 	var fs *parse.FileSet
 	var err error
