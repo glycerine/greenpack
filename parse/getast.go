@@ -19,6 +19,7 @@ import (
 	"github.com/glycerine/greenpack/cfg"
 	"github.com/glycerine/greenpack/gen"
 	//	"github.com/shurcooL/go-goon"
+	"github.com/glycerine/greenpack/msgp"
 	"golang.org/x/tools/go/loader"
 )
 
@@ -575,7 +576,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 				Deprecated:      deprecated,
 				ZebraId:         zebraId,
 				Skip:            skip,
-				FieldTagZidClue: Clue2Field(nm.Name, ex.TypeClue(), zebraId),
+				FieldTagZidClue: msgp.Clue2Field(nm.Name, ex.TypeClue(), zebraId),
 			})
 		}
 		return sf, nil
@@ -585,7 +586,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		sf[0].FieldTag = sf[0].FieldName
 	}
 	if !skip {
-		sf[0].FieldTagZidClue = Clue2Field(sf[0].FieldTag, ex.TypeClue(), zebraId)
+		sf[0].FieldTagZidClue = msgp.Clue2Field(sf[0].FieldTag, ex.TypeClue(), zebraId)
 	}
 
 	// validate extension
