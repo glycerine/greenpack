@@ -3,7 +3,7 @@ package testdata
 import "github.com/glycerine/rbtree"
 
 // gotta test the tests too!
-//go:generate zebrapack -no-structnames-onwire -unexported
+//go:generate greenpack -no-structnames-onwire -unexported
 
 type u struct {
 	m map[string]*Tr `zid:"0"`

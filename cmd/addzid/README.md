@@ -5,7 +5,7 @@ Summary: addzid automatically adds `zid:"0"`, `zid:"1"`, ... tags to your Go str
 
 Given a set of golang (Go) source files, addzid will tag the public
 struct fields with sequential zid tags. This prepares your source
-so that it can be fed to the `zebrapack` codegen tool.
+so that it can be fed to the `greenpack` codegen tool.
 
 
 to install: *run make*. This lets us record version info.
@@ -16,7 +16,7 @@ use
 
 ~~~
 use: addzid {-o outdir} myGoSourceFile.go myGoSourceFile2.go ...
-     # addzid makes it easy to add ZebraPack serialization[1] to Go source files.
+     # addzid makes it easy to add Greenpack serialization[1] to Go source files.
      # addzid reads .go files and adds `zid` tags to struct fields.
      #
      # options:
@@ -30,7 +30,7 @@ use: addzid {-o outdir} myGoSourceFile.go myGoSourceFile2.go ...
      # required: at least one .go source file for struct definitions.
      #  note: the .go source file to process must be listed last, after any options.
      #
-     # [1] https://github.com/glycerine/zebrapack 
+     # [1] https://github.com/glycerine/greenpack 
 ~~~
 
 
@@ -45,7 +45,7 @@ If you are feeling especially bold, `addzid -OVERWRITE my.go` will replace my.go
 
 By default only public fields (with a Capital first letter in their name) are tagged. The -unexported flag ignores the public/private distinction, and tags all fields.
 
-The zid tags allow the ZebraPack schema evolution to function properly as you add new fields to structs.
+The zid tags allow the Greenpack schema evolution to function properly as you add new fields to structs.
 
 windows build script
 ---------------------------

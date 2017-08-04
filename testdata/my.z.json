@@ -3,6 +3,150 @@
     "SourcePackage__str": "testdata",
     "ZebraSchemaId__i64": 0,
     "Structs__map": {
+        "Tree": {
+            "StructName__str": "Tree",
+            "Fields__slc": [
+                {
+                    "Zid__i64": 0,
+                    "FieldGoName__str": "Chld",
+                    "FieldTagName__str": "Chld",
+                    "FieldTypeStr__str": "[]Tree",
+                    "FieldCategory__": 26,
+                    "FieldFullType__ptr": {
+                        "Kind__": 26,
+                        "Str__str": "Slice",
+                        "Domain__ptr": {
+                            "Kind__": 22,
+                            "Str__str": "Tree"
+                        }
+                    }
+                },
+                {
+                    "Zid__i64": 1,
+                    "FieldGoName__str": "Str",
+                    "FieldTagName__str": "Str",
+                    "FieldTypeStr__str": "string",
+                    "FieldCategory__": 23,
+                    "FieldPrimitive__": 2,
+                    "FieldFullType__ptr": {
+                        "Kind__": 2,
+                        "Str__str": "string"
+                    }
+                },
+                {
+                    "Zid__i64": 2,
+                    "FieldGoName__str": "Par",
+                    "FieldTagName__str": "Par",
+                    "FieldTypeStr__str": "*S2",
+                    "FieldCategory__": 28,
+                    "FieldFullType__ptr": {
+                        "Kind__": 28,
+                        "Str__str": "Pointer",
+                        "Domain__ptr": {
+                            "Kind__": 22,
+                            "Str__str": "S2"
+                        }
+                    }
+                }
+            ]
+        },
+        "Big": {
+            "StructName__str": "Big",
+            "Fields__slc": [
+                {
+                    "Zid__i64": 0,
+                    "FieldGoName__str": "Slice",
+                    "FieldTagName__str": "Slice",
+                    "FieldTypeStr__str": "[]S2",
+                    "FieldCategory__": 26,
+                    "FieldFullType__ptr": {
+                        "Kind__": 26,
+                        "Str__str": "Slice",
+                        "Domain__ptr": {
+                            "Kind__": 22,
+                            "Str__str": "S2"
+                        }
+                    },
+                    "ShowZero__boo": true
+                },
+                {
+                    "Zid__i64": 1,
+                    "FieldGoName__str": "Transform",
+                    "FieldTagName__str": "Transform",
+                    "FieldTypeStr__str": "map[int]*S2",
+                    "FieldCategory__": 24,
+                    "FieldFullType__ptr": {
+                        "Kind__": 24,
+                        "Str__str": "Map",
+                        "Domain__ptr": {
+                            "Kind__": 13,
+                            "Str__str": "int"
+                        },
+                        "Range__ptr": {
+                            "Kind__": 28,
+                            "Str__str": "Pointer",
+                            "Domain__ptr": {
+                                "Kind__": 22,
+                                "Str__str": "S2"
+                            }
+                        }
+                    },
+                    "ShowZero__boo": true
+                },
+                {
+                    "Zid__i64": 2,
+                    "FieldGoName__str": "Myptr",
+                    "FieldTagName__str": "Myptr",
+                    "FieldTypeStr__str": "*S2",
+                    "FieldCategory__": 28,
+                    "FieldFullType__ptr": {
+                        "Kind__": 28,
+                        "Str__str": "Pointer",
+                        "Domain__ptr": {
+                            "Kind__": 22,
+                            "Str__str": "S2"
+                        }
+                    },
+                    "ShowZero__boo": true
+                },
+                {
+                    "Zid__i64": 3,
+                    "FieldGoName__str": "Myarray",
+                    "FieldTagName__str": "Myarray",
+                    "FieldTypeStr__str": "[3]string",
+                    "FieldCategory__": 27,
+                    "FieldFullType__ptr": {
+                        "Kind__": 27,
+                        "Str__str": "Array",
+                        "Domain__ptr": {
+                            "Kind__": 3,
+                            "Str__str": "3"
+                        },
+                        "Range__ptr": {
+                            "Kind__": 2,
+                            "Str__str": "string"
+                        }
+                    },
+                    "ShowZero__boo": true
+                },
+                {
+                    "Zid__i64": 4,
+                    "FieldGoName__str": "MySlice",
+                    "FieldTagName__str": "MySlice",
+                    "FieldTypeStr__str": "[]string",
+                    "FieldCategory__": 26,
+                    "FieldFullType__ptr": {
+                        "Kind__": 26,
+                        "Str__str": "Slice",
+                        "Domain__ptr": {
+                            "Kind__": 2,
+                            "Str__str": "string"
+                        }
+                    },
+                    "ShowZero__boo": true
+                }
+            ]
+        },
         "A": {
             "StructName__str": "A",
             "Fields__slc": [
@@ -210,150 +354,6 @@
                             "Str__str": "Tree"
                         }
                     }
-                }
-            ]
-        },
-        "Tree": {
-            "StructName__str": "Tree",
-            "Fields__slc": [
-                {
-                    "Zid__i64": 0,
-                    "FieldGoName__str": "Chld",
-                    "FieldTagName__str": "Chld",
-                    "FieldTypeStr__str": "[]Tree",
-                    "FieldCategory__": 26,
-                    "FieldFullType__ptr": {
-                        "Kind__": 26,
-                        "Str__str": "Slice",
-                        "Domain__ptr": {
-                            "Kind__": 22,
-                            "Str__str": "Tree"
-                        }
-                    }
-                },
-                {
-                    "Zid__i64": 1,
-                    "FieldGoName__str": "Str",
-                    "FieldTagName__str": "Str",
-                    "FieldTypeStr__str": "string",
-                    "FieldCategory__": 23,
-                    "FieldPrimitive__": 2,
-                    "FieldFullType__ptr": {
-                        "Kind__": 2,
-                        "Str__str": "string"
-                    }
-                },
-                {
-                    "Zid__i64": 2,
-                    "FieldGoName__str": "Par",
-                    "FieldTagName__str": "Par",
-                    "FieldTypeStr__str": "*S2",
-                    "FieldCategory__": 28,
-                    "FieldFullType__ptr": {
-                        "Kind__": 28,
-                        "Str__str": "Pointer",
-                        "Domain__ptr": {
-                            "Kind__": 22,
-                            "Str__str": "S2"
-                        }
-                    }
-                }
-            ]
-        },
-        "Big": {
-            "StructName__str": "Big",
-            "Fields__slc": [
-                {
-                    "Zid__i64": 0,
-                    "FieldGoName__str": "Slice",
-                    "FieldTagName__str": "Slice",
-                    "FieldTypeStr__str": "[]S2",
-                    "FieldCategory__": 26,
-                    "FieldFullType__ptr": {
-                        "Kind__": 26,
-                        "Str__str": "Slice",
-                        "Domain__ptr": {
-                            "Kind__": 22,
-                            "Str__str": "S2"
-                        }
-                    },
-                    "ShowZero__boo": true
-                },
-                {
-                    "Zid__i64": 1,
-                    "FieldGoName__str": "Transform",
-                    "FieldTagName__str": "Transform",
-                    "FieldTypeStr__str": "map[int]*S2",
-                    "FieldCategory__": 24,
-                    "FieldFullType__ptr": {
-                        "Kind__": 24,
-                        "Str__str": "Map",
-                        "Domain__ptr": {
-                            "Kind__": 13,
-                            "Str__str": "int"
-                        },
-                        "Range__ptr": {
-                            "Kind__": 28,
-                            "Str__str": "Pointer",
-                            "Domain__ptr": {
-                                "Kind__": 22,
-                                "Str__str": "S2"
-                            }
-                        }
-                    },
-                    "ShowZero__boo": true
-                },
-                {
-                    "Zid__i64": 2,
-                    "FieldGoName__str": "Myptr",
-                    "FieldTagName__str": "Myptr",
-                    "FieldTypeStr__str": "*S2",
-                    "FieldCategory__": 28,
-                    "FieldFullType__ptr": {
-                        "Kind__": 28,
-                        "Str__str": "Pointer",
-                        "Domain__ptr": {
-                            "Kind__": 22,
-                            "Str__str": "S2"
-                        }
-                    },
-                    "ShowZero__boo": true
-                },
-                {
-                    "Zid__i64": 3,
-                    "FieldGoName__str": "Myarray",
-                    "FieldTagName__str": "Myarray",
-                    "FieldTypeStr__str": "[3]string",
-                    "FieldCategory__": 27,
-                    "FieldFullType__ptr": {
-                        "Kind__": 27,
-                        "Str__str": "Array",
-                        "Domain__ptr": {
-                            "Kind__": 3,
-                            "Str__str": "3"
-                        },
-                        "Range__ptr": {
-                            "Kind__": 2,
-                            "Str__str": "string"
-                        }
-                    },
-                    "ShowZero__boo": true
-                },
-                {
-                    "Zid__i64": 4,
-                    "FieldGoName__str": "MySlice",
-                    "FieldTagName__str": "MySlice",
-                    "FieldTypeStr__str": "[]string",
-                    "FieldCategory__": 26,
-                    "FieldFullType__ptr": {
-                        "Kind__": 26,
-                        "Str__str": "Slice",
-                        "Domain__ptr": {
-                            "Kind__": 2,
-                            "Str__str": "string"
-                        }
-                    },
-                    "ShowZero__boo": true
                 }
             ]
         }

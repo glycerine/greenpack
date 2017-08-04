@@ -171,7 +171,7 @@ func (e *encodeGen) structmap(s *Struct) {
 		if fast {
 			// sanity check
 			if s.Fields[i].ZebraId < 0 {
-				fmt.Fprintf(os.Stderr, "\nzebrapack error: field '%s' is missing a zid number; cannot proceed under -fast\n", s.Fields[i].FieldTag)
+				fmt.Fprintf(os.Stderr, "\ngreenpack error: field '%s' is missing a zid number; cannot proceed under -fast\n", s.Fields[i].FieldTag)
 				os.Exit(1)
 			}
 			// proceed
