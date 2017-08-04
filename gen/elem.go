@@ -644,6 +644,8 @@ type StructField struct {
 	// ZebraId defaults to -1, meaning not-tagged with a zebra id.
 	// if ZebraId >= 0, then the tag `zebra:"N"` was found, with ZebraId == N.
 	ZebraId int64
+
+	FieldTagZidClue string
 }
 
 // BaseElem is an element that

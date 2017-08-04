@@ -568,13 +568,14 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		sf = sf[0:0]
 		for _, nm := range f.Names {
 			sf = append(sf, gen.StructField{
-				FieldTag:   nm.Name,
-				FieldName:  nm.Name,
-				FieldElem:  ex.Copy(),
-				OmitEmpty:  omitempty,
-				Deprecated: deprecated,
-				ZebraId:    zebraId,
-				Skip:       skip,
+				FieldTag:        nm.Name,
+				FieldName:       nm.Name,
+				FieldElem:       ex.Copy(),
+				OmitEmpty:       omitempty,
+				Deprecated:      deprecated,
+				ZebraId:         zebraId,
+				Skip:            skip,
+				FieldTagZidClue: Clue2Field(nm.Name, ex.TypeClue(), zebraId),
 			})
 		}
 		return sf, nil
@@ -582,6 +583,9 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 	sf[0].FieldElem = ex
 	if sf[0].FieldTag == "" {
 		sf[0].FieldTag = sf[0].FieldName
+	}
+	if !skip {
+		sf[0].FieldTagZidClue = Clue2Field(sf[0].FieldTag, ex.TypeClue(), zebraId)
 	}
 
 	// validate extension

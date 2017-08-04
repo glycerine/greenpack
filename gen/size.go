@@ -275,6 +275,7 @@ func fixedsizeExpr(e Elem) (string, bool) {
 		var strbody []byte
 		for _, f := range e.Fields {
 			if !f.Skip {
+
 				strbody = msgp.AppendString(strbody[:0], f.FieldTag)
 				hdrlen += len(strbody)
 			}
