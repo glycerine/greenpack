@@ -9,7 +9,7 @@ import (
 )
 
 // PreSave will be called before EncodeMsg/MarshalMsg
-// if you struct implements it.
+// if your struct implements it.
 type PreSave interface {
 
 	// PreSaveHook is called before msgp.MarshalMsg
@@ -21,7 +21,7 @@ type PreSave interface {
 }
 
 // PostLoad will be called after DecodeMsg/UnmarshalMsg,
-// if you struct implements it.
+// if your struct implements it.
 type PostLoad interface {
 
 	// PostLoadHook is called after
