@@ -3,7 +3,7 @@ greenpack: serialization that extends msgpack2 with field versioning and strong 
 
 `greenpack` is a data definition language and serialization format, a layer of convention on top of msgpack2 that provides field versioning and additional type safety.
 
-Msgpack2 enjoys wide support, and provides efficient and self-contained data serialization. We find only two problems with msgpack2: weak support for data evolution, and insufficiently strong typing of integers.
+`msgpack2` [https://github.com/msgpack/msgpack/blob/master/spec.md][http://msgpack.org] enjoys wide support, and provides efficient and self-contained data serialization. We find only two problems with msgpack2: weak support for data evolution, and insufficiently strong typing of integers.
 
 The greenpack format addresses these problems while keeping serialized data fully self-describing. Greenpack is independent of any external schema, but as an optimization uses the Go source file itself as a schema to maintain current versioning and type information. Dynamic languages still have an easy time reading greenpack--it is just msgpack2. There's no need to worry about coordinating the schema under which data was written, as data is self-contained.
 
