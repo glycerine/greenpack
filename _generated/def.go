@@ -37,21 +37,29 @@ type Fixed struct {
 	B bool
 }
 
+type PreviouslyAnon struct {
+	ValueA string `msg:"value_a"`
+	ValueB []byte `msg:"value_b"`
+}
+
 type TestType struct {
-	F   *float64          `msg:"float"`
-	Els map[string]string `msg:"elements"`
-	Obj struct {          // test anonymous struct
-		ValueA string `msg:"value_a"`
-		ValueB []byte `msg:"value_b"`
-	} `msg:"object"`
-	Child    *TestType   `msg:"child"`
-	Time     time.Time   `msg:"time"`
-	Any      interface{} `msg:"any"`
-	Appended msgp.Raw    `msg:"appended"`
-	Num      msgp.Number `msg:"num"`
+	F        *float64          `msg:"float"`
+	Els      map[string]string `msg:"elements"`
+	Obj      PreviouslyAnon    `msg:"object"`
+	Child    *TestType         `msg:"child"`
+	Time     time.Time         `msg:"time"`
+	Any      interface{}       `msg:"any"`
+	Appended msgp.Raw          `msg:"appended"`
+	Num      msgp.Number       `msg:"num"`
 	Slice1   []string
 	Slice2   []string
 	SlicePtr *[]string
+}
+
+type SimpleTestType struct {
+	F   *float64          `msg:"float"`
+	Els map[string]string `msg:"elements"`
+	Obj PreviouslyAnon    `msg:"object"`
 }
 
 //msgp:tuple Object
@@ -180,9 +188,14 @@ func myenumStr(s string) MyEnum {
 }
 
 // test pass-specific directive
-//msgp:decode ignore Insane
+// :encode ignore Insane
 
-type Insane [3]map[string]struct{ A, B CustomInt }
+// anonymous structs can't be serialized with greenpack,
+// because the fieldsempty/everything omitempty by default
+// logic requires named types when we define the helper
+// method fieldsNotEmpty().
+type Insane [3]map[string]InsaneInner
+type InsaneInner struct{ A, B CustomInt }
 
 type Custom struct {
 	Bts   CustomBytes          `msg:"bts"`

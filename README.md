@@ -127,7 +127,7 @@ not allowed.
 the type clue when writing data. For example,
 this means that signed and unsigned declarations
 must be respected. Even if another language uses
-a mspack2 implimentation that converts signed to
+a msgpack2 implimentation that converts signed to
 unsigned, as long as the field name is preserved
 we can still acurately reconstruct what the
 data's type was originally.

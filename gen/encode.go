@@ -77,6 +77,7 @@ func (e *encodeGen) gStruct(s *Struct) {
 	if !e.p.ok() {
 		return
 	}
+
 	if s.AsTuple {
 		e.tuple(s)
 	} else {
@@ -118,7 +119,9 @@ func (e *encodeGen) structmap(s *Struct) {
 	empty := "empty_" + randIdent()
 	inUse := "fieldsInUse_" + randIdent()
 
-	if s.hasOmitEmptyTags {
+	allOmitEmpty := !e.cfg.SerzEmpty
+
+	if allOmitEmpty || s.hasOmitEmptyTags {
 		e.p.printf("\n\n// honor the omitempty tags\n")
 		e.p.printf("var %s [%d]bool\n", empty, len(s.Fields))
 		e.p.printf("%s := %s.fieldsNotEmpty(%s[:])\n",
@@ -131,6 +134,7 @@ func (e *encodeGen) structmap(s *Struct) {
 		data = msgp.AppendMapHeader(nil, uint32(nfields))
 		e.p.printf("\n// map header, size %d", nfields)
 		e.Fuse(data)
+		e.fuseHook()
 	}
 
 	for i := range s.Fields {
@@ -141,17 +145,17 @@ func (e *encodeGen) structmap(s *Struct) {
 			return
 		}
 
-		if s.hasOmitEmptyTags && s.Fields[i].OmitEmpty {
+		if allOmitEmpty || (s.hasOmitEmptyTags && s.Fields[i].OmitEmpty) {
 			e.p.printf("\n if !%s[%d] {", empty, i)
 		}
 
 		data = msgp.AppendString(nil, s.Fields[i].FieldTagZidClue)
 		e.p.printf("\n// write %q", s.Fields[i].FieldTagZidClue)
-
 		e.Fuse(data)
+		e.fuseHook()
 		next(e, s.Fields[i].FieldElem)
 
-		if s.hasOmitEmptyTags && s.Fields[i].OmitEmpty {
+		if allOmitEmpty || (s.hasOmitEmptyTags && s.Fields[i].OmitEmpty) {
 			e.p.printf("\n }\n")
 		}
 	}

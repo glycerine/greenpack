@@ -174,6 +174,8 @@ func (p *Printer) ApplyDirective(pass Method, t TransformPass) {
 // Print prints an Elem.
 func (p *Printer) Print(e Elem) error {
 	for _, g := range p.gens {
+		//		fmt.Printf("\n\n 99999 about to begin executing the gen g='%#v'\n   ---------> on element e='%#v'.\n\n", g, e)
+
 		err := g.Execute(e)
 		if err != nil {
 			return err
@@ -218,6 +220,10 @@ type traversal interface {
 // type-switch dispatch to the correct
 // method given the type of 'e'
 func next(t traversal, e Elem) {
+	//	if DEBUG {
+	//		fmt.Printf("\n top of next(), e='%#v'.\n =========>>  traversal='%#v'\n", e, t)
+	//	}
+
 	switch e := e.(type) {
 	case *Map:
 		t.gMap(e)

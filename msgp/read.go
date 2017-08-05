@@ -1,12 +1,11 @@
 package msgp
 
 import (
+	"github.com/philhofer/fwd"
 	"io"
 	"math"
 	"sync"
 	"time"
-
-	"github.com/philhofer/fwd"
 )
 
 // PreSave will be called before EncodeMsg/MarshalMsg
