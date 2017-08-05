@@ -1,7 +1,7 @@
-Greenpack: a data description language and serialization format. Like Gobs version 2.0.
+Greenpack: a serialization convention atop msgpack2 that adds field versioning and stronger typing.
 ==========
 
-Greenpack is a data definition language and serialization format, a layer on top of msgpack2 that provides field versioning and additional type safety.
+Greenpack is a data definition language and serialization format, a layer of convention on top of msgpack2 that provides field versioning and additional type safety.
 
 We find only two problems with msgpack2: weak support for data evolution, and insufficiently strong typing.
 
