@@ -183,8 +183,9 @@ func (d *decodeGen) structAsMap(s *Struct) {
 	d.needsField()
 
 	k := genSerial()
-	fast := false // !d.cfg.UseMsgp2
-	tmpl, nStr := genDecodeMsgTemplate(k, fast)
+	skipclue := d.cfg.SkipZidClue
+
+	tmpl, nStr := genDecodeMsgTemplate(k)
 
 	fieldOrder := fmt.Sprintf("\n var decodeMsgFieldOrder%s = []string{", nStr)
 	fieldSkip := fmt.Sprintf("\n var decodeMsgFieldSkip%s = []bool{", nStr)
@@ -194,7 +195,11 @@ func (d *decodeGen) structAsMap(s *Struct) {
 		} else {
 			fieldSkip += fmt.Sprintf("false,")
 		}
-		fieldOrder += fmt.Sprintf("%q,", s.Fields[i].FieldTagZidClue)
+		fld := s.Fields[i].FieldTagZidClue
+		if skipclue {
+			fld = s.Fields[i].FieldTag
+		}
+		fieldOrder += fmt.Sprintf("%q,", fld)
 	}
 	fieldOrder += "}\n"
 	fieldSkip += "}\n"
@@ -215,16 +220,14 @@ func (d *decodeGen) structAsMap(s *Struct) {
 		if s.Fields[i].Skip {
 			continue
 		}
-		if fast {
-			d.p.printf("\ncase %v:", s.Fields[i].ZebraId)
-			d.p.printf("\n// zid %v for %q", s.Fields[i].ZebraId,
-				s.Fields[i].FieldTagZidClue)
-			d.p.printf("\n%s[%d]=true;", found, i)
-		} else {
-			d.p.printf("\ncase \"%s\":", s.Fields[i].FieldTagZidClue)
-			d.p.printf("\n%s[%d]=true;", found, i)
+		fld := s.Fields[i].FieldTagZidClue
+		if skipclue {
+			fld = s.Fields[i].FieldTag
 		}
-		//d.p.printf("\n fmt.Printf(\"I found field '%s' at depth=%d. dc.AlwaysNil = %%v\", dc.AlwaysNil);\n", s.Fields[i].FieldTagZidClue, d.depth)
+
+		d.p.printf("\ncase \"%s\":", fld)
+		d.p.printf("\n%s[%d]=true;", found, i)
+		//d.p.printf("\n fmt.Printf(\"I found field '%s' at depth=%d. dc.AlwaysNil = %%v\", dc.AlwaysNil);\n", fld, d.depth)
 		d.depth++
 		next(d, s.Fields[i].FieldElem)
 		d.depth--

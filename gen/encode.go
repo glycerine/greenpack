@@ -78,7 +78,7 @@ func (e *encodeGen) gStruct(s *Struct) {
 		return
 	}
 
-	if s.AsTuple {
+	if e.cfg.TupleByDefault || s.AsTuple {
 		e.tuple(s)
 	} else {
 		e.structmap(s)
@@ -120,6 +120,7 @@ func (e *encodeGen) structmap(s *Struct) {
 	inUse := "fieldsInUse_" + randIdent()
 
 	allOmitEmpty := !e.cfg.SerzEmpty
+	skipclue := e.cfg.SkipZidClue
 
 	if allOmitEmpty || s.hasOmitEmptyTags {
 		e.p.printf("\n\n// honor the omitempty tags\n")
@@ -149,8 +150,12 @@ func (e *encodeGen) structmap(s *Struct) {
 			e.p.printf("\n if !%s[%d] {", empty, i)
 		}
 
-		data = msgp.AppendString(nil, s.Fields[i].FieldTagZidClue)
-		e.p.printf("\n// write %q", s.Fields[i].FieldTagZidClue)
+		fld := s.Fields[i].FieldTagZidClue
+		if skipclue {
+			fld = s.Fields[i].FieldTag
+		}
+		data = msgp.AppendString(nil, fld)
+		e.p.printf("\n// write %q", fld)
 		e.Fuse(data)
 		e.fuseHook()
 		next(e, s.Fields[i].FieldElem)

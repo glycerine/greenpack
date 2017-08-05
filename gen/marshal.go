@@ -83,7 +83,7 @@ func (m *marshalGen) gStruct(s *Struct) {
 		return
 	}
 
-	if s.AsTuple {
+	if m.cfg.TupleByDefault || s.AsTuple {
 		m.tuple(s)
 	} else {
 		m.mapstruct(s)
@@ -113,6 +113,7 @@ func (m *marshalGen) mapstruct(s *Struct) {
 	nfields := len(s.Fields) - s.SkipCount
 
 	allOmitEmpty := !m.cfg.SerzEmpty
+	skipclue := m.cfg.SkipZidClue
 
 	if allOmitEmpty || s.hasOmitEmptyTags {
 		m.p.printf("\n\n// honor the omitempty tags\n")
@@ -137,14 +138,19 @@ func (m *marshalGen) mapstruct(s *Struct) {
 			m.p.printf("\n if !empty[%d] {", i)
 		}
 
+		fld := s.Fields[i].FieldTagZidClue
+		if skipclue {
+			fld = s.Fields[i].FieldTag
+		}
+
 		switch s.KeyTyp {
 		case "Int64":
 			data = msgp.AppendInt64(nil, s.Fields[i].ZebraId)
 		default:
-			data = msgp.AppendString(nil, s.Fields[i].FieldTagZidClue)
+			data = msgp.AppendString(nil, fld)
 		}
 
-		m.p.printf("\n// string %q", s.Fields[i].FieldTagZidClue)
+		m.p.printf("\n// string %q", fld)
 		m.Fuse(data)
 		m.fuseHook()
 		next(m, s.Fields[i].FieldElem)

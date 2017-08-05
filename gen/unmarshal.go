@@ -126,10 +126,12 @@ func (u *unmarshalGen) mapstruct(s *Struct) {
 	if n == 0 {
 		return
 	}
+
+	skipclue := u.cfg.SkipZidClue
+
 	u.needsField()
 	k := genSerial()
-	fast := false // !u.cfg.UseMsgp2
-	tmpl, nStr := genUnmarshalMsgTemplate(k, fast)
+	tmpl, nStr := genUnmarshalMsgTemplate(k)
 
 	fieldOrder := fmt.Sprintf("\n var unmarshalMsgFieldOrder%s = []string{", nStr)
 	fieldSkip := fmt.Sprintf("\n var unmarshalMsgFieldSkip%s = []bool{", nStr)
@@ -139,7 +141,12 @@ func (u *unmarshalGen) mapstruct(s *Struct) {
 		} else {
 			fieldSkip += fmt.Sprintf("false,")
 		}
-		fieldOrder += fmt.Sprintf("%q,", s.Fields[i].FieldTagZidClue)
+		fld := s.Fields[i].FieldTagZidClue
+		if skipclue {
+			fld = s.Fields[i].FieldTag
+		}
+
+		fieldOrder += fmt.Sprintf("%q,", fld)
 	}
 	fieldOrder += "}\n"
 	fieldSkip += "}\n"
@@ -156,15 +163,13 @@ func (u *unmarshalGen) mapstruct(s *Struct) {
 		if s.Fields[i].Skip {
 			continue
 		}
-		if fast {
-			u.p.printf("\ncase %v:", s.Fields[i].ZebraId)
-			u.p.printf("\n// zid %v for %q", s.Fields[i].ZebraId,
-				s.Fields[i].FieldTagZidClue)
-			u.p.printf("\n%s[%d]=true;", found, i)
-		} else {
-			u.p.printf("\ncase \"%s\":", s.Fields[i].FieldTagZidClue)
-			u.p.printf("\n%s[%d]=true;", found, i)
+		fld := s.Fields[i].FieldTagZidClue
+		if skipclue {
+			fld = s.Fields[i].FieldTag
 		}
+
+		u.p.printf("\ncase \"%s\":", fld)
+		u.p.printf("\n%s[%d]=true;", found, i)
 		u.depth++
 		next(u, s.Fields[i].FieldElem)
 		u.depth--

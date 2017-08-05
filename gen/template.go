@@ -55,12 +55,9 @@ doneWithStruct_:
 		// -- templateDecodeMsg ends here --
 `
 
-func genDecodeMsgTemplate(n int, fast bool) (template, nStr string) {
+func genDecodeMsgTemplate(n int) (template, nStr string) {
 	nStr = fmt.Sprintf("%v%v", n, randIdent())
 	tpl := templateDecodeMsg
-	if fast {
-		tpl = templateDecodeMsgZid
-	}
 	return strings.Replace(tpl, `_`, nStr, -1), nStr
 }
 
@@ -114,11 +111,8 @@ doneWithStruct_:
 		// -- templateUnmarshalMsg ends here --
 `
 
-func genUnmarshalMsgTemplate(n int, fast bool) (template, nStr string) {
+func genUnmarshalMsgTemplate(n int) (template, nStr string) {
 	nStr = fmt.Sprintf("%v%v", n, randIdent())
 	tpl := templateUnmarshalMsg
-	if fast {
-		tpl = templateUnmarshalMsgZid
-	}
 	return strings.Replace(tpl, `_`, nStr, -1), nStr
 }
