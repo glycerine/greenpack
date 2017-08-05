@@ -78,7 +78,7 @@ func (e *encodeGen) gStruct(s *Struct) {
 		return
 	}
 
-	if e.cfg.TupleByDefault || s.AsTuple {
+	if e.cfg.AllTuple || s.AsTuple {
 		e.tuple(s)
 	} else {
 		e.structmap(s)

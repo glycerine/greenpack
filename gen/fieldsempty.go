@@ -49,6 +49,9 @@ func (e *fieldsEmpty) Execute(p Elem) error {
 }
 
 func (e *fieldsEmpty) gStruct(s *Struct) {
+	if e.cfg.AllTuple {
+		return
+	}
 	//	fmt.Printf("\n\n 77777 gStruct starting for fieldsempty s='%#v'\n\n ******* and e.recvr = '%#v'\n\n", s, e.recvr)
 	e.p.printf("// %sfieldsNotEmpty supports omitempty tags\n", e.cfg.MethodPrefix)
 

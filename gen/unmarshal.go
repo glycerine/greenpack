@@ -94,7 +94,7 @@ func (u *unmarshalGen) gStruct(s *Struct) {
 	if !u.p.ok() {
 		return
 	}
-	if s.AsTuple {
+	if u.cfg.AllTuple || s.AsTuple {
 		u.tuple(s)
 	} else {
 		u.mapstruct(s)

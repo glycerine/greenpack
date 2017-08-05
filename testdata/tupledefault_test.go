@@ -2,18 +2,17 @@ package testdata
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	cv "github.com/glycerine/goconvey/convey"
 	"github.com/glycerine/greenpack/msgp"
 )
 
-func Test012TupleByDefaultWorks(t *testing.T) {
+func Test012AllTuple(t *testing.T) {
 
-	cv.Convey("greenpack -tuple-by-default writes tuples without fieldnames", t, func() {
+	cv.Convey("greenpack -alltuple always writes tuples without fieldnames", t, func() {
 
-		v := OmitClueTestStruct{
+		v := TupleByDefaultTestStruct{
 			S: "hello",
 			N: -19,
 		}
@@ -32,14 +31,14 @@ func Test012TupleByDefaultWorks(t *testing.T) {
 
 		found0 := bytes.Contains(bts, []byte("S"))
 		found1 := bytes.Contains(bts, []byte("N"))
-		fmt.Printf("\n bts = '%x'/'%s'\n", bts, string(bts))
+		//fmt.Printf("\n bts = '%x'/'%s'\n", bts, string(bts))
 
 		// tuples don't write field names.
 		cv.So(found0, cv.ShouldBeFalse)
 		cv.So(found1, cv.ShouldBeFalse)
 
 		// verify unmarshal works
-		var v2 OmitClueTestStruct
+		var v2 TupleByDefaultTestStruct
 		_, err = v2.UnmarshalMsg(bts)
 		if err != nil {
 			t.Fatal(err)
@@ -48,7 +47,7 @@ func Test012TupleByDefaultWorks(t *testing.T) {
 		cv.So(v2.S, cv.ShouldEqual, v.S)
 
 		// verify decode works
-		var v3 OmitClueTestStruct
+		var v3 TupleByDefaultTestStruct
 		err = msgp.Decode(bytes.NewBuffer(bts), &v3)
 		if err != nil {
 			t.Fatal(err)

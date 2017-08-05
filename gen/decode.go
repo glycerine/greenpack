@@ -89,7 +89,8 @@ func (d *decodeGen) Execute(p Elem) error {
 	d.p.comment("We treat empty fields as if we read a Nil from the wire.")
 	d.p.printf("\nfunc (%s %s) %sDecodeMsg(dc *msgp.Reader) (err error) {\n", p.Varname(), methodReceiver(p), d.cfg.MethodPrefix)
 
-	d.p.printf(`var sawTopNil bool
+	if !d.cfg.AllTuple {
+		d.p.printf(`var sawTopNil bool
   if dc.IsNil() {
     sawTopNil = true
     err = dc.ReadNil()
@@ -99,16 +100,21 @@ func (d *decodeGen) Execute(p Elem) error {
     dc.PushAlwaysNil()
   }
 `)
+	}
 
 	// next will increment k, but we want the first, top level DecodeMsg
 	// to refer to this same k ...
 	next(d, p)
 
-	d.p.printf(`
+	if !d.cfg.AllTuple {
+
+		d.p.printf(`
 	if sawTopNil {
 		dc.PopAlwaysNil()
 	}
 `)
+	}
+
 	d.p.postLoadHook()
 	d.p.nakedReturn()
 	unsetReceiver(p)
@@ -125,7 +131,7 @@ func (d *decodeGen) gStruct(s *Struct) {
 	if !d.p.ok() {
 		return
 	}
-	if s.AsTuple {
+	if d.cfg.AllTuple || s.AsTuple {
 		d.structAsTuple(s)
 	} else {
 		d.structAsMap(s)

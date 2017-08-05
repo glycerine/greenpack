@@ -83,7 +83,7 @@ func (m *marshalGen) gStruct(s *Struct) {
 		return
 	}
 
-	if m.cfg.TupleByDefault || s.AsTuple {
+	if m.cfg.AllTuple || s.AsTuple {
 		m.tuple(s)
 	} else {
 		m.mapstruct(s)

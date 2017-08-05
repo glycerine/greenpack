@@ -21,8 +21,8 @@ type GreenConfig struct {
 	MethodPrefix string
 	SerzEmpty    bool
 
-	TupleByDefault bool
-	SkipZidClue    bool
+	AllTuple    bool
+	SkipZidClue bool
 }
 
 // call DefineFlags before myflags.Parse()
@@ -40,7 +40,7 @@ func (c *GreenConfig) DefineFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&c.ReadStringsFast, "fast-strings", false, "for speed when reading a string in a message that won't be reused, this flag means we'll use unsafe to cast the string header and avoid allocation.")
 	fs.StringVar(&c.SchemaToGo, "schema-to-go", "", "(standalone functionality) path to schema in msgpack2 format; we will convert it to Go, write the Go on stdout, and exit immediately")
 	fs.StringVar(&c.MethodPrefix, "method-prefix", "", "(optional) prefix that will be pre-prended to the front of generated method names; useful when you need to avoid namespace collisions, but the generated tests will break/the msgp package interfaces won't be satisfied.")
-	fs.BoolVar(&c.TupleByDefault, "tuple-by-default", false, "use tuples for everything")
+	fs.BoolVar(&c.AllTuple, "alltuple", false, "use tuples for everything")
 	fs.BoolVar(&c.SkipZidClue, "omit-clue", false, "don't append zid and clue to field name (makes things just like msgpack2 traditional encoding, without version + type clue)")
 }
 

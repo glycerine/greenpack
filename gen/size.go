@@ -102,7 +102,7 @@ func (s *sizeGen) gStruct(st *Struct) {
 	}
 	nfields := uint32(len(st.Fields) - st.SkipCount)
 
-	if st.AsTuple {
+	if s.cfg.AllTuple || st.AsTuple {
 		data := msgp.AppendArrayHeader(nil, nfields)
 		s.addConstant(strconv.Itoa(len(data)))
 		for i := range st.Fields {
