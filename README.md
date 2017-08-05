@@ -82,7 +82,7 @@ readers and writers. It is easily addressed with
 type clues, small extra information about the
 originally defined type.
 
-# field version info, using the `zid` field.
+# field version info, using the `zid` tag.
 
 * Conflict resolution: the Cap'nProto numbering and
 update conflict resolution method is used here.
