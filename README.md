@@ -294,9 +294,11 @@ for more detail.
 notices
 -------
 
+~~~
 Portions Copyright (c) 2016, 2017 Jason E. Aten, Ph.D.
 Portions Copyright (c) 2014 Philip Hofer
 Portions Copyright (c) 2009 The Go Authors (license at http://golang.org) where indicated
+~~~
 
 LICENSE: MIT. See https://github.com/glycerine/greenpack/blob/master/LICENSE
 
