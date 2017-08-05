@@ -133,7 +133,7 @@ we can still acurately reconstruct what the
 data's type was originally.
 
 performance and comparison
----------------------------
+=========================
 
 `greenpack -fast-strings` is zero-allocation, and one
 of the fastest serialization formats avaiable for Go.[1]
@@ -146,6 +146,11 @@ Gencode isn't zero alloc, and has no versioning support.
 CapnProto isn't very portable to dynamic languages
 like R or Javascript, and requires keeping duplicate
 mirror structs in your code.
+
+Compared to (Gogoprotobuf) ProtcolBuffers, greenpack reads
+are 6% faster on these microbenchmarks. Writes
+are 15% faster and do no allocation; GogoprotobufMarshal
+appears to allocate on write.
 
 
 deprecating fields
