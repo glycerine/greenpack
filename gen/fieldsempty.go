@@ -58,10 +58,18 @@ func (e *fieldsEmpty) gStruct(s *Struct) {
 		}
 	}
 
-	if numOE == 0 {
-		// no fields tagged with omitempty, just return the full field count.
-		e.p.printf("\nreturn %d }\n", nfields)
-		return
+	// default is SerzEmpty false, so by
+	// default we will treat all as being omitempty.
+	// This is safe since we will zero any re-used
+	// struct's fields when reading.
+	//
+	if e.cfg.SerzEmpty {
+		// even under SerzEmpty, we still respect the specific ,omitempty tag:
+		if numOE == 0 {
+			// no fields tagged with omitempty, just return the full field count.
+			e.p.printf("\nreturn %d }\n", nfields)
+			return
+		}
 	}
 	// remember this to avoid recomputing it in other passes.
 	s.hasOmitEmptyTags = true

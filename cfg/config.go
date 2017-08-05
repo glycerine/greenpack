@@ -19,6 +19,7 @@ type GreenConfig struct {
 	SchemaToGo      string
 
 	MethodPrefix string
+	SerzEmpty    bool
 }
 
 // call DefineFlags before myflags.Parse()
@@ -29,6 +30,7 @@ func (c *GreenConfig) DefineFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&c.Marshal, "marshal", true, "create Marshal and Unmarshal methods")
 	fs.BoolVar(&c.Tests, "tests", true, "create tests and benchmarks")
 	fs.BoolVar(&c.Unexported, "unexported", false, "also process unexported types")
+	fs.BoolVar(&c.SerzEmpty, "write-zeros", false, "serialize zero-value fields to the wire, consuming much more space. By default all fields are treated as `omitempty` fields, where they are omitted from the serialization if they contain their zero-value. If -write-zero is given, then only fields specifically marked as `omitempty` are treated as such.")
 
 	fs.StringVar(&c.WriteSchema, "write-schema", "", "write schema (in msgpack2 format) to this file; - for stdout")
 	fs.BoolVar(&c.GenSchemaId, "genid", false, "generate a fresh random greenSchemaId64 value to include in your Go source schema")

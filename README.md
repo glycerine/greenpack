@@ -216,18 +216,26 @@ command line flags
 
 ### `msg:",omitempty"` tags on struct fields
 
-When using greenpack, you can use the `omitempty` tag on your struct fields.
+By default, all fields are treated as `omitempty`. If the
+field contains its zero-value (see the Go spec), then it
+is not serialized on the wire.
 
-In the following example,
+If you wish to consume space unnecessarily, you can
+use the `greenpack -write-zeros` flag. Then only
+fields specifically marked with the struct tag
+`omitempty` will be treated as such.
+
+
+For example, in the following example,
 ```
 type Hedgehog struct {
    Furriness string `msg:",omitempty"`
 }
 ```
 
-If Furriness is the empty string, the field will not be serialized, thus saving the space of the field name on the wire.
+If Furriness is the empty string, the field will not be serialized, thus saving the space of the field name on the wire. If the `-write-zeros` flags was given and the `omitempty` tag removed, then Furriness would be serialized no matter what value it contained.
 
-It is safe to re-use structs even with `omitempty`. For reference:
+It is safe to re-use structs by default, and with `omitempty`. For reference:
 
 from https://github.com/tinylib/msgp/issues/154:
 > The only special feature of UnmarshalMsg and DecodeMsg (from a zero-alloc standpoint) is that they will use pre-existing fields in an object rather than allocating new ones. So, if you decode into the same object repeatedly, things like slices and maps won't be re-allocated on each decode; instead, they will be re-sized appropriately. In other words, mutable fields are simply mutated in-place.

@@ -469,6 +469,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		alltags := reflect.StructTag(strings.Trim(f.Tag.Value, "`"))
 		body := alltags.Get("msg")
 		tags := strings.Split(body, ",")
+
 		if len(tags) == 2 && tags[1] == "extension" {
 			extension = true
 		}

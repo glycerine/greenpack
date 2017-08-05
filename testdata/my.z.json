@@ -1,8 +1,139 @@
 {
     "SourcePath__str": "testdata/my.go",
     "SourcePackage__str": "testdata",
-    "GreenSchemaId__i64": 0,
+    "GreenSchemaId__i64": 1947397430155838,
     "Structs__map": {
+        "Sys": {
+            "StructName__str": "Sys",
+            "Fields__slc": [
+                {
+                    "Zid__i64": 0,
+                    "FieldGoName__str": "F",
+                    "FieldTagName__str": "F",
+                    "FieldTypeStr__str": "interface{}",
+                    "FieldCategory__": 23,
+                    "FieldPrimitive__": 19,
+                    "FieldFullType__ptr": {
+                        "Kind__": 19,
+                        "Str__str": "Intf"
+                    }
+                }
+            ]
+        },
+        "S2": {
+            "StructName__str": "S2",
+            "Fields__slc": [
+                {
+                    "Zid__i64": 0,
+                    "FieldGoName__str": "A",
+                    "FieldTagName__str": "alpha",
+                    "Skip__boo": true
+                },
+                {
+                    "Zid__i64": 1,
+                    "FieldGoName__str": "B",
+                    "FieldTagName__str": "beta",
+                    "FieldTypeStr__str": "string",
+                    "FieldCategory__": 23,
+                    "FieldPrimitive__": 2,
+                    "FieldFullType__ptr": {
+                        "Kind__": 2,
+                        "Str__str": "string"
+                    }
+                },
+                {
+                    "Zid__i64": 2,
+                    "FieldGoName__str": "R",
+                    "FieldTagName__str": "ralph",
+                    "FieldTypeStr__str": "map[string]uint8",
+                    "FieldCategory__": 24,
+                    "FieldFullType__ptr": {
+                        "Kind__": 24,
+                        "Str__str": "Map",
+                        "Domain__ptr": {
+                            "Kind__": 2,
+                            "Str__str": "string"
+                        },
+                        "Range__ptr": {
+                            "Kind__": 8,
+                            "Str__str": "uint8"
+                        }
+                    }
+                },
+                {
+                    "Zid__i64": 3,
+                    "FieldGoName__str": "P",
+                    "FieldTagName__str": "P",
+                    "FieldTypeStr__str": "uint16",
+                    "FieldCategory__": 23,
+                    "FieldPrimitive__": 9,
+                    "FieldFullType__ptr": {
+                        "Kind__": 9,
+                        "Str__str": "uint16"
+                    },
+                    "Deprecated__boo": true
+                },
+                {
+                    "Zid__i64": 4,
+                    "FieldGoName__str": "Q",
+                    "FieldTagName__str": "Q",
+                    "FieldTypeStr__str": "uint32",
+                    "FieldCategory__": 23,
+                    "FieldPrimitive__": 10,
+                    "FieldFullType__ptr": {
+                        "Kind__": 10,
+                        "Str__str": "uint32"
+                    }
+                },
+                {
+                    "Zid__i64": 5,
+                    "FieldGoName__str": "T",
+                    "FieldTagName__str": "T",
+                    "FieldTypeStr__str": "int64",
+                    "FieldCategory__": 23,
+                    "FieldPrimitive__": 17,
+                    "FieldFullType__ptr": {
+                        "Kind__": 17,
+                        "Str__str": "int64"
+                    },
+                    "ShowZero__boo": true
+                },
+                {
+                    "Zid__i64": 6,
+                    "FieldGoName__str": "Arr",
+                    "FieldTagName__str": "arr",
+                    "FieldTypeStr__str": "[6]float64",
+                    "FieldCategory__": 27,
+                    "FieldFullType__ptr": {
+                        "Kind__": 27,
+                        "Str__str": "Array",
+                        "Domain__ptr": {
+                            "Kind__": 6,
+                            "Str__str": "6"
+                        },
+                        "Range__ptr": {
+                            "Kind__": 4,
+                            "Str__str": "float64"
+                        }
+                    }
+                },
+                {
+                    "Zid__i64": 7,
+                    "FieldGoName__str": "MyTree",
+                    "FieldTagName__str": "MyTree",
+                    "FieldTypeStr__str": "*Tree",
+                    "FieldCategory__": 28,
+                    "FieldFullType__ptr": {
+                        "Kind__": 28,
+                        "Str__str": "Pointer",
+                        "Domain__ptr": {
+                            "Kind__": 22,
+                            "Str__str": "Tree"
+                        }
+                    }
+                }
+            ]
+        },
         "Tree": {
             "StructName__str": "Tree",
             "Fields__slc": [
@@ -222,137 +353,6 @@
                     "FieldFullType__ptr": {
                         "Kind__": 18,
                         "Str__str": "bool"
-                    }
-                }
-            ]
-        },
-        "Sys": {
-            "StructName__str": "Sys",
-            "Fields__slc": [
-                {
-                    "Zid__i64": 0,
-                    "FieldGoName__str": "F",
-                    "FieldTagName__str": "F",
-                    "FieldTypeStr__str": "interface{}",
-                    "FieldCategory__": 23,
-                    "FieldPrimitive__": 19,
-                    "FieldFullType__ptr": {
-                        "Kind__": 19,
-                        "Str__str": "Intf"
-                    }
-                }
-            ]
-        },
-        "S2": {
-            "StructName__str": "S2",
-            "Fields__slc": [
-                {
-                    "Zid__i64": 0,
-                    "FieldGoName__str": "A",
-                    "FieldTagName__str": "alpha",
-                    "Skip__boo": true
-                },
-                {
-                    "Zid__i64": 1,
-                    "FieldGoName__str": "B",
-                    "FieldTagName__str": "beta",
-                    "FieldTypeStr__str": "string",
-                    "FieldCategory__": 23,
-                    "FieldPrimitive__": 2,
-                    "FieldFullType__ptr": {
-                        "Kind__": 2,
-                        "Str__str": "string"
-                    }
-                },
-                {
-                    "Zid__i64": 2,
-                    "FieldGoName__str": "R",
-                    "FieldTagName__str": "ralph",
-                    "FieldTypeStr__str": "map[string]uint8",
-                    "FieldCategory__": 24,
-                    "FieldFullType__ptr": {
-                        "Kind__": 24,
-                        "Str__str": "Map",
-                        "Domain__ptr": {
-                            "Kind__": 2,
-                            "Str__str": "string"
-                        },
-                        "Range__ptr": {
-                            "Kind__": 8,
-                            "Str__str": "uint8"
-                        }
-                    }
-                },
-                {
-                    "Zid__i64": 3,
-                    "FieldGoName__str": "P",
-                    "FieldTagName__str": "P",
-                    "FieldTypeStr__str": "uint16",
-                    "FieldCategory__": 23,
-                    "FieldPrimitive__": 9,
-                    "FieldFullType__ptr": {
-                        "Kind__": 9,
-                        "Str__str": "uint16"
-                    },
-                    "Deprecated__boo": true
-                },
-                {
-                    "Zid__i64": 4,
-                    "FieldGoName__str": "Q",
-                    "FieldTagName__str": "Q",
-                    "FieldTypeStr__str": "uint32",
-                    "FieldCategory__": 23,
-                    "FieldPrimitive__": 10,
-                    "FieldFullType__ptr": {
-                        "Kind__": 10,
-                        "Str__str": "uint32"
-                    }
-                },
-                {
-                    "Zid__i64": 5,
-                    "FieldGoName__str": "T",
-                    "FieldTagName__str": "T",
-                    "FieldTypeStr__str": "int64",
-                    "FieldCategory__": 23,
-                    "FieldPrimitive__": 17,
-                    "FieldFullType__ptr": {
-                        "Kind__": 17,
-                        "Str__str": "int64"
-                    },
-                    "ShowZero__boo": true
-                },
-                {
-                    "Zid__i64": 6,
-                    "FieldGoName__str": "Arr",
-                    "FieldTagName__str": "arr",
-                    "FieldTypeStr__str": "[6]float64",
-                    "FieldCategory__": 27,
-                    "FieldFullType__ptr": {
-                        "Kind__": 27,
-                        "Str__str": "Array",
-                        "Domain__ptr": {
-                            "Kind__": 6,
-                            "Str__str": "6"
-                        },
-                        "Range__ptr": {
-                            "Kind__": 4,
-                            "Str__str": "float64"
-                        }
-                    }
-                },
-                {
-                    "Zid__i64": 7,
-                    "FieldGoName__str": "MyTree",
-                    "FieldTagName__str": "MyTree",
-                    "FieldTypeStr__str": "*Tree",
-                    "FieldCategory__": 28,
-                    "FieldFullType__ptr": {
-                        "Kind__": 28,
-                        "Str__str": "Pointer",
-                        "Domain__ptr": {
-                            "Kind__": 22,
-                            "Str__str": "Tree"
-                        }
                     }
                 }
             ]
