@@ -12,13 +12,13 @@ import (
 // We treat empty fields as if we read a Nil from the wire.
 func (z *TupleByDefaultTestStruct) DecodeMsg(dc *msgp.Reader) (err error) {
 
-	var zpqw1 uint32
-	zpqw1, err = dc.ReadArrayHeader()
+	var zgensym_f43bd773bf01f77_0 uint32
+	zgensym_f43bd773bf01f77_0, err = dc.ReadArrayHeader()
 	if err != nil {
 		return
 	}
-	if zpqw1 != 2 {
-		err = msgp.ArrayError{Wanted: 2, Got: zpqw1}
+	if zgensym_f43bd773bf01f77_0 != 2 {
+		err = msgp.ArrayError{Wanted: 2, Got: zgensym_f43bd773bf01f77_0}
 		return
 	}
 	z.S, err = dc.ReadString()
@@ -85,13 +85,13 @@ func (z *TupleByDefaultTestStruct) UnmarshalMsgWithCfg(bts []byte, cfg *msgp.Run
 		bts = nbs.PushAlwaysNil(bts[1:])
 	}
 
-	var zbsq2 uint32
-	zbsq2, bts, err = nbs.ReadArrayHeaderBytes(bts)
+	var zgensym_f43bd773bf01f77_1 uint32
+	zgensym_f43bd773bf01f77_1, bts, err = nbs.ReadArrayHeaderBytes(bts)
 	if err != nil {
 		return
 	}
-	if zbsq2 != 2 {
-		err = msgp.ArrayError{Wanted: 2, Got: zbsq2}
+	if zgensym_f43bd773bf01f77_1 != 2 {
+		err = msgp.ArrayError{Wanted: 2, Got: zgensym_f43bd773bf01f77_1}
 		return
 	}
 	z.S, bts, err = nbs.ReadStringBytes(bts)

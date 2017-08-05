@@ -113,6 +113,7 @@ func main() {
 			os.Exit(1)
 		}
 	}
+	gen.SetFilename(c.GoFile)
 
 	var mode gen.Method
 	if c.Encode {
