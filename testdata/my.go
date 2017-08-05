@@ -7,7 +7,7 @@ import (
 //go:generate greenpack
 //go:generate greenpack -o my_msgp_gen.go -method-prefix=MSGP -io=false -tests=false
 
-const zebraSchemaId64 = 0x6eb25cc0f9a3e
+const greenSchemaId64 = 0x6eb25cc0f9a3e
 
 //func main() {}
 
