@@ -294,15 +294,17 @@ for more detail.
 notices
 -------
 
-Copyright (c) 2016, 2017 Jason E. Aten, Ph.D.
+Portions Copyright (c) 2016, 2017 Jason E. Aten, Ph.D.
+Portions Copyright (c) 2014 Philip Hofer
+Portions Copyright (c) 2009 The Go Authors (license at http://golang.org) where indicated
 
 LICENSE: MIT. See https://github.com/glycerine/greenpack/blob/master/LICENSE
 
-ancestor codebase
+ancestor codebase: tinylib/msgp
 ------------------
 
 `greenpack` gets most of its speed by descending from the
-fantastic https://github.com/tinylib/msgp library by
+fantastic and highly tuned https://github.com/tinylib/msgp library by
 Philip Hofer. The special tag and shim handling is best documented
 in the `msgp` writeup and wiki [https://github.com/tinylib/msgp/wiki].
 
