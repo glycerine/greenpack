@@ -147,8 +147,17 @@ For write speed, only Zebrapack is faster. For
 reads, only CapnProto and Gencode are slightly faster.
 Gencode isn't zero alloc, and has no versioning support.
 CapnProto isn't very portable to dynamic languages
-like R or Javascript, and requires keeping duplicate
-mirror structs in your code.
+like R or Javascript; Java support was never
+finished. It requires keeping duplicate
+mirror structs in your code. I like CapnProto and
+maintained Go bindings for CapnProto for quite a
+while. However the convenience of msgpack2 won
+me over. Moreover CapnProto's layout format
+is undocumented, it requires a C++ build chain to
+build the IDL compiler, and unused fields always
+take space on the wire. `greenpack` is pure Go,
+and there are over 50 msgpack libraries -- one for every
+language imaginable -- cited at http://msgpack.org.
 
 Compared to (Gogoprotobuf) ProtcolBuffers, greenpack reads
 are 6% faster on these microbenchmarks. Writes
