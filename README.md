@@ -1,15 +1,12 @@
-Greenpack: a serialization convention atop msgpack2 that adds field versioning and stronger typing.
+greenpack: a serialization convention atop msgpack2 that adds field versioning and stronger typing.
 ==========
 
-Greenpack is a data definition language and serialization format, a layer of convention on top of msgpack2 that provides field versioning and additional type safety.
+`greenpack` is a data definition language and serialization format, a layer of convention on top of msgpack2 that provides field versioning and additional type safety.
 
-We find only two problems with msgpack2: weak support for data evolution, and insufficiently strong typing.
+Msgpack2 enjoys wide support, and provides efficient and self-contained data serialization. We find only two problems with msgpack2: weak support for data evolution, and insufficiently strong typing of integers.
 
-The Greenpack format addresses these problems while keeping serialized data fully self-describing. Grenpack is independent of any external schema, but as an optimization uses the Go source file itself as a schema to maintain current versioning and type information. Dynamic languages still have an easy time reading greenpack--it is just msgpack2. There's no need to worry about coordinating the schema under which data was written, as data is self-contained.
+The greenpack format addresses these problems while keeping serialized data fully self-describing. Grenpack is independent of any external schema, but as an optimization uses the Go source file itself as a schema to maintain current versioning and type information. Dynamic languages still have an easy time reading greenpack--it is just msgpack2. There's no need to worry about coordinating the schema under which data was written, as data is self-contained.
 
-# background and motivation
-
-Greenpack is a data definition language and serialization format. It removes gray areas from msgpack2 serialized data, and provides for declared schemas (the Go file), and sane data evolution: no ambiguity about the declared types and no failures to read data when evolving a field's name or type.
 
 # the main idea
 
@@ -24,7 +21,7 @@ type A struct {
   Friend   bool        `zid:"5"`
 }
 
-then when greenpack serializes, the it looks like this on the wire:
+then when greenpack serializes, the it looks like msgpack2 on the wire with extended field names:
          
 greenpack
 --------              
@@ -41,8 +38,7 @@ a := A{
 
 Notice the only thing that changed with respect to the msgpack2 encoding is that the the fieldnames have been extended to contain a version and a type clue.
 
-
-The central idea of Greenpack: start with msgpack2, and append version and type clues to the end of the field names when stored on the wire. We say type "clues" because the type information clarifies the original size and signed-ness of the type, which adds the missing detail needed to fully reconstruct the original schema from the data presented.
+The central idea of greenpack: start with msgpack2, and append version numbers and type clues to the end of the field names when stored on the wire. We say type "clues" because the type information clarifies the original size and signed-ness of the type, which adds the missing detail to integers needed to fully reconstruct the original schema from the data presented. This address the problem that commonly msgpack2 implementations ignore the spec and encode numbers using the smallest unsigned type possible, which corrupts the original type information and can induce decoding errors for large and negative numbers.
 
 The version `zid` number gives us the ability to evolve our data without crashes.
 
@@ -199,20 +195,6 @@ command line flags
       generated tests will break/the msgp package
       interfaces won't be satisfied.
 
-  -no-embedded-schema
-    	don't embed the schema in the generated files
-
-  -no-structnames-onwire
-      don't embed the name of the struct in the
-      serialized greenpack. Skipping the embedded
-      struct names saves time and space and matches
-      what protocol buffers/thrift/capnproto/msgpack do.
-      You must know the type on the wire you expect;
-      or embed a type tag in one universal wrapper
-      struct. Embedded struct names are a feature
-      of Greenpack to help with dynamic language
-      bindings.
-
   -o string
     	output file (default is {input_file}_gen.go
 
@@ -258,7 +240,7 @@ NB: Under tuple encoding (https://github.com/tinylib/msgp/wiki/Preprocessor-Dire
 
 The `addzid` utility (in the cmd/addzid subdir) can help you
 get started. Running `addzid mysource.go` on a .go source file
-will add the `zid:"0"`... fields automatically. This makes adding Greenpack
+will add the `zid:"0"`... fields automatically. This makes adding greenpack
 serialization to existing Go projects easy.
 See https://github.com/glycerine/greenpack/blob/master/cmd/addzid/README.md
 for more detail.
@@ -297,7 +279,7 @@ In a source file, include the following directive:
 //go:generate greenpack
 ```
 
-The `greenpack` command will generate serialization methods for all exported type declarations in the file. If you add the flag `-msgp`, it will generate msgpack2 rather than Greenpack format.
+The `greenpack` command will generate serialization methods for all exported type declarations in the file. If you add the flag `-msgp`, it will generate msgpack2 rather than greenpack format.
 
 For other language's use, schemas can can be written to a separate file using `greenpack -file my.go -write-schema` at the shell. (By default schemas are not written to the wire, just as in protobufs/CapnProto/Thrift.)
 
@@ -376,6 +358,6 @@ If the output compiles, then there's a pretty good chance things are fine. (Plus
 
 ### Performance
 
-If you like benchmarks, see [here](http://bravenewgeek.com/so-you-wanna-go-fast/) and above in the Greenpack benchmarks section; [see here for the benchmark source code](https://github.com/glycerine/go_serialization_benchmarks).
+If you like benchmarks, see [here](http://bravenewgeek.com/so-you-wanna-go-fast/) and above in the greenpack benchmarks section; [see here for the benchmark source code](https://github.com/glycerine/go_serialization_benchmarks).
 
 As one might expect, the generated methods that deal with `[]byte` are faster for small objects, but the `io.Reader/Writer` methods are generally more memory-efficient (and, at some point, faster) for large (> 2KB) objects.
