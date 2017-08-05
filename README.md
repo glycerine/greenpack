@@ -208,7 +208,11 @@ command line flags
 Usage of greenpack:
 
   -alltuple
-    	use tuples for everything
+    	use tuples for everything. Negates the point
+        of greenpack, but useful in a pinch for
+        performance. Provides no data versioning
+        whatsoever.
+        
   -fast-strings
     	for speed when reading a string in
         a message that won't be reused, this
