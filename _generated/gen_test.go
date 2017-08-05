@@ -151,8 +151,8 @@ func Test11111HonorDefaultOmitEmpty(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(buf.Bytes()) != 11 {
-		t.Fatalf("should have encoding of 11 bytes since omitempty is on by default -- only struct values are never empty")
+	if len(buf.Bytes()) != 1 {
+		t.Fatalf("should have encoding of 1 byte since omitempty is on by default")
 	}
 
 	tnew := new(SimpleTestType)

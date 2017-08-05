@@ -59,7 +59,7 @@ type TestType struct {
 type SimpleTestType struct {
 	F   *float64          `msg:"float"`
 	Els map[string]string `msg:"elements"`
-	Obj PreviouslyAnon    `msg:"object"`
+	Obj *PreviouslyAnon   `msg:"object"`
 }
 
 //msgp:tuple Object
