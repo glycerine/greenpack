@@ -211,7 +211,10 @@ Usage of greenpack:
     	use tuples for everything. Negates the point
         of greenpack, but useful in a pinch for
         performance. Provides no data versioning
-        whatsoever.
+        whatsoever. If you even so much as change
+        the order of your fields, you won't be
+        able to read back your earlier data
+        correctly/without crashing.
         
   -fast-strings
     	for speed when reading a string in
