@@ -1,6 +1,8 @@
 greenpack: serialization that extends msgpack2 with field versioning and strong typing
 ==========
 
+`greenpack` keeps your data completely self-contained. No coordination with a (long lost?) schema is needed to decode.
+
 `greenpack` is a data definition language and serialization format, a layer of convention on top of msgpack2 that provides field versioning and additional type safety.
 
 `msgpack2` [https://github.com/msgpack/msgpack/blob/master/spec.md] [http://msgpack.org] enjoys wide cross-language support, and provides efficient and self-contained data serialization. We find only two problems with msgpack2: weak support for data evolution, and insufficiently strong typing of integers.
