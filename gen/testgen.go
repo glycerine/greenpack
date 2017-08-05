@@ -18,14 +18,14 @@ var (
 // "Type{}" syntax.
 // we should support all the types.
 
-func mtest(w io.Writer, cfg *cfg.ZebraConfig) *mtestGen {
+func mtest(w io.Writer, cfg *cfg.GreenConfig) *mtestGen {
 	return &mtestGen{w: w, cfg: cfg}
 }
 
 type mtestGen struct {
 	passes
 	w   io.Writer
-	cfg *cfg.ZebraConfig
+	cfg *cfg.GreenConfig
 }
 
 func (m *mtestGen) MethodPrefix() string {
@@ -49,10 +49,10 @@ func (m *mtestGen) Method() Method { return marshaltest }
 type etestGen struct {
 	passes
 	w   io.Writer
-	cfg *cfg.ZebraConfig
+	cfg *cfg.GreenConfig
 }
 
-func etest(w io.Writer, cfg *cfg.ZebraConfig) *etestGen {
+func etest(w io.Writer, cfg *cfg.GreenConfig) *etestGen {
 	return &etestGen{w: w, cfg: cfg}
 }
 

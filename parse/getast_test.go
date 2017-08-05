@@ -103,7 +103,7 @@ func testCode(code string, out []byte) error {
 	fmt.Printf("\n in file '%s', checking:\n%v\n", gofile.Name(),
 		code)
 
-	cfg := cfg.ZebraConfig{
+	cfg := cfg.GreenConfig{
 		Out:        ofile,
 		GoFile:     gofile.Name(),
 		Encode:     true,

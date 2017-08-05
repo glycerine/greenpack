@@ -4,7 +4,7 @@ import (
 	"flag"
 )
 
-type ZebraConfig struct {
+type GreenConfig struct {
 	Out        string
 	GoFile     string
 	Encode     bool
@@ -25,7 +25,7 @@ type ZebraConfig struct {
 }
 
 // call DefineFlags before myflags.Parse()
-func (c *ZebraConfig) DefineFlags(fs *flag.FlagSet) {
+func (c *GreenConfig) DefineFlags(fs *flag.FlagSet) {
 	fs.StringVar(&c.Out, "o", "", "output file (default is {input_file}_gen.go")
 	fs.StringVar(&c.GoFile, "file", "", "input file (or directory); default is $GOFILE, which is set by the `go generate` command.")
 	fs.BoolVar(&c.Encode, "io", true, "create Encode and Decode methods")
@@ -45,6 +45,6 @@ func (c *ZebraConfig) DefineFlags(fs *flag.FlagSet) {
 }
 
 // call c.ValidateConfig() after myflags.Parse()
-func (c *ZebraConfig) ValidateConfig() error {
+func (c *GreenConfig) ValidateConfig() error {
 	return nil
 }

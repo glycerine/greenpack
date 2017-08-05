@@ -105,10 +105,10 @@ const (
 
 type Printer struct {
 	gens []generator
-	cfg  *cfg.ZebraConfig
+	cfg  *cfg.GreenConfig
 }
 
-func NewPrinter(m Method, out io.Writer, tests io.Writer, cfg *cfg.ZebraConfig) *Printer {
+func NewPrinter(m Method, out io.Writer, tests io.Writer, cfg *cfg.GreenConfig) *Printer {
 	if m.isset(Test) && tests == nil {
 		panic("cannot print tests with 'nil' tests argument!")
 	}

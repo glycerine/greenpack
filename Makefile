@@ -11,8 +11,8 @@ GGEN = ./_generated/generated.go ./_generated/generated_test.go
 
 MGEN = ./msgp/defgen_test.go ./msgp/nestedgen_test.go
 
-# generated zebra layer above msgp
-ZGEN = ./zebra/zebra_gen.go
+# generated green layer above msgp
+ZGEN = ./green/green_gen.go
 
 SHELL := /bin/bash
 
@@ -34,15 +34,15 @@ $(GGEN): ./_generated/def.go
 $(MGEN): ./msgp/defs_test.go
 	go generate ./msgp
 
-$(ZGEN): ./zebra/zebra.go
+$(ZGEN): ./green/green.go
 	go install
-	go generate ./zebra
+	go generate ./green
 
 test: all
 	go test -v ./parse
 	go test -v ./msgp
 	go test -v ./_generated
-	go test -v ./zebra
+	go test -v ./green
 	# and test addzid
 	go test -v ./cmd/addzid
 	# build and run on testdata/

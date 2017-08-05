@@ -9,7 +9,7 @@ import (
 	"github.com/glycerine/greenpack/msgp"
 )
 
-func marshal(w io.Writer, cfg *cfg.ZebraConfig) *marshalGen {
+func marshal(w io.Writer, cfg *cfg.GreenConfig) *marshalGen {
 	return &marshalGen{
 		p:   printer{w: w},
 		cfg: cfg,
@@ -20,7 +20,7 @@ type marshalGen struct {
 	passes
 	p    printer
 	fuse []byte
-	cfg  *cfg.ZebraConfig
+	cfg  *cfg.GreenConfig
 }
 
 func (m *marshalGen) MethodPrefix() string {

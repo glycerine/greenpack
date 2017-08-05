@@ -31,7 +31,7 @@ import (
 // inconvient to have to meet
 // the compiler's demands just yet.
 //
-func FileNoLoad(c *cfg.ZebraConfig) (*FileSet, error) {
+func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 	ok, isDir := fileOrDir(c.GoFile)
 	if !ok {
 		return nil, fmt.Errorf("error: path '%s' does not exist", c.GoFile)

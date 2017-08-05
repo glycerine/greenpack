@@ -22,7 +22,7 @@ const (
 	expr
 )
 
-func sizes(w io.Writer, cfg *cfg.ZebraConfig) *sizeGen {
+func sizes(w io.Writer, cfg *cfg.GreenConfig) *sizeGen {
 	return &sizeGen{
 		p:     printer{w: w},
 		state: assign,
@@ -34,7 +34,7 @@ type sizeGen struct {
 	passes
 	p     printer
 	state sizeState
-	cfg   *cfg.ZebraConfig
+	cfg   *cfg.GreenConfig
 }
 
 func (s *sizeGen) MethodPrefix() string {

@@ -9,7 +9,7 @@ import (
 	"github.com/glycerine/greenpack/cfg"
 )
 
-func decode(w io.Writer, cfg *cfg.ZebraConfig) *decodeGen {
+func decode(w io.Writer, cfg *cfg.GreenConfig) *decodeGen {
 	return &decodeGen{
 		p:        printer{w: w},
 		hasfield: false,
@@ -22,7 +22,7 @@ type decodeGen struct {
 	p        printer
 	hasfield bool
 	depth    int
-	cfg      *cfg.ZebraConfig
+	cfg      *cfg.GreenConfig
 	lifo     []bool
 
 	post postDefs

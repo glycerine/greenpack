@@ -33,7 +33,7 @@ type FileSet struct {
 	Identities map[string]gen.Elem // processed from specs
 	Directives []string            // raw preprocessor directives
 	Imports    []*ast.ImportSpec   // imports
-	Cfg        *cfg.ZebraConfig
+	Cfg        *cfg.GreenConfig
 
 	ZebraSchemaId int64
 	PackageInfo   *loader.PackageInfo
@@ -48,7 +48,7 @@ type FileSet struct {
 // directory will be parsed.
 // If unexport is false, only exported identifiers are included in the FileSet.
 // If the resulting FileSet would be empty, an error is returned.
-func File(c *cfg.ZebraConfig) (*FileSet, error) {
+func File(c *cfg.GreenConfig) (*FileSet, error) {
 	ok, isDir := fileOrDir(c.GoFile)
 	if !ok {
 		return nil, fmt.Errorf("error: path '%s' does not exist", c.GoFile)

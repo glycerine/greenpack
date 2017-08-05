@@ -92,14 +92,14 @@ import (
 
 	"github.com/glycerine/greenpack/cfg"
 	"github.com/glycerine/greenpack/gen"
+	"github.com/glycerine/greenpack/green"
 	"github.com/glycerine/greenpack/parse"
 	"github.com/glycerine/greenpack/printer"
-	"github.com/glycerine/greenpack/zebra"
 )
 
 func main() {
 	myflags := flag.NewFlagSet("greenpack", flag.ExitOnError)
-	c := &cfg.ZebraConfig{}
+	c := &cfg.GreenConfig{}
 	c.DefineFlags(myflags)
 
 	err := myflags.Parse(os.Args[1:])
@@ -161,7 +161,7 @@ func main() {
 //
 //	err := msgp.Run("path/to/myfile.go", gen.Size|gen.Marshal|gen.Unmarshal|gen.Test, false)
 //
-func Run(mode gen.Method, c *cfg.ZebraConfig) error {
+func Run(mode gen.Method, c *cfg.GreenConfig) error {
 	if mode&^gen.Test == 0 {
 		return nil
 	}
@@ -221,7 +221,7 @@ func fileExists(name string) bool {
 	return true
 }
 
-func handleSchemaToGo(c *cfg.ZebraConfig) {
+func handleSchemaToGo(c *cfg.GreenConfig) {
 	if !fileExists(c.SchemaToGo) {
 		fmt.Fprintf(os.Stderr, "error: -schema-to-go '%s' path not found\n", c.SchemaToGo)
 		os.Exit(1)
@@ -232,7 +232,7 @@ func handleSchemaToGo(c *cfg.ZebraConfig) {
 			c.SchemaToGo, err)
 		os.Exit(1)
 	}
-	var sch zebra.Schema
+	var sch green.Schema
 	_, err = sch.UnmarshalMsg(by)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: -schema-to-go '%s' produced error on UnmarshalMsg: %v\n",

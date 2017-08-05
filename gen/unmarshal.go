@@ -9,7 +9,7 @@ import (
 	"github.com/glycerine/greenpack/cfg"
 )
 
-func unmarshal(w io.Writer, cfg *cfg.ZebraConfig) *unmarshalGen {
+func unmarshal(w io.Writer, cfg *cfg.GreenConfig) *unmarshalGen {
 	return &unmarshalGen{
 		p:   printer{w: w},
 		cfg: cfg,
@@ -21,7 +21,7 @@ type unmarshalGen struct {
 	p        printer
 	hasfield bool
 	depth    int
-	cfg      *cfg.ZebraConfig
+	cfg      *cfg.GreenConfig
 	post     postDefs
 }
 

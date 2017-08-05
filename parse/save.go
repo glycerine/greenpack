@@ -28,7 +28,7 @@ func (fs *FileSet) SaveMsgpackFile(parsedPath, path string) error {
 	w := msgp.NewWriter(f)
 	defer w.Flush()
 
-	tr, err := TranslateToZebraSchema(parsedPath, fs)
+	tr, err := TranslateToGreenSchema(parsedPath, fs)
 	if err != nil {
 		return err
 	}

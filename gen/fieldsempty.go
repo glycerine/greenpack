@@ -7,7 +7,7 @@ import (
 	"github.com/glycerine/greenpack/cfg"
 )
 
-func fieldsempty(w io.Writer, cfg *cfg.ZebraConfig) *fieldsEmpty {
+func fieldsempty(w io.Writer, cfg *cfg.GreenConfig) *fieldsEmpty {
 	return &fieldsEmpty{
 		p:   printer{w: w},
 		cfg: cfg,
@@ -18,7 +18,7 @@ type fieldsEmpty struct {
 	passes
 	p     printer
 	recvr string
-	cfg   *cfg.ZebraConfig
+	cfg   *cfg.GreenConfig
 }
 
 func (e *fieldsEmpty) MethodPrefix() string {

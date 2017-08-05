@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/glycerine/greenpack/zebra"
+	"github.com/glycerine/greenpack/green"
 )
 
 const (
@@ -263,7 +263,7 @@ type Elem interface {
 	ZeroLiteral(v string) string
 
 	// GetZtype provides type info in a uniform way.
-	GetZtype() zebra.Ztype
+	GetZtype() green.Ztype
 
 	// for template instantiation with custom method prefix
 	MethodPrefix() string
@@ -334,23 +334,23 @@ func (a *Array) TypeName() string {
 	return a.common.alias
 }
 
-func (a *Array) GetZtype() (r zebra.Ztype) {
+func (a *Array) GetZtype() (r green.Ztype) {
 
-	r.Kind = zebra.ArrayCat
+	r.Kind = green.ArrayCat
 	r.Str = r.Kind.String()
 
 	zt := a.Els.GetZtype()
 	r.Range = &zt
 
 	// set Domain to be the size of the array
-	r.Domain = &zebra.Ztype{}
+	r.Domain = &green.Ztype{}
 	r.Domain.Str = a.SizeNamed
 	//fmt.Printf("a is '%#v'\n", a)
 	n, err := strconv.Atoi(a.SizeResolved)
 	if err != nil {
 		panic(err)
 	}
-	r.Domain.Kind = zebra.Zkind(n)
+	r.Domain.Kind = green.Zkind(n)
 	return
 }
 
@@ -377,13 +377,13 @@ func (m *Map) TypeClue() string {
 	return "map"
 }
 
-func (m *Map) GetZtype() (r zebra.Ztype) {
+func (m *Map) GetZtype() (r green.Ztype) {
 
-	r.Kind = zebra.MapCat
+	r.Kind = green.MapCat
 	r.Str = r.Kind.String()
 
-	r.Domain = &zebra.Ztype{}
-	r.Domain.Kind = zebra.ZkindFromString(m.KeyTyp)
+	r.Domain = &green.Ztype{}
+	r.Domain.Kind = green.ZkindFromString(m.KeyTyp)
 	r.Domain.Str = r.Domain.Kind.String()
 
 	rng := m.Value.GetZtype()
@@ -456,8 +456,8 @@ func (s *Slice) SetVarname(a string) {
 	s.Els.SetVarname(fmt.Sprintf("%s[%s]", varName, s.Index))
 }
 
-func (s *Slice) GetZtype() (r zebra.Ztype) {
-	r.Kind = zebra.SliceCat
+func (s *Slice) GetZtype() (r green.Ztype) {
+	r.Kind = green.SliceCat
 	r.Str = r.Kind.String()
 
 	dom := s.Els.GetZtype()
@@ -492,8 +492,8 @@ func (s *Ptr) TypeClue() string {
 	return "ptr"
 }
 
-func (s *Ptr) GetZtype() (r zebra.Ztype) {
-	r.Kind = zebra.PointerCat
+func (s *Ptr) GetZtype() (r green.Ztype) {
+	r.Kind = green.PointerCat
 	r.Str = r.Kind.String()
 
 	dom := s.Value.GetZtype()
@@ -576,8 +576,8 @@ func (s *Struct) TypeClue() string {
 	return "rct"
 }
 
-func (s *Struct) GetZtype() (r zebra.Ztype) {
-	r.Kind = zebra.StructCat
+func (s *Struct) GetZtype() (r green.Ztype) {
+	r.Kind = green.StructCat
 	r.Str = r.Kind.String() // s.TypeName()
 	return
 }
@@ -661,8 +661,8 @@ type BaseElem struct {
 	needsref     bool      // needs reference for shim
 }
 
-func (s *BaseElem) GetZtype() (r zebra.Ztype) {
-	r.Kind = zebra.Zkind(s.Value)
+func (s *BaseElem) GetZtype() (r green.Ztype) {
+	r.Kind = green.Zkind(s.Value)
 	if r.Kind != 22 {
 		r.Str = r.Kind.String()
 		return

@@ -1,7 +1,7 @@
 {
     "SourcePath__str": "testdata/my.go",
     "SourcePackage__str": "testdata",
-    "ZebraSchemaId__i64": 0,
+    "GreenSchemaId__i64": 0,
     "Structs__map": {
         "Tree": {
             "StructName__str": "Tree",

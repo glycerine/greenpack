@@ -1,4 +1,4 @@
-package zebra
+package green
 
 import (
 	"fmt"
@@ -166,7 +166,7 @@ func (s *Schema) WriteToGo(w io.Writer, path string, pkg string) (err error) {
 	}
 
 	fmt.Fprintf(w, "const greenSchemaId64 = 0x%x // %v\n\n",
-		s.ZebraSchemaId, s.ZebraSchemaId)
+		s.GreenSchemaId, s.GreenSchemaId)
 
 	for i := range s.Structs {
 		err = s.Structs[i].WriteToGo(w)
@@ -208,7 +208,7 @@ func (s *Struct) WriteToGo(w io.Writer) (err error) {
 	return nil
 }
 
-// ErrNoStructNameFound is returned by ZebraToMsgp2 when it cannot locate the
+// ErrNoStructNameFound is returned by GreenToMsgp2 when it cannot locate the
 // embedded struct name string.
 var ErrNoStructNameFound = fmt.Errorf("error: no -1:struct-name field:value found in greenpack struct")
 

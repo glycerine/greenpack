@@ -27,7 +27,7 @@ func PrintFile(
 	file string,
 	f *parse.FileSet,
 	mode gen.Method,
-	cfg *cfg.ZebraConfig,
+	cfg *cfg.GreenConfig,
 	pathToGoSource string) error {
 
 	out, tests, err := generate(f, mode, cfg)
@@ -37,7 +37,7 @@ func PrintFile(
 
 	if !cfg.NoEmbeddedSchema {
 		// add the serialized msgpack2 zebra schema
-		tr, err := parse.TranslateToZebraSchema(pathToGoSource, f)
+		tr, err := parse.TranslateToGreenSchema(pathToGoSource, f)
 		if err != nil {
 			return err
 		}
@@ -60,9 +60,9 @@ func PrintFile(
 			return err
 		}
 
-		_, err = fmt.Fprintf(out, "\n// %sZebraSchemaInMsgpack2Format "+
+		_, err = fmt.Fprintf(out, "\n// %sGreenSchemaInMsgpack2Format "+
 			"provides the Greenpack Schema in msgpack2 format, length "+
-			"%v bytes\nfunc (%s) %sZebraSchemaInMsgpack2Format() []byte {return "+
+			"%v bytes\nfunc (%s) %sGreenSchemaInMsgpack2Format() []byte {return "+
 			" []byte{",
 			pre,
 			len(sby),
@@ -95,9 +95,9 @@ func PrintFile(
 
 		jby := compactJson.Bytes()
 
-		_, err = fmt.Fprintf(out, "\n// %sZebraSchemaInJsonCompact "+
+		_, err = fmt.Fprintf(out, "\n// %sGreenSchemaInJsonCompact "+
 			"provides the Greenpack Schema in compact JSON format, length "+
-			"%v bytes\nfunc (%s) %sZebraSchemaInJsonCompact() []byte {return "+
+			"%v bytes\nfunc (%s) %sGreenSchemaInJsonCompact() []byte {return "+
 			" []byte(`%s`)}",
 			pre, len(jby), fileStructName, pre, string(jby))
 		if err != nil {
@@ -110,9 +110,9 @@ func PrintFile(
 		}
 
 		pby := pretty.Bytes()
-		_, err = fmt.Fprintf(out, "\n// %sZebraSchemaInJsonPretty "+
+		_, err = fmt.Fprintf(out, "\n// %sGreenSchemaInJsonPretty "+
 			"provides the Greenpack Schema in pretty JSON format, length "+
-			"%v bytes\nfunc (%s) %sZebraSchemaInJsonPretty() []byte {return "+
+			"%v bytes\nfunc (%s) %sGreenSchemaInJsonPretty() []byte {return "+
 			" []byte(`%s`)}",
 			pre, len(pby), fileStructName, pre, string(pby))
 		if err != nil {
@@ -173,7 +173,7 @@ func dedupImports(imp []string) []string {
 	return r
 }
 
-func generate(f *parse.FileSet, mode gen.Method, cfg *cfg.ZebraConfig) (*bytes.Buffer, *bytes.Buffer, error) {
+func generate(f *parse.FileSet, mode gen.Method, cfg *cfg.GreenConfig) (*bytes.Buffer, *bytes.Buffer, error) {
 	outbuf := bytes.NewBuffer(make([]byte, 0, 4096))
 	writePkgHeader(outbuf, f.Package)
 
