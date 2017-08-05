@@ -46,7 +46,7 @@ If you've ever had your msgpack crash your server because you tried to change th
 
 The second easy idea: use the Go language struct definition syntax as our serialization schema. Why invent another format? Serialization for Go developers should be almost trivially easy. While we are focused on a serialization format for Go, because other language can read msgpack2, they can also readily parse the schema. While the schema is optional, greenpack (this repo) provides code generation tools based on the schema (Go file) that generates extremely fast serialization code.
 
-# the need for type clues
+# the need for stronger integer typing
 
 Starting point: [msgpack2](http://msgpack.org) is great.
 It is has an easy to read spec, it defines a compact
@@ -94,13 +94,16 @@ prior to the addition. No gaps in numbering are
 allowed, and no numbers are ever deleted.
 To get the effect of deletion, add the `deprecated` value
 in `msg` tag. This is an effective tombstone.
-It allows the tools to help detect
+It allows the tools (the `go` compiler and the
+`greenpack` code generator) to help detect
 merge conflicts as soon as possible. If
 two people try to merge schemas where the same
-struct or field number is re-used, a
-schema compiler can automatically detect
-this update conflict, and flag the human
-to resolve the conflict before proceeding.
+struct or field number is re-used, then
+when `greenpack` is run to regenerate the
+serialization code (under `go generate`),
+it will automatically detect the conflict,
+and flag the human to resolve the conflict
+before proceeding.
 
 * All fields optional. Just as in msgpack2,
 Cap'nProto, Gobs, and Flatbuffers, all fields
