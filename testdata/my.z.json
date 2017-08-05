@@ -3,23 +3,6 @@
     "SourcePackage__str": "testdata",
     "GreenSchemaId__i64": 1947397430155838,
     "Structs__map": {
-        "Sys": {
-            "StructName__str": "Sys",
-            "Fields__slc": [
-                {
-                    "Zid__i64": 0,
-                    "FieldGoName__str": "F",
-                    "FieldTagName__str": "F",
-                    "FieldTypeStr__str": "interface{}",
-                    "FieldCategory__": 23,
-                    "FieldPrimitive__": 19,
-                    "FieldFullType__ptr": {
-                        "Kind__": 19,
-                        "Str__str": "Intf"
-                    }
-                }
-            ]
-        },
         "S2": {
             "StructName__str": "S2",
             "Fields__slc": [
@@ -353,6 +336,23 @@
                     "FieldFullType__ptr": {
                         "Kind__": 18,
                         "Str__str": "bool"
+                    }
+                }
+            ]
+        },
+        "Sys": {
+            "StructName__str": "Sys",
+            "Fields__slc": [
+                {
+                    "Zid__i64": 0,
+                    "FieldGoName__str": "F",
+                    "FieldTagName__str": "F",
+                    "FieldTypeStr__str": "interface{}",
+                    "FieldCategory__": 23,
+                    "FieldPrimitive__": 19,
+                    "FieldFullType__ptr": {
+                        "Kind__": 19,
+                        "Str__str": "Intf"
                     }
                 }
             ]
