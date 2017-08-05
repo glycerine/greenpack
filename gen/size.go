@@ -100,7 +100,6 @@ func (s *sizeGen) gStruct(st *Struct) {
 	if !s.p.ok() {
 		return
 	}
-	fast := false // !s.cfg.UseMsgp2
 	nfields := uint32(len(st.Fields) - st.SkipCount)
 
 	if st.AsTuple {
@@ -124,15 +123,8 @@ func (s *sizeGen) gStruct(st *Struct) {
 				continue
 			}
 			data = data[:0]
-			if fast && !s.cfg.NoEmbeddedStructNames {
-				data = msgp.AppendInt64(data, st.Fields[i].ZebraId)
+			data = msgp.AppendString(data, st.Fields[i].FieldTagZidClue)
 
-				// account for the -1:structName
-				recv := imutMethodReceiver(st)
-				data = msgp.AppendNegativeOneAndStringAsBytes(data, []byte(recv))
-			} else {
-				data = msgp.AppendString(data, st.Fields[i].FieldTagZidClue)
-			}
 			s.addConstant(strconv.Itoa(len(data)))
 			next(s, st.Fields[i].FieldElem)
 		}

@@ -1,7 +1,6 @@
 package testdata
 
 import (
-	"github.com/glycerine/greenpack/msgp"
 	"time"
 )
 
@@ -23,7 +22,7 @@ type S2 struct {
 	T int64            `zid:"5" msg:",showzero"`
 
 	// test const array and *ast.SelectorExpr as array size
-	Arr [msgp.ExtensionPrefixSize]float64 `zid:"6" msg:"arr"`
+	Arr [6]float64 `zid:"6" msg:"arr"`
 
 	MyTree *Tree `zid:"7"`
 }

@@ -169,11 +169,11 @@ func Run(mode gen.Method, c *cfg.GreenConfig) error {
 	fmt.Printf(">>> Input: \"%s\"\n", c.GoFile)
 	var fs *parse.FileSet
 	var err error
-	if c.NoLoad {
-		fs, err = parse.FileNoLoad(c)
-	} else {
-		fs, err = parse.File(c)
-	}
+	//if c.NoLoad {
+	fs, err = parse.FileNoLoad(c)
+	//} else {
+	//	fs, err = parse.File(c)
+	//}
 	if err != nil {
 		return err
 	}

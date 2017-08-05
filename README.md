@@ -48,7 +48,7 @@ The version `zid` number gives us the ability to evolve our data without crashes
 
 If you've ever had your msgpack crash your server because you tried to change the type of a field but keep the same name, then you know how fragile msgpack can be. The type clue fixes that.
 
-The second easy idea: use the Go language struct definition syntax as our serialization schema. Why invent another format? Serialization for Go developers should be almost trivially easy. While we are focused on a serialization format for Go, because other language can read msgpack2, they can also readily parse the schema. The schema is stored in msgpack2 struct convention (and optionally json), rather than the Greenpack struct convention, for bootstrapping.
+The second easy idea: use the Go language struct definition syntax as our serialization schema. Why invent another format? Serialization for Go developers should be almost trivially easy. While we are focused on a serialization format for Go, because other language can read msgpack2, they can also readily parse the schema. While the schema is optional, greenpack (this repo) provides code generation tools based on the schema (Go file) that generates extremely fast serialization code.
 
 # the need for type clues
 
@@ -172,11 +172,6 @@ command line flags
   $ greenpack -h
 
   Usage of greenpack:
-
-  -msgp
-    	generate msgpack2 serializers instead of Greenpack;
-        for backward compatiblity or serializing the zebra
-        schema itself.
 
   -fast-strings
     	for speed when reading a string in a message that won't be

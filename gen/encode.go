@@ -3,7 +3,6 @@ package gen
 import (
 	"fmt"
 	"io"
-	"os"
 
 	"github.com/glycerine/greenpack/cfg"
 	"github.com/glycerine/greenpack/msgp"
@@ -116,45 +115,22 @@ func (e *encodeGen) appendraw(bts []byte) {
 func (e *encodeGen) structmap(s *Struct) {
 	nfields := len(s.Fields) - s.SkipCount
 	var data []byte
-	fast := false // !e.cfg.UseMsgp2
 	empty := "empty_" + randIdent()
 	inUse := "fieldsInUse_" + randIdent()
-	// if fast, then always omit-empty.
-	if fast || s.hasOmitEmptyTags {
+
+	if s.hasOmitEmptyTags {
 		e.p.printf("\n\n// honor the omitempty tags\n")
 		e.p.printf("var %s [%d]bool\n", empty, len(s.Fields))
 		e.p.printf("%s := %s.fieldsNotEmpty(%s[:])\n",
 			inUse, s.vname, empty)
 		e.p.printf("\n// map header\n")
-		if fast && !e.cfg.NoEmbeddedStructNames {
-			// +1 for the -1:structName type-identifier.
-			e.p.printf("	err = en.WriteMapHeader(%s+1)\n", inUse)
-		} else {
-			e.p.printf("	err = en.WriteMapHeader(%s)\n", inUse)
-		}
+		e.p.printf("	err = en.WriteMapHeader(%s)\n", inUse)
 		e.p.printf("	if err != nil {\n")
 		e.p.printf("		return err\n}\n")
 	} else {
 		data = msgp.AppendMapHeader(nil, uint32(nfields))
 		e.p.printf("\n// map header, size %d", nfields)
 		e.Fuse(data)
-	}
-
-	if fast && !e.cfg.NoEmbeddedStructNames {
-		// record the struct name under integer key -1
-		recv := s.TypeName() // imutMethodReceiver(s)
-		e.p.printf("\n// runtime struct type identification for '%s'\n", recv)
-		hexname := ""
-		for i := range recv {
-			hexname += fmt.Sprintf("0x%x,", recv[i])
-		}
-		e.p.printf("err = en.Append(0xff)\n")
-		e.p.printf("	if err != nil {\n")
-		e.p.printf("		return err\n}\n")
-
-		e.p.printf("err = en.WriteStringFromBytes([]byte{%s})\n", hexname)
-		e.p.printf("	if err != nil {\n")
-		e.p.printf("		return err\n}\n")
 	}
 
 	for i := range s.Fields {
@@ -165,27 +141,17 @@ func (e *encodeGen) structmap(s *Struct) {
 			return
 		}
 
-		if fast || (s.hasOmitEmptyTags && s.Fields[i].OmitEmpty) {
+		if s.hasOmitEmptyTags && s.Fields[i].OmitEmpty {
 			e.p.printf("\n if !%s[%d] {", empty, i)
 		}
-		if fast {
-			// sanity check
-			if s.Fields[i].ZebraId < 0 {
-				fmt.Fprintf(os.Stderr, "\ngreenpack error: field '%s' is missing a zid number; cannot proceed under -fast\n", s.Fields[i].FieldTag)
-				os.Exit(1)
-			}
-			// proceed
-			data = msgp.AppendInt64(nil, s.Fields[i].ZebraId)
-			e.p.printf("\n// zid %v for %q", s.Fields[i].ZebraId,
-				s.Fields[i].FieldTagZidClue)
-		} else {
-			data = msgp.AppendString(nil, s.Fields[i].FieldTagZidClue)
-			e.p.printf("\n// write %q", s.Fields[i].FieldTagZidClue)
-		}
+
+		data = msgp.AppendString(nil, s.Fields[i].FieldTagZidClue)
+		e.p.printf("\n// write %q", s.Fields[i].FieldTagZidClue)
+
 		e.Fuse(data)
 		next(e, s.Fields[i].FieldElem)
 
-		if fast || (s.hasOmitEmptyTags && s.Fields[i].OmitEmpty) {
+		if s.hasOmitEmptyTags && s.Fields[i].OmitEmpty {
 			e.p.printf("\n }\n")
 		}
 	}

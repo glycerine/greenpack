@@ -2,16 +2,13 @@ package printer
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"path"
 	"strings"
 
 	"github.com/glycerine/greenpack/cfg"
 	"github.com/glycerine/greenpack/gen"
-	"github.com/glycerine/greenpack/msgp"
 	"github.com/glycerine/greenpack/parse"
 	"golang.org/x/tools/imports"
 )
@@ -33,91 +30,6 @@ func PrintFile(
 	out, tests, err := generate(f, mode, cfg)
 	if err != nil {
 		return err
-	}
-
-	if !cfg.NoEmbeddedSchema {
-		// add the serialized msgpack2 zebra schema
-		tr, err := parse.TranslateToGreenSchema(pathToGoSource, f)
-		if err != nil {
-			return err
-		}
-		//fmt.Printf("tr = %#v\n", tr)
-		sby, err := tr.MarshalMsg(nil)
-		if err != nil {
-			return err
-		}
-
-		pre := cfg.MethodPrefix
-
-		fn := path.Base(file)
-
-		fileStructName := fileNameToStructName(fn)
-		_, err = fmt.Fprintf(out, "\n// %s holds Greenpack"+
-			" schema from file '%s'\n"+
-			"type %s struct{}\n",
-			fileStructName, pathToGoSource, fileStructName)
-		if err != nil {
-			return err
-		}
-
-		_, err = fmt.Fprintf(out, "\n// %sGreenSchemaInMsgpack2Format "+
-			"provides the Greenpack Schema in msgpack2 format, length "+
-			"%v bytes\nfunc (%s) %sGreenSchemaInMsgpack2Format() []byte {return "+
-			" []byte{",
-			pre,
-			len(sby),
-			fileStructName,
-			pre)
-		if err != nil {
-			return err
-		}
-		for i := range sby {
-			if i%10 == 0 {
-				fmt.Fprintf(out, "\n")
-			}
-			_, err = fmt.Fprintf(out, "0x%02x,", sby[i])
-			if err != nil {
-				return err
-			}
-		}
-		_, err = fmt.Fprintf(out, "\n}}\n\n")
-		if err != nil {
-			return err
-		}
-
-		// store as json and pretty-printed too
-		buf := bytes.NewBuffer(sby)
-		var compactJson, pretty bytes.Buffer
-		_, err = msgp.CopyToJSON(&compactJson, buf)
-		if err != nil {
-			return err
-		}
-
-		jby := compactJson.Bytes()
-
-		_, err = fmt.Fprintf(out, "\n// %sGreenSchemaInJsonCompact "+
-			"provides the Greenpack Schema in compact JSON format, length "+
-			"%v bytes\nfunc (%s) %sGreenSchemaInJsonCompact() []byte {return "+
-			" []byte(`%s`)}",
-			pre, len(jby), fileStructName, pre, string(jby))
-		if err != nil {
-			return err
-		}
-
-		err = json.Indent(&pretty, compactJson.Bytes(), "", "    ")
-		if err != nil {
-			return err
-		}
-
-		pby := pretty.Bytes()
-		_, err = fmt.Fprintf(out, "\n// %sGreenSchemaInJsonPretty "+
-			"provides the Greenpack Schema in pretty JSON format, length "+
-			"%v bytes\nfunc (%s) %sGreenSchemaInJsonPretty() []byte {return "+
-			" []byte(`%s`)}",
-			pre, len(pby), fileStructName, pre, string(pby))
-		if err != nil {
-			return err
-		}
 	}
 
 	// we'll run goimports on the main file

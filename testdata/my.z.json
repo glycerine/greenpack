@@ -325,14 +325,14 @@
                     "Zid__i64": 6,
                     "FieldGoName__str": "Arr",
                     "FieldTagName__str": "arr",
-                    "FieldTypeStr__str": "[msgp.ExtensionPrefixSize]float64",
+                    "FieldTypeStr__str": "[6]float64",
                     "FieldCategory__": 27,
                     "FieldFullType__ptr": {
                         "Kind__": 27,
                         "Str__str": "Array",
                         "Domain__ptr": {
                             "Kind__": 6,
-                            "Str__str": "msgp.ExtensionPrefixSize"
+                            "Str__str": "6"
                         },
                         "Range__ptr": {
                             "Kind__": 4,
@@ -359,7 +359,6 @@
         }
     },
     "Imports__slc": [
-        "\"github.com/glycerine/greenpack/msgp\"",
         "\"time\""
     ]
 }
