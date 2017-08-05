@@ -1,4 +1,4 @@
-greenpack: a serialization convention atop msgpack2 that adds field versioning and stronger typing.
+greenpack: serialization that extends msgpack2 with field versioning and strong typing
 ==========
 
 `greenpack` is a data definition language and serialization format, a layer of convention on top of msgpack2 that provides field versioning and additional type safety.
