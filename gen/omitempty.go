@@ -41,6 +41,16 @@ func (s *omitEmpty) gMap(m *Map) {
 }
 
 func (s *omitEmpty) gBase(b *BaseElem) {
+
+	// To handle the shim that converts time to string,
+	// we have to special case time.Time. Otherwise we'll
+	// apply the string check here, and that won't compile.
+
+	if b.TypeName() == "time.Time" {
+		s.p.printf("%s", IsEmptyTime(b.Varname()))
+		return
+	}
+
 	switch b.Value {
 	case Bytes:
 		s.p.printf("%s", IsLenZero(b.Varname()))
