@@ -46,11 +46,11 @@ test: all
 	# and test addzid
 	go test -v ./cmd/addzid
 	# build and run on testdata/
-	go build -o ./greenpack && ./greenpack -write-schema testdata/my.z -file testdata/my.go && go test -v ./testdata
+	go build -o ./greenpack
 	cd testdata && go generate && go test -v
 	./greenpack -file testdata/my.go && go test -v ./testdata/my_gen_test.go ./testdata/my.go ./testdata/my_gen.go
 	./greenpack -file testdata/my.go -o testdata/my_msgp_gen.go -method-prefix=MSGP -tests=false -io=false # test the -method-prefix flag
-	./greenpack -schema-to-go testdata/my.z > /tmp/remy.go && echo "func main() {}" >> /tmp/remy.go && go run /tmp/remy.go && rm /tmp/remy.go
+
 
 bench: all
 	go test -bench . ./msgp

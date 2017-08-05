@@ -227,10 +227,6 @@ Usage of greenpack:
         is $GOFILE, which is set by the
         go generate command.
         
-  -genid
-    	generate a fresh random greenSchemaId64
-        value to include in your Go source schema
-        
   -io
     	create Encode and Decode methods (default true)
         
@@ -253,22 +249,13 @@ Usage of greenpack:
         (makes things just like msgpack2 traditional
         encoding, without version + type clue)
         
-  -schema-to-go string
-    	(standalone functionality) path to schema in
-        msgpack2 format; we will convert it to Go,
-        write the Go on stdout, and exit immediately
-        
   -tests
     	create tests and benchmarks (default true)
         
   -unexported
     	also process unexported types
         
-  -write-schema string
-    	write schema (in msgpack2 format) to this
-        file; - for stdout
-        
-  -write-zeros omitempty
+  -write-zeros
     	serialize zero-value fields to the wire,
         consuming much more space. By default
         all fields are treated as omitempty fields,

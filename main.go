@@ -81,18 +81,14 @@
 package main
 
 import (
-	cryptorand "crypto/rand"
-	"encoding/binary"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/glycerine/greenpack/cfg"
 	"github.com/glycerine/greenpack/gen"
-	"github.com/glycerine/greenpack/green"
 	"github.com/glycerine/greenpack/parse"
 	"github.com/glycerine/greenpack/printer"
 )
@@ -107,23 +103,6 @@ func main() {
 	if err != nil {
 		fmt.Printf("greenpack command line flag error: '%s'\n", err)
 		os.Exit(1)
-	}
-
-	if c.GenSchemaId {
-		var by [8]byte
-		cryptorand.Read(by[:])
-		n := binary.LittleEndian.Uint64(by[:])
-		n &= 0x0001ffffffffffff // restrict to 53 bits so R and js work
-		fmt.Printf("\n// This crypto-randomly generated greenSchemaId64 is a 53-bit\n"+
-			"// integer that identifies your namespace.\n"+
-			"// Paste it into your Go source.\n"+
-			"  const greenSchemaId64 int64 = 0x%x // %v\n\n", n, n)
-		os.Exit(0)
-	}
-
-	if c.SchemaToGo != "" {
-		handleSchemaToGo(c)
-		os.Exit(0)
 	}
 
 	// GOFILE is set by go generate
@@ -183,13 +162,6 @@ func Run(mode gen.Method, c *cfg.GreenConfig) error {
 		return nil
 	}
 
-	if c.WriteSchema != "" { // saveSchemaAsMsgpackToFile
-		err := fs.SaveMsgpackFile(c.GoFile, c.WriteSchema)
-		if err != nil {
-			panic(err)
-		}
-	}
-
 	return printer.PrintFile(newFilename(c.Out, c.GoFile, fs.Package), fs, mode, c, c.GoFile)
 }
 
@@ -219,30 +191,4 @@ func fileExists(name string) bool {
 		return false
 	}
 	return true
-}
-
-func handleSchemaToGo(c *cfg.GreenConfig) {
-	if !fileExists(c.SchemaToGo) {
-		fmt.Fprintf(os.Stderr, "error: -schema-to-go '%s' path not found\n", c.SchemaToGo)
-		os.Exit(1)
-	}
-	by, err := ioutil.ReadFile(c.SchemaToGo)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: -schema-to-go '%s' produced error on reading file: %v\n",
-			c.SchemaToGo, err)
-		os.Exit(1)
-	}
-	var sch green.Schema
-	_, err = sch.UnmarshalMsg(by)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: -schema-to-go '%s' produced error on UnmarshalMsg: %v\n",
-			c.SchemaToGo, err)
-		os.Exit(1)
-	}
-	err = sch.WriteToGo(os.Stdout, c.SchemaToGo, "main")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: -schema-to-go '%s' produced error on UnmarshalMsg: %v\n",
-			c.SchemaToGo, err)
-		os.Exit(1)
-	}
 }

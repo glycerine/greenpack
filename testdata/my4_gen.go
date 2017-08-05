@@ -12,13 +12,13 @@ import (
 // We treat empty fields as if we read a Nil from the wire.
 func (z *TupleByDefaultTestStruct) DecodeMsg(dc *msgp.Reader) (err error) {
 
-	var zjbo1 uint32
-	zjbo1, err = dc.ReadArrayHeader()
+	var zpqw1 uint32
+	zpqw1, err = dc.ReadArrayHeader()
 	if err != nil {
 		return
 	}
-	if zjbo1 != 2 {
-		err = msgp.ArrayError{Wanted: 2, Got: zjbo1}
+	if zpqw1 != 2 {
+		err = msgp.ArrayError{Wanted: 2, Got: zpqw1}
 		return
 	}
 	z.S, err = dc.ReadString()
@@ -85,13 +85,13 @@ func (z *TupleByDefaultTestStruct) UnmarshalMsgWithCfg(bts []byte, cfg *msgp.Run
 		bts = nbs.PushAlwaysNil(bts[1:])
 	}
 
-	var zdqc2 uint32
-	zdqc2, bts, err = nbs.ReadArrayHeaderBytes(bts)
+	var zbsq2 uint32
+	zbsq2, bts, err = nbs.ReadArrayHeaderBytes(bts)
 	if err != nil {
 		return
 	}
-	if zdqc2 != 2 {
-		err = msgp.ArrayError{Wanted: 2, Got: zdqc2}
+	if zbsq2 != 2 {
+		err = msgp.ArrayError{Wanted: 2, Got: zbsq2}
 		return
 	}
 	z.S, bts, err = nbs.ReadStringBytes(bts)
