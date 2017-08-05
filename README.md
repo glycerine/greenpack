@@ -132,6 +132,21 @@ unsigned, as long as the field name is preserved
 we can still acurately reconstruct what the
 data's type was originally.
 
+performance and comparison
+---------------------------
+
+`greenpack -fast-strings` is zero-allocation, and one
+of the fastest serialization formats avaiable for Go.[1]
+
+[1] https://github.com/glycerine/go_serialization_benchmarks
+
+For write speed, only Zebrapack is faster. For
+reads, only CapnProto and Gencode are slightly faster.
+Gencode isn't zero alloc, and has no versioning support.
+CapnProto isn't very portable to dynamic languages
+like R or Javascript, and requires keeping duplicate
+mirror structs in your code.
+
 
 deprecating fields
 ------------------
