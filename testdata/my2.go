@@ -1,7 +1,5 @@
 package testdata
 
-import "github.com/glycerine/rbtree"
-
 // gotta test the tests too!
 //go:generate greenpack  -unexported
 
@@ -14,8 +12,8 @@ type u struct {
 }
 
 type Tr struct {
-	U  string       `zid:"0"`
-	et *rbtree.Tree `msg:"-"`
+	U  string `zid:"0"`
+	et *Tr    `msg:"-"`
 
 	Nt int `zid:"1"`
 
