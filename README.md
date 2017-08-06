@@ -1,4 +1,4 @@
-greenpack: a serialization convention for msgpack2; adds field versioning and stronger typing.
+greenpack: a serialization convention for msgpack2; adds field versioning and type annotation.
 ==========
 
 `greenpack` is a simple convention for naming fields in `msgpack` data: we take the
