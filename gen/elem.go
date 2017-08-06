@@ -131,6 +131,7 @@ var prim2clue = map[Primitive]string{
 	Intf:       "ifc",
 	Time:       "tim",
 	Ext:        "ext",
+	IDENT:      "rct",
 }
 
 // types built into the library
