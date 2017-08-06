@@ -59,7 +59,7 @@ bench: all
 	go test -bench . ./_generated
 
 clean:
-	$(RM) $(GGEN) $(MGEN) 
+	$(RM) $(GGEN) $(MGEN) ./greenpack
 
 wipe: clean
 	$(RM) $(BIN)
