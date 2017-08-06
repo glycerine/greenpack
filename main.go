@@ -105,6 +105,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	if c.ShowVersion {
+		fmt.Println(GetCodeVersion(os.Args[0]))
+		os.Exit(0)
+	}
+
 	// GOFILE is set by go generate
 	if c.GoFile == "" {
 		c.GoFile = os.Getenv("GOFILE")

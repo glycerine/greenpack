@@ -11,3 +11,4 @@ testdata/my.z
 testdata/my.z.json
 testdata/my_gen.go
 testdata/my_gen_test.go
+gitcommit.go
