@@ -1,29 +1,8 @@
-greenpack: serialization that extends msgpack2 with field versioning and strong typing
+greenpack: a serialization convention for msgpack2; adds field versioning and stronger typing.
 ==========
 
-`greenpack` keeps your data completely self-contained. No coordination with a (long lost?) schema is needed to decode.
-
-`greenpack` is a data definition language and serialization format, a layer of convention on top of msgpack2 that provides field versioning and additional type safety.
-
-
-install
-========
-
-~~~
-$ go get -d github.com/glycerine/greenpack
-$ cd $GOPATH/src/github.com/glycerine/greenpack
-$ make install
-~~~
-
-The binaries `greenpack` and `addzid` will then be available in `$GOPATH/bin/greenpack`.
-
-details
-========
-
-`msgpack2` [https://github.com/msgpack/msgpack/blob/master/spec.md] [http://msgpack.org] enjoys wide cross-language support, and provides efficient and self-contained data serialization. We find only two problems with msgpack2: weak support for data evolution, and insufficiently strong typing of integers.
-
-The greenpack format addresses these problems while keeping serialized data fully self-describing. Greenpack is independent of any external schema, but as an optimization uses the Go source file itself as a schema to maintain current versioning and type information. Dynamic languages still have an easy time reading greenpack--it is just msgpack2. There's no need to worry about coordinating the schema under which data was written, as data is self-contained.
-
+`greenpack` is a simple convention for naming fields in `msgpack` data: we take the
+original field name and append a version number and basic type indicator.
 
 # the main idea
 
@@ -55,13 +34,17 @@ a := A{
 
 Notice the only thing that changed with respect to the msgpack2 encoding is that the the fieldnames have been extended to contain a version and a type clue.
 
+`msgpack2` [https://github.com/msgpack/msgpack/blob/master/spec.md] [http://msgpack.org] enjoys wide cross-language support, and provides efficient and self-contained data serialization. We find only two problems with msgpack2: weak support for data evolution, and insufficiently strong typing of integers.
+
+The greenpack format addresses these problems while keeping serialized data fully self-describing. Greenpack is independent of any external schema, but as an optimization uses the Go source file itself as a schema to maintain current versioning and type information. Dynamic languages still have an easy time reading greenpack--it is just msgpack2. There's no need to worry about locating the schema under which data was written, as data stays self-contained.
+
 The central idea of greenpack: start with msgpack2, and append version numbers and type clues to the end of the field names when stored on the wire. We say type "clues" because the type information clarifies the original size and signed-ness of the type, which adds the missing detail to integers needed to fully reconstruct the original data from the serialization. This address the problem that commonly msgpack2 implementations ignore the spec and encode numbers using the smallest unsigned type possible, which corrupts the original type information and can induce decoding errors for large and negative numbers.
 
 If you've ever had your msgpack crash your server because you tried to change the type of a field but keep the same name, then you know how fragile msgpack can be. The type clue fixes that.
 
 The version `zid` number gives us the ability to evolve our data without crashes. The moniker `zid` reveals `greenpacks` evolution from `zebrapack`, where it stood for "zebrapack version id". Rather than rework all the tooling to expect `gid`, which might be confused with a `GUID`, we simply keep the convention. `zid` indicates the field version.
 
-The second easy idea: use the Go language struct definition syntax as our serialization schema. There is no need to invent a completely different format. Serialization for Go developers should be almost trivially easy. While we are focused on a serialization format for Go, because other language can read msgpack2, they can also readily parse the schema. While the schema is optional, greenpack (this repo) provides code generation tools based on the schema (Go file) that generates extremely fast serialization code.
+One last easy idea: use the Go language struct definition syntax as our serialization schema. There is no need to invent a completely different format. Serialization for Go developers should be almost trivially easy. While we are focused on a serialization format for Go, because other language can read msgpack2, they can also readily parse the schema. While the schema is optional, greenpack (this repo) provides code generation tools based on the schema (Go file) that generates extremely fast serialization code.
 
 # the need for stronger integer typing
 
