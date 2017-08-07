@@ -7,6 +7,7 @@ import (
 
 	cv "github.com/glycerine/goconvey/convey"
 	"github.com/glycerine/greenpack/cfg"
+	"github.com/glycerine/greenpack/gen"
 	"testing"
 )
 
@@ -129,4 +130,69 @@ func testCode(code string, out []byte) error {
 	os.Remove(ofile)
 	os.Remove(ofile + ".json")
 	return err
+}
+
+// write out fields in zid order: re-order the
+// field sequence to match the zid-based order.
+// This allows for consistent and reproducible
+// serialization.
+
+func Test003OrderFieldsByZid(t *testing.T) {
+
+	cv.Convey("for reproducible serialization, order fields by zid", t, func() {
+		code := "\npackage fred\n\n" +
+			"type Flint struct {\n" +
+			"   Barney string `zid:\"1\"`\n" +
+			"   Wilma  string `zid:\"0\"`\n" +
+			"}\n"
+
+		gofile, err := ioutil.TempFile(".", "tmp-test-001")
+		panicOn(err)
+		ofile := gofile.Name() + ".out"
+
+		defer func() {
+			os.Remove(gofile.Name())
+			os.Remove(ofile)
+		}()
+
+		fmt.Fprintf(gofile, code)
+		gofile.Close()
+
+		fmt.Printf("\n in file '%s', checking:\n%v\n", gofile.Name(),
+			code)
+
+		cfg := cfg.GreenConfig{
+			Out:        ofile,
+			GoFile:     gofile.Name(),
+			Encode:     true,
+			Marshal:    true,
+			Tests:      true,
+			Unexported: false,
+		}
+		fs, err := File(&cfg)
+		if len(fs.Identities) > 0 {
+			rct := fs.Identities["Flint"].(*gen.Struct)
+			fmt.Printf("\n debug: spec[flint]='%#v'\n", rct)
+			//			lastZid := -1
+			seenNeg := false
+			for i, fld := range rct.Fields {
+				curZid := fld.ZebraId
+				if seenNeg && curZid != -1 {
+					panic(fmt.Sprintf("all zid of -1 must come at the end; we saw %v at pos %v after a -1", curZid, i))
+				}
+				fmt.Printf("field %v has zid %v\n", i, curZid)
+				// allow zid of -1 (not specified) to be at
+				// the end only
+				if curZid >= 0 {
+					// must match i, so be in increasing order!
+					if curZid != int64(i) {
+						panic(fmt.Sprintf("expected curZid to be %v, but got %v", i, curZid))
+					}
+				} else {
+					seenNeg = true
+				}
+
+			}
+		}
+	})
 }
