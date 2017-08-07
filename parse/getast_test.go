@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"sort"
 
 	cv "github.com/glycerine/goconvey/convey"
 	"github.com/glycerine/greenpack/cfg"
@@ -194,5 +195,19 @@ func Test003OrderFieldsByZid(t *testing.T) {
 
 			}
 		}
+	})
+}
+
+func Test004OrderFieldsByZid(t *testing.T) {
+
+	cv.Convey("zidSetSlice.Sort() order should sort c(-1,1,0,-1) -> c(0,1,-1,-1)", t, func() {
+
+		z := []zid{zid{zid: -1, origPos: 0}, zid{zid: 1, origPos: 1}, zid{zid: 0, origPos: 2}, zid{zid: -1, origPos: 3}}
+
+		sort.Sort(zidSetSlice(z))
+		cv.So(z[0].zid, cv.ShouldEqual, 0)
+		cv.So(z[1].zid, cv.ShouldEqual, 1)
+		cv.So(z[2].zid, cv.ShouldEqual, -1)
+		cv.So(z[3].zid, cv.ShouldEqual, -1)
 	})
 }

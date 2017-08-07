@@ -393,13 +393,28 @@ func fieldName(f *ast.Field) string {
 type zid struct {
 	zid       int64
 	fieldName string
+	origPos   int
 }
 
 type zidSetSlice []zid
 
-func (p zidSetSlice) Len() int           { return len(p) }
-func (p zidSetSlice) Less(i, j int) bool { return p[i].zid < p[j].zid }
-func (p zidSetSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+func (p zidSetSlice) Len() int { return len(p) }
+
+// sort negatives to the end, so that our
+// non-zid (-1) fields come last. This lets
+// us write deterministically the zid fields,
+// in order.
+func (p zidSetSlice) Less(i, j int) bool {
+	if p[i].zid >= 0 && p[j].zid >= 0 ||
+		p[i].zid < 0 && p[j].zid < 0 {
+		return p[i].zid < p[j].zid
+	}
+	if p[i].zid < 0 && p[j].zid >= 0 {
+		return false
+	}
+	return true
+}
+func (p zidSetSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
 func (fs *FileSet) parseFieldList(fl *ast.FieldList) ([]gen.StructField, error) {
 	if fl == nil || fl.NumFields() == 0 {
@@ -407,6 +422,8 @@ func (fs *FileSet) parseFieldList(fl *ast.FieldList) ([]gen.StructField, error) 
 	}
 	out := make([]gen.StructField, 0, fl.NumFields())
 	var zidSet []zid
+	var origPos int
+	hasZid := false
 	for _, field := range fl.List {
 		pushstate(fieldName(field))
 		fds, err := fs.getField(field)
@@ -417,8 +434,10 @@ func (fs *FileSet) parseFieldList(fl *ast.FieldList) ([]gen.StructField, error) 
 		for _, x := range fds {
 			//fmt.Printf("\n on field '%#v'\n", x)
 			if x.ZebraId >= 0 {
-				zidSet = append(zidSet, zid{zid: x.ZebraId, fieldName: x.FieldName})
+				hasZid = true
 			}
+			zidSet = append(zidSet, zid{zid: x.ZebraId, fieldName: x.FieldName, origPos: origPos})
+			origPos++
 		}
 		if len(fds) > 0 {
 			out = append(out, fds...)
@@ -428,16 +447,29 @@ func (fs *FileSet) parseFieldList(fl *ast.FieldList) ([]gen.StructField, error) 
 		popstate()
 	}
 	// check zidSet sequential from 0, no gaps, no duplicates
-	if len(zidSet) > 0 {
+	if hasZid {
 		sort.Sort(zidSetSlice(zidSet))
 		if zidSet[0].zid != 0 {
 			return nil, fmt.Errorf("zid (zebra id tags on struct fields) must start at 0; lowest zid was '%v' at field '%v'", zidSet[0].zid, zidSet[0].fieldName)
 		}
 		for i := range zidSet {
-			if zidSet[i].zid != int64(i) {
-				return nil, fmt.Errorf("zid sequence interrupted - commit conflict possible! gap or duplicate in zid sequence (saw %v; expected %v), near field '%v'", zidSet[i].zid, i, zidSet[i].fieldName)
+			if zidSet[i].zid >= 0 {
+				if zidSet[i].zid != int64(i) {
+					return nil, fmt.Errorf("zid sequence interrupted - commit conflict possible! gap or duplicate in zid sequence (saw %v; expected %v), near field '%v'", zidSet[i].zid, i, zidSet[i].fieldName)
+				}
 			}
 		}
+		// now re-arrange fields into zid order,
+		// so that writes are deterministic, and
+		// we don't have randomized field order.
+		sortedOut := make([]gen.StructField, len(out))
+		if len(out) != len(zidSet) {
+			panic("size mismatch, out and zidSet must be the same len")
+		}
+		for i := range zidSet {
+			sortedOut[i] = out[zidSet[i].origPos]
+		}
+		out = sortedOut
 	}
 	return out, nil
 }
