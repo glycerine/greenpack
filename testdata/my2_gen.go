@@ -79,13 +79,13 @@ doneWithStruct5zgensym_72ba5d454ae3d9dd_6:
 				return
 			}
 		case "Nt_zid01_int":
-			found5zgensym_72ba5d454ae3d9dd_6[2] = true
+			found5zgensym_72ba5d454ae3d9dd_6[1] = true
 			z.Nt, err = dc.ReadInt()
 			if err != nil {
 				return
 			}
 		case "Snot_zid02_map":
-			found5zgensym_72ba5d454ae3d9dd_6[3] = true
+			found5zgensym_72ba5d454ae3d9dd_6[2] = true
 			var zgensym_72ba5d454ae3d9dd_7 uint32
 			zgensym_72ba5d454ae3d9dd_7, err = dc.ReadMapHeader()
 			if err != nil {
@@ -113,7 +113,7 @@ doneWithStruct5zgensym_72ba5d454ae3d9dd_6:
 				z.Snot[zgensym_72ba5d454ae3d9dd_0] = zgensym_72ba5d454ae3d9dd_1
 			}
 		case "Notyet_zid03_map":
-			found5zgensym_72ba5d454ae3d9dd_6[4] = true
+			found5zgensym_72ba5d454ae3d9dd_6[3] = true
 			var zgensym_72ba5d454ae3d9dd_8 uint32
 			zgensym_72ba5d454ae3d9dd_8, err = dc.ReadMapHeader()
 			if err != nil {
@@ -141,7 +141,7 @@ doneWithStruct5zgensym_72ba5d454ae3d9dd_6:
 				z.Notyet[zgensym_72ba5d454ae3d9dd_2] = zgensym_72ba5d454ae3d9dd_3
 			}
 		case "Setm_zid04_slc":
-			found5zgensym_72ba5d454ae3d9dd_6[5] = true
+			found5zgensym_72ba5d454ae3d9dd_6[4] = true
 			var zgensym_72ba5d454ae3d9dd_9 uint32
 			zgensym_72ba5d454ae3d9dd_9, err = dc.ReadArrayHeader()
 			if err != nil {
@@ -202,9 +202,9 @@ doneWithStruct5zgensym_72ba5d454ae3d9dd_6:
 }
 
 // fields of Tr
-var decodeMsgFieldOrder5zgensym_72ba5d454ae3d9dd_6 = []string{"U_zid00_str", "", "Nt_zid01_int", "Snot_zid02_map", "Notyet_zid03_map", "Setm_zid04_slc"}
+var decodeMsgFieldOrder5zgensym_72ba5d454ae3d9dd_6 = []string{"U_zid00_str", "Nt_zid01_int", "Snot_zid02_map", "Notyet_zid03_map", "Setm_zid04_slc", ""}
 
-var decodeMsgFieldSkip5zgensym_72ba5d454ae3d9dd_6 = []bool{false, true, false, false, false, false}
+var decodeMsgFieldSkip5zgensym_72ba5d454ae3d9dd_6 = []bool{false, false, false, false, false, true}
 
 // fieldsNotEmpty supports omitempty tags
 func (z *Tr) fieldsNotEmpty(isempty []bool) uint32 {
@@ -216,20 +216,20 @@ func (z *Tr) fieldsNotEmpty(isempty []bool) uint32 {
 	if isempty[0] {
 		fieldsInUse--
 	}
-	isempty[2] = (z.Nt == 0) // number, omitempty
+	isempty[1] = (z.Nt == 0) // number, omitempty
+	if isempty[1] {
+		fieldsInUse--
+	}
+	isempty[2] = (len(z.Snot) == 0) // string, omitempty
 	if isempty[2] {
 		fieldsInUse--
 	}
-	isempty[3] = (len(z.Snot) == 0) // string, omitempty
+	isempty[3] = (len(z.Notyet) == 0) // string, omitempty
 	if isempty[3] {
 		fieldsInUse--
 	}
-	isempty[4] = (len(z.Notyet) == 0) // string, omitempty
+	isempty[4] = (len(z.Setm) == 0) // string, omitempty
 	if isempty[4] {
-		fieldsInUse--
-	}
-	isempty[5] = (len(z.Setm) == 0) // string, omitempty
-	if isempty[5] {
 		fieldsInUse--
 	}
 
@@ -264,7 +264,7 @@ func (z *Tr) EncodeMsg(en *msgp.Writer) (err error) {
 		}
 	}
 
-	if !empty_zgensym_72ba5d454ae3d9dd_10[2] {
+	if !empty_zgensym_72ba5d454ae3d9dd_10[1] {
 		// write "Nt_zid01_int"
 		err = en.Append(0xac, 0x4e, 0x74, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x31, 0x5f, 0x69, 0x6e, 0x74)
 		if err != nil {
@@ -276,7 +276,7 @@ func (z *Tr) EncodeMsg(en *msgp.Writer) (err error) {
 		}
 	}
 
-	if !empty_zgensym_72ba5d454ae3d9dd_10[3] {
+	if !empty_zgensym_72ba5d454ae3d9dd_10[2] {
 		// write "Snot_zid02_map"
 		err = en.Append(0xae, 0x53, 0x6e, 0x6f, 0x74, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x32, 0x5f, 0x6d, 0x61, 0x70)
 		if err != nil {
@@ -298,7 +298,7 @@ func (z *Tr) EncodeMsg(en *msgp.Writer) (err error) {
 		}
 	}
 
-	if !empty_zgensym_72ba5d454ae3d9dd_10[4] {
+	if !empty_zgensym_72ba5d454ae3d9dd_10[3] {
 		// write "Notyet_zid03_map"
 		err = en.Append(0xb0, 0x4e, 0x6f, 0x74, 0x79, 0x65, 0x74, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x33, 0x5f, 0x6d, 0x61, 0x70)
 		if err != nil {
@@ -320,7 +320,7 @@ func (z *Tr) EncodeMsg(en *msgp.Writer) (err error) {
 		}
 	}
 
-	if !empty_zgensym_72ba5d454ae3d9dd_10[5] {
+	if !empty_zgensym_72ba5d454ae3d9dd_10[4] {
 		// write "Setm_zid04_slc"
 		err = en.Append(0xae, 0x53, 0x65, 0x74, 0x6d, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x34, 0x5f, 0x73, 0x6c, 0x63)
 		if err != nil {
@@ -367,13 +367,13 @@ func (z *Tr) MarshalMsg(b []byte) (o []byte, err error) {
 		o = msgp.AppendString(o, z.U)
 	}
 
-	if !empty[2] {
+	if !empty[1] {
 		// string "Nt_zid01_int"
 		o = append(o, 0xac, 0x4e, 0x74, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x31, 0x5f, 0x69, 0x6e, 0x74)
 		o = msgp.AppendInt(o, z.Nt)
 	}
 
-	if !empty[3] {
+	if !empty[2] {
 		// string "Snot_zid02_map"
 		o = append(o, 0xae, 0x53, 0x6e, 0x6f, 0x74, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x32, 0x5f, 0x6d, 0x61, 0x70)
 		o = msgp.AppendMapHeader(o, uint32(len(z.Snot)))
@@ -383,7 +383,7 @@ func (z *Tr) MarshalMsg(b []byte) (o []byte, err error) {
 		}
 	}
 
-	if !empty[4] {
+	if !empty[3] {
 		// string "Notyet_zid03_map"
 		o = append(o, 0xb0, 0x4e, 0x6f, 0x74, 0x79, 0x65, 0x74, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x33, 0x5f, 0x6d, 0x61, 0x70)
 		o = msgp.AppendMapHeader(o, uint32(len(z.Notyet)))
@@ -393,7 +393,7 @@ func (z *Tr) MarshalMsg(b []byte) (o []byte, err error) {
 		}
 	}
 
-	if !empty[5] {
+	if !empty[4] {
 		// string "Setm_zid04_slc"
 		o = append(o, 0xae, 0x53, 0x65, 0x74, 0x6d, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x34, 0x5f, 0x73, 0x6c, 0x63)
 		o = msgp.AppendArrayHeader(o, uint32(len(z.Setm)))
@@ -485,14 +485,14 @@ doneWithStruct12zgensym_72ba5d454ae3d9dd_13:
 				return
 			}
 		case "Nt_zid01_int":
-			found12zgensym_72ba5d454ae3d9dd_13[2] = true
+			found12zgensym_72ba5d454ae3d9dd_13[1] = true
 			z.Nt, bts, err = nbs.ReadIntBytes(bts)
 
 			if err != nil {
 				return
 			}
 		case "Snot_zid02_map":
-			found12zgensym_72ba5d454ae3d9dd_13[3] = true
+			found12zgensym_72ba5d454ae3d9dd_13[2] = true
 			if nbs.AlwaysNil {
 				if len(z.Snot) > 0 {
 					for key, _ := range z.Snot {
@@ -531,7 +531,7 @@ doneWithStruct12zgensym_72ba5d454ae3d9dd_13:
 				}
 			}
 		case "Notyet_zid03_map":
-			found12zgensym_72ba5d454ae3d9dd_13[4] = true
+			found12zgensym_72ba5d454ae3d9dd_13[3] = true
 			if nbs.AlwaysNil {
 				if len(z.Notyet) > 0 {
 					for key, _ := range z.Notyet {
@@ -570,7 +570,7 @@ doneWithStruct12zgensym_72ba5d454ae3d9dd_13:
 				}
 			}
 		case "Setm_zid04_slc":
-			found12zgensym_72ba5d454ae3d9dd_13[5] = true
+			found12zgensym_72ba5d454ae3d9dd_13[4] = true
 			if nbs.AlwaysNil {
 				(z.Setm) = (z.Setm)[:0]
 			} else {
@@ -637,9 +637,9 @@ doneWithStruct12zgensym_72ba5d454ae3d9dd_13:
 }
 
 // fields of Tr
-var unmarshalMsgFieldOrder12zgensym_72ba5d454ae3d9dd_13 = []string{"U_zid00_str", "", "Nt_zid01_int", "Snot_zid02_map", "Notyet_zid03_map", "Setm_zid04_slc"}
+var unmarshalMsgFieldOrder12zgensym_72ba5d454ae3d9dd_13 = []string{"U_zid00_str", "Nt_zid01_int", "Snot_zid02_map", "Notyet_zid03_map", "Setm_zid04_slc", ""}
 
-var unmarshalMsgFieldSkip12zgensym_72ba5d454ae3d9dd_13 = []bool{false, true, false, false, false, false}
+var unmarshalMsgFieldSkip12zgensym_72ba5d454ae3d9dd_13 = []bool{false, false, false, false, false, true}
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *Tr) Msgsize() (s int) {
