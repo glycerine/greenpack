@@ -335,7 +335,7 @@ Advances in `greenpack` beyond `msgp`:
 
 * support for marking fields as deprecated
 
-* if you don't want the zid and type-clue appended, the `-omit-clue` option means you can use `greenpack` as a msgpack-only generator.
+* if you don't want the zid and type-clue appended, the `-omit-clue` option means you can use `greenpack` as just a better msgpack-only generator.
 
 
 # from the original https://github.com/tinylib/msgp README
