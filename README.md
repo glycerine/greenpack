@@ -44,6 +44,8 @@ If you've ever had your msgpack crash your server because you tried to change th
 
 The version `zid` number gives us the ability to evolve our data without crashes. The moniker `zid` reveals `greenpacks` evolution from `zebrapack`, where it stood for "zebrapack version id". Rather than rework all the tooling to expect `gid`, which might be confused with a `GUID`, we simply keep the convention. `zid` indicates the field version.
 
+An additional advantage of the `zid` numbering is that it makes the serialization consistent and reproducible, since `greenpack` writes fields in `zid` order.
+
 One last easy idea: use the Go language struct definition syntax as our serialization schema. There is no need to invent a completely different format. Serialization for Go developers should be almost trivially easy. While we are focused on a serialization format for Go, because other language can read msgpack2, they can also readily parse the schema. While the schema is optional, greenpack (this repo) provides code generation tools based on the schema (Go file) that generates extremely fast serialization code.
 
 # the need for stronger integer typing
