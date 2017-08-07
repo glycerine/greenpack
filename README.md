@@ -339,7 +339,7 @@ Advances in `greenpack` beyond `msgp`:
 
 * the `-alltuple` flag is convenient if you do alot of tuple-only work.
 
-* the `-fast-strings` flag is a useful performance optimization when you need zero-allocation and you know you won't look at your message flow again.
+* the `-fast-strings` flag is a useful performance optimization when you need zero-allocation and you know you won't look at your message flow again (of when you do, you make a copy manually).
 
 # from the original https://github.com/tinylib/msgp README
 
