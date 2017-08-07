@@ -341,6 +341,8 @@ Advances in `greenpack` beyond `msgp`:
 
 * the `-fast-strings` flag is a useful performance optimization when you need zero-allocation and you know you won't look at your message flow again (of when you do, you make a copy manually).
 
+* the msg.PostLoad and msg.PreSave interfaces let you hook into the serialization process to prepare your data structures. For example, a tree frequently needs flattening before storage. Symmetrically, the tree will need reconstrution right after loading. These interfaces are particularly helpful for nested structures.
+
 # from the original https://github.com/tinylib/msgp README
 
 MessagePack Code Generator [![Build Status](https://travis-ci.org/tinylib/msgp.svg?branch=master)](https://travis-ci.org/tinylib/msgp)
