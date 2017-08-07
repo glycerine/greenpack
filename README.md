@@ -329,14 +329,17 @@ Advances in `greenpack` beyond `msgp`:
 
 * with `zid` numbering, serialization consistent and reproducible, since `greenpack` writes fields in `zid` order.
 
-* all fiels are `omitempty` by default. If you don't use a field, you don't pay for it in serialization time.
+* all fields are `omitempty` by default. If you don't use a field, you don't pay for it in serialization time.
 
 * generated code is reproducible, so you don't get version control churn everytime you re-run the code generator (https://github.com/tinylib/msgp/pull/185)
 
 * support for marking fields as deprecated
 
-* if you don't want the zid and type-clue appended, the `-omit-clue` option means you can use `greenpack` as just a better msgpack-only generator.
+* if you don't want the zid and type-clue appended to field names, the `-omit-clue` option means you can use `greenpack` as just a better (omit empty by default) msgpack-only generator.
 
+* the `-alltuple` flag is convenient if you do alot of tuple-only work.
+
+* the `-fast-strings` flag is a useful performance optimization when you need zero-allocation and you know you won't look at your message flow again.
 
 # from the original https://github.com/tinylib/msgp README
 
