@@ -325,6 +325,15 @@ fantastic and highly tuned https://github.com/tinylib/msgp library by
 Philip Hofer. The special tag and shim handling is best documented
 in the `msgp` writeup and wiki [https://github.com/tinylib/msgp/wiki].
 
+Advances in `greenpack` beyond `msgp`:
+
+* with `zid` numbering, serialization consistent and reproducible, since `greenpack` writes fields in `zid` order.
+
+* all fiels are `omitempty` by default. If you don't use a field, you don't pay for it in serialization time.
+
+* generated code is reproducible, so you don't get version control churn everytime you re-run the code generator (https://github.com/tinylib/msgp/pull/185)
+
+* support for marking fields as deprecated
 
 # from the original https://github.com/tinylib/msgp README
 
