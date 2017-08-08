@@ -403,16 +403,22 @@ func (p zidSetSlice) Len() int { return len(p) }
 // sort negatives to the end, so that our
 // non-zid (-1) fields come last. This lets
 // us write deterministically the zid fields,
-// in order.
+// in order. For -1 fields without zid, sort them by
+// their original appearance order to
+// maintain stability.
 func (p zidSetSlice) Less(i, j int) bool {
-	if p[i].zid >= 0 && p[j].zid >= 0 ||
-		p[i].zid < 0 && p[j].zid < 0 {
+	if p[i].zid < 0 && p[j].zid < 0 {
+		return p[i].origPos < p[j].origPos
+	}
+	if p[i].zid >= 0 && p[j].zid >= 0 {
 		return p[i].zid < p[j].zid
 	}
 	if p[i].zid < 0 && p[j].zid >= 0 {
+		// sort negative to the end
 		return false
 	}
-	return true
+	// p[i].zid >= 0 && p[j].zid < 0
+	return true // sort negatives to the end
 }
 func (p zidSetSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
