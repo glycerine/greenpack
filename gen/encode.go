@@ -116,8 +116,8 @@ func (e *encodeGen) appendraw(bts []byte) {
 func (e *encodeGen) structmap(s *Struct) {
 	nfields := len(s.Fields) - s.SkipCount
 	var data []byte
-	empty := "empty_" + randIdent()
-	inUse := "fieldsInUse_" + randIdent()
+	empty := "empty_" + gensym()
+	inUse := "fieldsInUse_" + gensym()
 
 	allOmitEmpty := !e.cfg.SerzEmpty
 	skipclue := e.cfg.SkipZidClue

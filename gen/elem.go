@@ -267,7 +267,7 @@ func (a *Array) ZeroLiteral(v string) string {
 func (a *Array) SetVarname(s string) {
 	a.common.SetVarname(s)
 ridx:
-	a.Index = randIdent()
+	a.Index = gensym()
 
 	// try to avoid using the same
 	// index as a parent slice
@@ -356,8 +356,8 @@ func (m *Map) ZeroLiteral(v string) string {
 func (m *Map) SetVarname(s string) {
 	m.common.SetVarname(s)
 ridx:
-	m.Keyidx = randIdent()
-	m.Validx = randIdent()
+	m.Keyidx = gensym()
+	m.Validx = gensym()
 
 	// just in case
 	if m.Keyidx == m.Validx {
@@ -399,7 +399,7 @@ func (a *Slice) ZeroLiteral(v string) string {
 
 func (s *Slice) SetVarname(a string) {
 	s.common.SetVarname(a)
-	s.Index = randIdent()
+	s.Index = gensym()
 	varName := s.Varname()
 	if varName[0] == '*' {
 		// Pointer-to-slice requires parenthesis for slicing.

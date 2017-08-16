@@ -56,7 +56,7 @@ doneWithStruct_:
 `
 
 func genDecodeMsgTemplate(n int) (template, nStr string) {
-	nStr = fmt.Sprintf("%v%v", n, randIdent())
+	nStr = fmt.Sprintf("%v%v", n, gensym())
 	tpl := templateDecodeMsg
 	return strings.Replace(tpl, `_`, nStr, -1), nStr
 }
@@ -112,7 +112,7 @@ doneWithStruct_:
 `
 
 func genUnmarshalMsgTemplate(n int) (template, nStr string) {
-	nStr = fmt.Sprintf("%v%v", n, randIdent())
+	nStr = fmt.Sprintf("%v%v", n, gensym())
 	tpl := templateUnmarshalMsg
 	return strings.Replace(tpl, `_`, nStr, -1), nStr
 }

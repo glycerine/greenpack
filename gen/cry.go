@@ -24,8 +24,8 @@ func SetFilename(fn string) {
 	fileNameHash = fmt.Sprintf("%x", h.Sum64())
 }
 
-// generate a random identifier name
-func randIdent() string {
+// generate a unconflicting symbol name
+func gensym() string {
 	return "zgensym_" + fileNameHash + fmt.Sprintf("_%d", genSerial())
 }
 
