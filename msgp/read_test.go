@@ -28,7 +28,7 @@ func TestReadIntf(t *testing.T) {
 		float32(9082.092),
 		int64(-40),
 		uint64(9082981),
-		time.Now(),
+		time.Now().Round(0), // Round(0) will strip off the monotone part of the go1.9 time.
 		"hello!",
 		[]byte("hello!"),
 		map[string]interface{}{
@@ -60,7 +60,7 @@ func TestReadIntf(t *testing.T) {
 			t.Errorf("Test case: %d: %s", i, err)
 		}
 		if !reflect.DeepEqual(v, ts) {
-			t.Errorf("%v in; %v out", ts, v)
+			t.Errorf("'%v' in; '%v' out", ts, v)
 		}
 	}
 
@@ -611,7 +611,7 @@ func BenchmarkReadComplex128(b *testing.B) {
 
 func TestTime(t *testing.T) {
 	var buf bytes.Buffer
-	now := time.Now()
+	now := time.Now().Round(0) // Round(0) will strip the monotone clock.
 	en := NewWriter(&buf)
 	dc := NewReader(&buf)
 

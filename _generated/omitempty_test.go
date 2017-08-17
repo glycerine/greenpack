@@ -50,7 +50,7 @@ func TestMissingNilledOutWhenUnmarshallingOrDecodingNilIntoNestedStructs(t *test
 			MyMap:       map[string]string{"key": "to my heart"},
 			MyArrayMap:  [3]map[string]string{{"key1": "to my heart1"}, {"key2": "to my heart2"}, {}},
 
-			TopTime: time.Now(),
+			TopTime: time.Now().Round(0),
 		}
 		s.PtrTime = &s.TopTime
 

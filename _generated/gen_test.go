@@ -79,7 +79,7 @@ func Test1EncodeDecode(t *testing.T) {
 			ValueB: []byte("here's the second inner value"),
 		},
 		Child:    nil,
-		Time:     time.Now(),
+		Time:     time.Now().Round(0),
 		Appended: msgp.Raw([]byte{0xc0}), // 'nil'
 	}
 
