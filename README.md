@@ -327,7 +327,7 @@ in the `msgp` writeup and wiki [https://github.com/tinylib/msgp/wiki].
 
 Advances in `greenpack` beyond `msgp`:
 
-* with `zid` numbering, serialization consistent and reproducible, since `greenpack` writes fields in `zid` order.
+* with `zid` numbering, serialization becomes consistent and reproducible, since `greenpack` writes fields in `zid` order.
 
 * all fields are `omitempty` by default. If you don't use a field, you don't pay for it in serialization time.
 
