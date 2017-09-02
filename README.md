@@ -293,7 +293,7 @@ It is safe to re-use structs by default, and with `omitempty`. For reference:
 from https://github.com/tinylib/msgp/issues/154:
 > The only special feature of UnmarshalMsg and DecodeMsg (from a zero-alloc standpoint) is that they will use pre-existing fields in an object rather than allocating new ones. So, if you decode into the same object repeatedly, things like slices and maps won't be re-allocated on each decode; instead, they will be re-sized appropriately. In other words, mutable fields are simply mutated in-place.
 
-This continues to hold true, and missing fields on the wire will zero the field in any re-used struct.
+This continues to hold true, and a missing field on the wire will zero the field in any re-used struct.
 
 NB: Under tuple encoding (https://github.com/tinylib/msgp/wiki/Preprocessor-Directives), for example `//msgp:tuple Hedgehog`, then all fields are always serialized and the omitempty tag is ignored.
 
