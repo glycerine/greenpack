@@ -344,7 +344,42 @@ Advances in `greenpack` beyond `msgp`:
 
 * the msgp.PostLoad and msgp.PreSave interfaces let you hook into the serialization process to write custom procedures to prepare your data structures for writing. For example, a tree frequently needs flattening before storage. On the read, the tree will need reconstrution right after loading. These interfaces are particularly helpful for nested structures, as they are invoked automatically if they are available.
 
-# from the original https://github.com/tinylib/msgp README
+### appendix A: type clues
+
+(see prim2clue in https://github.com/glycerine/greenpack/blob/master/gen/elem.go#L112)
+~~~
+base types:
+"bin" // []byte, a slice of bytes
+"str" // string (not struct, which is "rct")
+"f32" // float32
+"f64" // float64
+"c64" // complex64
+"c28" // complex128
+"unt" // uint (machine word size, like Go)
+"u08" // uint8
+"u16" // uint16
+"u32" // uint32
+"u64" // uint64
+"byt" // byte
+"int" // int (machine word size, like Go)
+"i08" // int8
+"i16" // int16
+"i32" // int32
+"i64" // int64
+"boo" // bool
+"ifc" // interface
+"tim" // time.Time
+"ext" // msgpack extension
+
+compound types:
+"ary" // array
+"map" // map
+"slc" // slice
+"ptr" // pointer
+"rct" // struct
+~~~
+
+# appendix B: from the original https://github.com/tinylib/msgp README
 
 MessagePack Code Generator [![Build Status](https://travis-ci.org/tinylib/msgp.svg?branch=master)](https://travis-ci.org/tinylib/msgp)
 =======
