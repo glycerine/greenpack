@@ -120,7 +120,7 @@ func (e *encodeGen) structmap(s *Struct) {
 	inUse := "fieldsInUse_" + gensym()
 
 	allOmitEmpty := !e.cfg.SerzEmpty
-	skipclue := e.cfg.SkipZidClue
+	skipclue := e.cfg.SkipZidClue || e.cfg.Msgpack2
 
 	if allOmitEmpty || s.hasOmitEmptyTags {
 		e.p.printf("\n\n// honor the omitempty tags\n")

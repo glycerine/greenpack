@@ -189,7 +189,7 @@ func (d *decodeGen) structAsMap(s *Struct) {
 	d.needsField()
 
 	k := genSerial()
-	skipclue := d.cfg.SkipZidClue
+	skipclue := d.cfg.SkipZidClue || d.cfg.Msgpack2
 
 	tmpl, nStr := genDecodeMsgTemplate(k)
 

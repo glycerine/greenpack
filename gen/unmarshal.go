@@ -127,7 +127,7 @@ func (u *unmarshalGen) mapstruct(s *Struct) {
 		return
 	}
 
-	skipclue := u.cfg.SkipZidClue
+	skipclue := u.cfg.SkipZidClue || u.cfg.Msgpack2
 
 	u.needsField()
 	k := genSerial()

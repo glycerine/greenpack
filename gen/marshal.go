@@ -113,7 +113,7 @@ func (m *marshalGen) mapstruct(s *Struct) {
 	nfields := len(s.Fields) - s.SkipCount
 
 	allOmitEmpty := !m.cfg.SerzEmpty
-	skipclue := m.cfg.SkipZidClue
+	skipclue := m.cfg.SkipZidClue || m.cfg.Msgpack2
 
 	if allOmitEmpty || s.hasOmitEmptyTags {
 		m.p.printf("\n\n// honor the omitempty tags\n")
