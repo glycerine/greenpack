@@ -243,7 +243,8 @@ Usage of greenpack:
         
   -o string
     	output file (default is {input_file}_gen.go
-        
+
+  -msgpack2   (alias for -omit-clue)
   -omit-clue
     	don't append zid and clue to field name
         (makes things just like msgpack2 traditional
