@@ -685,8 +685,6 @@ func (mw *Writer) WriteIntf(v interface{}) error {
 	case reflect.Map:
 		return mw.writeMap(val)
 	}
-	fmt.Printf("\n DEBUG! write.go: unsupporting type '%T'/val='%#v'/val.Type='%v'\n", val, val, val.Type())
-	panic("arg!")
 	return &ErrUnsupportedType{val.Type()}
 }
 
