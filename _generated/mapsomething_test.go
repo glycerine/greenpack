@@ -27,6 +27,7 @@ func TestMarshalMapOfConcreteType(t *testing.T) {
 	}
 }
 
+// this always worked fine
 func TestMarshalMapOfInterface(t *testing.T) {
 
 	m := make(map[string]interface{})

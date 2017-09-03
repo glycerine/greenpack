@@ -320,13 +320,19 @@ func AppendMapStrSomething(b []byte, m reflect.Value) ([]byte, error) {
 
 	keys := m.MapKeys()
 	sz := uint32(len(keys))
-	b = AppendMapHeader(b, sz)
+	if sz == 0 {
+		b = AppendMapHeader(b, sz)
+		return b, nil
+	}
 	var err error
 	for i, key := range keys {
 		if i == 0 {
 			if key.Type().Kind() != reflect.String {
 				return b, &ErrUnsupportedType{T: m.Type()}
 			}
+			// lazy because we try hard not to write
+			// half a value to b and then error out.
+			b = AppendMapHeader(b, sz)
 		}
 
 		b = AppendString(b, key.String())
