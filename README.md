@@ -307,6 +307,14 @@ serialization to existing Go projects easy.
 See https://github.com/glycerine/greenpack/blob/master/cmd/addzid/README.md
 for more detail.
 
+## used by
+
+* my own internal projects
+
+* https://github.com/chrislusf/gleam
+
+* your project here
+
 notices
 -------
 
