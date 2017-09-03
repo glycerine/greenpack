@@ -13,9 +13,23 @@ type Row struct {
 }
 
 // https://github.com/glycerine/greenpack/issues/1
-func TestMarshalSliceOfInterface(t *testing.T) {
+func TestMarshalMapOfConcreteType(t *testing.T) {
 
 	m := make(map[string][]float64)
+	m["def"] = []float64{1.2, 3.4}
+
+	row := Row{}
+	row.K = []interface{}{"abc"}
+	row.V = []interface{}{m}
+	_, err := row.MarshalMsg(nil)
+	if err != nil {
+		panic(err) // panic: msgp: type "map[string][]float64" not supported
+	}
+}
+
+func TestMarshalMapOfInterface(t *testing.T) {
+
+	m := make(map[string]interface{})
 	m["def"] = []float64{1.2, 3.4}
 
 	row := Row{}

@@ -671,7 +671,7 @@ func (mw *Writer) WriteIntf(v interface{}) error {
 
 	val := reflect.ValueOf(v)
 	if !isSupported(val.Kind()) || !val.IsValid() {
-		return fmt.Errorf("msgp: type %s not supported", val)
+		return fmt.Errorf("msgp: type %s not supported(1)", val)
 	}
 
 	switch val.Kind() {
@@ -685,6 +685,8 @@ func (mw *Writer) WriteIntf(v interface{}) error {
 	case reflect.Map:
 		return mw.writeMap(val)
 	}
+	fmt.Printf("\n DEBUG! write.go: unsupporting type '%T'/val='%#v'/val.Type='%v'\n", val, val, val.Type())
+	panic("arg!")
 	return &ErrUnsupportedType{val.Type()}
 }
 
@@ -740,7 +742,7 @@ func (mw *Writer) writeStruct(v reflect.Value) error {
 
 func (mw *Writer) writeVal(v reflect.Value) error {
 	if !isSupported(v.Kind()) {
-		return fmt.Errorf("msgp: msgp/enc: type %q not supported", v.Type())
+		return fmt.Errorf("msgp: msgp/enc: type %q not supported(2)", v.Type())
 	}
 
 	// shortcut for nil values
@@ -782,7 +784,7 @@ func (mw *Writer) writeVal(v reflect.Value) error {
 		return mw.writeStruct(v)
 
 	}
-	return fmt.Errorf("msgp: msgp/enc: type %q not supported", v.Type())
+	return fmt.Errorf("msgp: msgp/enc: type %q not supported(3)", v.Type())
 }
 
 // is the reflect.Kind encodable?

@@ -136,7 +136,7 @@ type ErrUnsupportedType struct {
 }
 
 // Error implements error
-func (e *ErrUnsupportedType) Error() string { return fmt.Sprintf("msgp: type %q not supported", e.T) }
+func (e *ErrUnsupportedType) Error() string { return fmt.Sprintf("msgp: type %q not supported(4)", e.T) }
 
 // Resumable returns 'true' for ErrUnsupportedType
 func (e *ErrUnsupportedType) Resumable() bool { return true }

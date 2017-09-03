@@ -313,6 +313,32 @@ func AppendMapStrIntf(b []byte, m map[string]interface{}) ([]byte, error) {
 	return b, nil
 }
 
+// AppendMapStrSomething appends a map[string]* to the slice
+// as a MessagePack map with 'str'-type keys. * must be
+// serializable by AppendIntf().
+func AppendMapStrSomething(b []byte, m reflect.Value, mi interface{}) ([]byte, error) {
+
+	keys := m.MapKeys()
+	sz := uint32(len(keys))
+	b = AppendMapHeader(b, sz)
+	var err error
+	for i, key := range keys {
+		if i == 0 {
+			if key.Type().Kind() != reflect.String {
+				return b, &ErrUnsupportedType{T: m.Type()}
+			}
+		}
+
+		b = AppendString(b, key.String())
+		val := m.MapIndex(key)
+		b, err = AppendIntf(b, val.Interface())
+		if err != nil {
+			return b, err
+		}
+	}
+	return b, nil
+}
+
 // AppendIntf appends the concrete type of 'i' to the
 // provided []byte. 'i' must be one of the following:
 //  - 'nil'
@@ -405,6 +431,9 @@ func AppendIntf(b []byte, i interface{}) ([]byte, error) {
 		}
 		b, err = AppendIntf(b, v.Elem().Interface())
 		return b, err
+
+	case reflect.Map:
+		return AppendMapStrSomething(b, v, i)
 	default:
 		return b, &ErrUnsupportedType{T: v.Type()}
 	}
