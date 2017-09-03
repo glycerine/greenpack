@@ -23,7 +23,7 @@ func TestMarshalMapOfConcreteType(t *testing.T) {
 	row.V = []interface{}{m}
 	_, err := row.MarshalMsg(nil)
 	if err != nil {
-		panic(err) // panic: msgp: type "map[string][]float64" not supported
+		panic(err)
 	}
 }
 
@@ -37,6 +37,6 @@ func TestMarshalMapOfInterface(t *testing.T) {
 	row.V = []interface{}{m}
 	_, err := row.MarshalMsg(nil)
 	if err != nil {
-		panic(err) // panic: msgp: type "map[string][]float64" not supported
+		panic(err)
 	}
 }
