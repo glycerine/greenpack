@@ -370,13 +370,13 @@ func (mw *Writer) WriteInt64(i int64) error {
 }
 
 // WriteInt8 writes an int8 to the writer
-func (mw *Writer) WriteInt8(i int8) error { return mw.WriteInt64(int64(i)) }
+func (mw *Writer) WriteInt8(i int8) error { return mw.WriteInt8(i) }
 
 // WriteInt16 writes an int16 to the writer
-func (mw *Writer) WriteInt16(i int16) error { return mw.WriteInt64(int64(i)) }
+func (mw *Writer) WriteInt16(i int16) error { return mw.WriteInt16(i) }
 
 // WriteInt32 writes an int32 to the writer
-func (mw *Writer) WriteInt32(i int32) error { return mw.WriteInt64(int64(i)) }
+func (mw *Writer) WriteInt32(i int32) error { return mw.WriteInt32(i) }
 
 // WriteInt writes an int to the writer
 func (mw *Writer) WriteInt(i int) error { return mw.WriteInt64(int64(i)) }
