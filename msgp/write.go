@@ -401,13 +401,13 @@ func (mw *Writer) WriteUint64(u uint64) error {
 func (mw *Writer) WriteByte(u byte) error { return mw.WriteUint8(uint8(u)) }
 
 // WriteUint8 writes a uint8 to the writer
-func (mw *Writer) WriteUint8(u uint8) error { return mw.WriteUint64(uint64(u)) }
+func (mw *Writer) WriteUint8(u uint8) error { return mw.WriteUint8(u) }
 
 // WriteUint16 writes a uint16 to the writer
-func (mw *Writer) WriteUint16(u uint16) error { return mw.WriteUint64(uint64(u)) }
+func (mw *Writer) WriteUint16(u uint16) error { return mw.WriteUint16(u) }
 
 // WriteUint32 writes a uint32 to the writer
-func (mw *Writer) WriteUint32(u uint32) error { return mw.WriteUint64(uint64(u)) }
+func (mw *Writer) WriteUint32(u uint32) error { return mw.WriteUint32(u) }
 
 // WriteUint writes a uint to the writer
 func (mw *Writer) WriteUint(u uint) error { return mw.WriteUint64(uint64(u)) }
