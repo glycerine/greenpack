@@ -22,6 +22,7 @@ type GreenConfig struct {
 	Msgpack2    bool // -msgpack2 is an alias for -omit-clue
 
 	ShowVersion bool
+	TrueInt     bool
 }
 
 // call DefineFlags before myflags.Parse()
@@ -40,6 +41,7 @@ func (c *GreenConfig) DefineFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&c.SkipZidClue, "omit-clue", false, "don't append zid and clue to field name (makes things just like msgpack2 traditional encoding, without version + type clue)")
 	fs.BoolVar(&c.Msgpack2, "msgpack2", false, "(alias for -omit-clue) don't append zid and clue to field name (makes things just like msgpack2 traditional encoding, without version + type clue)")
 	fs.BoolVar(&c.ShowVersion, "version", false, "print version info and exit")
+	fs.BoolVar(&c.TrueInt, "true-int", false, "use true type when encoding integers, not smallest possible type for the value")
 }
 
 // call c.ValidateConfig() after myflags.Parse()
