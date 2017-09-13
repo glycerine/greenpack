@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const trueIntType = true
+
 // ensure 'sz' extra bytes in 'b' btw len(b) and cap(b)
 func ensure(b []byte, sz int) ([]byte, int) {
 	l := len(b)
@@ -75,15 +77,42 @@ func AppendFloat32(b []byte, f float32) []byte {
 
 // AppendInt64 appends an int64 to the slice
 func AppendInt64(b []byte, i int64) []byte {
-	if i >= 0 {
+	if trueIntType {
+		o, n := ensure(b, 9)
+		putMint64(o[n:], i)
+		return o
+	} else {
+
+		if i >= 0 {
+			switch {
+			case i <= math.MaxInt8:
+				return append(b, wfixint(uint8(i)))
+			case i <= math.MaxInt16:
+				o, n := ensure(b, 3)
+				putMint16(o[n:], int16(i))
+				return o
+			case i <= math.MaxInt32:
+				o, n := ensure(b, 5)
+				putMint32(o[n:], int32(i))
+				return o
+			default:
+				o, n := ensure(b, 9)
+				putMint64(o[n:], i)
+				return o
+			}
+		}
 		switch {
-		case i <= math.MaxInt8:
-			return append(b, wfixint(uint8(i)))
-		case i <= math.MaxInt16:
+		case i >= -32:
+			return append(b, wnfixint(int8(i)))
+		case i >= math.MinInt8:
+			o, n := ensure(b, 2)
+			putMint8(o[n:], int8(i))
+			return o
+		case i >= math.MinInt16:
 			o, n := ensure(b, 3)
 			putMint16(o[n:], int16(i))
 			return o
-		case i <= math.MaxInt32:
+		case i >= math.MinInt32:
 			o, n := ensure(b, 5)
 			putMint32(o[n:], int32(i))
 			return o
@@ -93,66 +122,64 @@ func AppendInt64(b []byte, i int64) []byte {
 			return o
 		}
 	}
-	switch {
-	case i >= -32:
-		return append(b, wnfixint(int8(i)))
-	case i >= math.MinInt8:
-		o, n := ensure(b, 2)
-		putMint8(o[n:], int8(i))
-		return o
-	case i >= math.MinInt16:
-		o, n := ensure(b, 3)
-		putMint16(o[n:], int16(i))
-		return o
-	case i >= math.MinInt32:
-		o, n := ensure(b, 5)
-		putMint32(o[n:], int32(i))
-		return o
-	default:
-		o, n := ensure(b, 9)
-		putMint64(o[n:], i)
-		return o
-	}
 }
 
 // AppendInt appends an int to the slice
 func AppendInt(b []byte, i int) []byte { return AppendInt64(b, int64(i)) }
 
 // AppendInt8 appends an int8 to the slice
-func AppendInt8(b []byte, i int8) []byte { return AppendInt64(b, int64(i)) }
+func AppendInt8(b []byte, i int8) []byte {
+	o, n := ensure(b, 2)
+	putMint8(o[n:], i)
+	return o
+}
 
 // AppendInt16 appends an int16 to the slice
-func AppendInt16(b []byte, i int16) []byte { return AppendInt64(b, int64(i)) }
+func AppendInt16(b []byte, i int16) []byte {
+	o, n := ensure(b, 3)
+	putMint16(o[n:], i)
+	return o
+}
 
 // AppendInt32 appends an int32 to the slice
-func AppendInt32(b []byte, i int32) []byte { return AppendInt64(b, int64(i)) }
+func AppendInt32(b []byte, i int32) []byte {
+	o, n := ensure(b, 5)
+	putMint32(o[n:], int32(i))
+	return o
+}
 
 // AppendUint64 appends a uint64 to the slice
 func AppendUint64(b []byte, u uint64) []byte {
-	switch {
-	case u <= (1<<7)-1:
-		return append(b, wfixint(uint8(u)))
-
-	case u <= math.MaxUint8:
-		o, n := ensure(b, 2)
-		putMuint8(o[n:], uint8(u))
-		return o
-
-	case u <= math.MaxUint16:
-		o, n := ensure(b, 3)
-		putMuint16(o[n:], uint16(u))
-		return o
-
-	case u <= math.MaxUint32:
-		o, n := ensure(b, 5)
-		putMuint32(o[n:], uint32(u))
-		return o
-
-	default:
+	if trueIntType {
 		o, n := ensure(b, 9)
 		putMuint64(o[n:], u)
 		return o
+	} else {
 
+		switch {
+		case u <= (1<<7)-1:
+			return append(b, wfixint(uint8(u)))
+
+		case u <= math.MaxUint8:
+			o, n := ensure(b, 2)
+			putMuint8(o[n:], uint8(u))
+			return o
+
+		case u <= math.MaxUint16:
+			o, n := ensure(b, 3)
+			putMuint16(o[n:], uint16(u))
+			return o
+
+		case u <= math.MaxUint32:
+			o, n := ensure(b, 5)
+			putMuint32(o[n:], uint32(u))
+			return o
+
+		default:
+			o, n := ensure(b, 9)
+			putMuint64(o[n:], u)
+			return o
+		}
 	}
 }
 
@@ -160,13 +187,21 @@ func AppendUint64(b []byte, u uint64) []byte {
 func AppendUint(b []byte, u uint) []byte { return AppendUint64(b, uint64(u)) }
 
 // AppendUint8 appends a uint8 to the slice
-func AppendUint8(b []byte, u uint8) []byte { return AppendUint64(b, uint64(u)) }
+func AppendUint8(b []byte, u uint8) []byte {
+	o, n := ensure(b, 2)
+	putMuint8(o[n:], uint8(u))
+	return o
+}
 
 // AppendByte is analogous to AppendUint8
 func AppendByte(b []byte, u byte) []byte { return AppendUint8(b, uint8(u)) }
 
 // AppendUint16 appends a uint16 to the slice
-func AppendUint16(b []byte, u uint16) []byte { return AppendUint64(b, uint64(u)) }
+func AppendUint16(b []byte, u uint16) []byte {
+	o, n := ensure(b, 3)
+	putMuint16(o[n:], uint16(u))
+	return o
+}
 
 // AppendUint32 appends a uint32 to the slice
 func AppendUint32(b []byte, u uint32) []byte {

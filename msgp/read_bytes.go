@@ -622,7 +622,7 @@ func (nbs *NilBitsStack) ReadUint64Bytes(b []byte) (u uint64, o []byte, err erro
 			err = ErrShortBytes
 			return
 		}
-		u = uint64(getMuint32(b)) // decoding issue 4 here.
+		u = uint64(getMuint32(b))
 		o = b[5:]
 		return
 
@@ -1212,16 +1212,36 @@ func (nbs *NilBitsStack) ReadIntfBytes(b []byte) (i interface{}, o []byte, err e
 		i, o, err = nbs.ReadFloat64Bytes(b)
 		return
 
-	case Int8Type, Int16Type, Int32Type, Int64Type:
+	case Int8Type:
+		i, o, err = nbs.ReadInt8Bytes(b)
+		return
+
+	case Int16Type:
+		i, o, err = nbs.ReadInt16Bytes(b)
+		return
+
+	case Int32Type:
+		i, o, err = nbs.ReadInt32Bytes(b)
+		return
+
+	case Int64Type:
 		i, o, err = nbs.ReadInt64Bytes(b)
+		return
+
+	case Uint8Type:
+		i, o, err = nbs.ReadUint8Bytes(b)
+		return
+
+	case Uint16Type:
+		i, o, err = nbs.ReadUint16Bytes(b)
 		return
 
 	case Uint32Type:
 		i, o, err = nbs.ReadUint32Bytes(b)
 		return
 
-	case Uint8Type, Uint16Type, Uint64Type:
-		i, o, err = nbs.ReadUint64Bytes(b) // decode issue 4 here
+	case Uint64Type:
+		i, o, err = nbs.ReadUint64Bytes(b)
 		return
 
 	case BoolType:

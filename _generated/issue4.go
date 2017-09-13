@@ -67,7 +67,7 @@ func issue4EncodeDecode() {
 
 	encodedRow, _ := encodeRow(*newRowIssue4(originalTs, originalData...))
 
-	fmt.Printf("\nencoded: %#v\n", encodedRow)
+	//fmt.Printf("\nencoded: %#v\n", encodedRow)
 
 	row, _ := decodeRowIssue4(encodedRow)
 

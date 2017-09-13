@@ -343,71 +343,58 @@ func (mw *Writer) WriteFloat32(f float32) error {
 
 // WriteInt64 writes an int64 to the writer
 func (mw *Writer) WriteInt64(i int64) error {
-	if i >= 0 {
-		switch {
-		case i <= math.MaxInt8:
-			return mw.push(wfixint(uint8(i)))
-		case i <= math.MaxInt16:
-			return mw.prefix16(mint16, uint16(i))
-		case i <= math.MaxInt32:
-			return mw.prefix32(mint32, uint32(i))
-		default:
-			return mw.prefix64(mint64, uint64(i))
-		}
-	}
-	switch {
-	case i >= -32:
-		return mw.push(wnfixint(int8(i)))
-	case i >= math.MinInt8:
-		return mw.prefix8(mint8, uint8(i))
-	case i >= math.MinInt16:
-		return mw.prefix16(mint16, uint16(i))
-	case i >= math.MinInt32:
-		return mw.prefix32(mint32, uint32(i))
-	default:
-		return mw.prefix64(mint64, uint64(i))
-	}
+	return mw.prefix64(mint64, uint64(i))
 }
 
 // WriteInt8 writes an int8 to the writer
-func (mw *Writer) WriteInt8(i int8) error { return mw.WriteInt64(int64(i)) }
+func (mw *Writer) WriteInt8(i int8) error {
+	switch {
+	case i >= 0:
+		return mw.push(wfixint(uint8(i)))
+	case i >= -32:
+		return mw.push(wnfixint(int8(i)))
+	}
+	return mw.prefix8(mint8, uint8(i))
+}
 
 // WriteInt16 writes an int16 to the writer
-func (mw *Writer) WriteInt16(i int16) error { return mw.WriteInt64(int64(i)) }
+func (mw *Writer) WriteInt16(i int16) error {
+	return mw.prefix16(mint16, uint16(i))
+}
 
 // WriteInt32 writes an int32 to the writer
-func (mw *Writer) WriteInt32(i int32) error { return mw.WriteInt64(int64(i)) }
+func (mw *Writer) WriteInt32(i int32) error {
+	return mw.prefix32(mint32, uint32(i))
+}
 
 // WriteInt writes an int to the writer
 func (mw *Writer) WriteInt(i int) error { return mw.WriteInt64(int64(i)) }
 
 // WriteUint64 writes a uint64 to the writer
 func (mw *Writer) WriteUint64(u uint64) error {
-	switch {
-	case u <= (1<<7)-1:
-		return mw.push(wfixint(uint8(u)))
-	case u <= math.MaxUint8:
-		return mw.prefix8(muint8, uint8(u))
-	case u <= math.MaxUint16:
-		return mw.prefix16(muint16, uint16(u))
-	case u <= math.MaxUint32:
-		return mw.prefix32(muint32, uint32(u))
-	default:
-		return mw.prefix64(muint64, u)
-	}
+	return mw.prefix64(muint64, u)
 }
 
 // WriteByte is analogous to WriteUint8
 func (mw *Writer) WriteByte(u byte) error { return mw.WriteUint8(uint8(u)) }
 
 // WriteUint8 writes a uint8 to the writer
-func (mw *Writer) WriteUint8(u uint8) error { return mw.WriteUint64(uint64(u)) }
+func (mw *Writer) WriteUint8(u uint8) error {
+	if u <= (1<<7)-1 {
+		return mw.push(wfixint(uint8(u)))
+	}
+	return mw.prefix8(muint8, uint8(u))
+}
 
 // WriteUint16 writes a uint16 to the writer
-func (mw *Writer) WriteUint16(u uint16) error { return mw.WriteUint64(uint64(u)) }
+func (mw *Writer) WriteUint16(u uint16) error {
+	return mw.prefix16(muint16, uint16(u))
+}
 
 // WriteUint32 writes a uint32 to the writer
-func (mw *Writer) WriteUint32(u uint32) error { return mw.WriteUint64(uint64(u)) }
+func (mw *Writer) WriteUint32(u uint32) error {
+	return mw.prefix32(muint32, uint32(u))
+}
 
 // WriteUint writes a uint to the writer
 func (mw *Writer) WriteUint(u uint) error { return mw.WriteUint64(uint64(u)) }
@@ -757,8 +744,14 @@ func (mw *Writer) writeVal(v reflect.Value) error {
 	case reflect.Complex64, reflect.Complex128:
 		return mw.WriteComplex128(v.Complex())
 
-	case reflect.Int, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int8:
+	case reflect.Int, reflect.Int64:
 		return mw.WriteInt64(v.Int())
+	case reflect.Int8:
+		return mw.WriteInt8(int8(v.Int()))
+	case reflect.Int16:
+		return mw.WriteInt16(int16(v.Int()))
+	case reflect.Int32:
+		return mw.WriteInt32(int32(v.Int()))
 
 	case reflect.Interface, reflect.Ptr:
 		if v.IsNil() {
@@ -769,8 +762,14 @@ func (mw *Writer) writeVal(v reflect.Value) error {
 	case reflect.Map:
 		return mw.writeMap(v)
 
-	case reflect.Uint, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint8:
+	case reflect.Uint, reflect.Uint64:
 		return mw.WriteUint64(v.Uint())
+	case reflect.Uint8:
+		return mw.WriteUint8(uint8(v.Uint()))
+	case reflect.Uint16:
+		return mw.WriteUint16(uint16(v.Uint()))
+	case reflect.Uint32:
+		return mw.WriteUint32(uint32(v.Uint()))
 
 	case reflect.String:
 		return mw.WriteString(v.String())

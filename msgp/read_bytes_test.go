@@ -2,6 +2,7 @@ package msgp
 
 import (
 	"bytes"
+	"fmt"
 	"reflect"
 	"testing"
 	"time"
@@ -477,7 +478,8 @@ func TestReadIntfBytes(t *testing.T) {
 			t.Errorf("expected 0 bytes left; found %d", len(left))
 		}
 		if !reflect.DeepEqual(v, out) {
-			t.Errorf("ReadIntf(): %v in; %v out", v, out)
+			fmt.Printf("\nbytes = '%#v'\n", buf.Bytes())
+			panic(fmt.Sprintf("ReadIntf(): %v/type=%T in; %v/type=%T out", v, v, out, out))
 		}
 	}
 
