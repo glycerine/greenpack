@@ -9,8 +9,8 @@ func TestNumber(t *testing.T) {
 
 	n := Number{}
 
-	if n.Type() != IntType {
-		t.Errorf("expected zero-value type to be %s; got %s", IntType, n.Type())
+	if n.Type() != Int64Type {
+		t.Errorf("expected zero-value type to be %s; got %s", Int64Type, n.Type())
 	}
 
 	if n.String() != "0" {
@@ -19,7 +19,7 @@ func TestNumber(t *testing.T) {
 
 	n.AsInt(248)
 	i, ok := n.Int()
-	if !ok || i != 248 || n.Type() != IntType || n.String() != "248" {
+	if !ok || i != 248 || n.Type() != Int64Type || n.String() != "248" {
 		t.Errorf("%d in; %d out!", 248, i)
 	}
 
@@ -31,7 +31,7 @@ func TestNumber(t *testing.T) {
 
 	n.AsUint(40000)
 	u, ok := n.Uint()
-	if !ok || u != 40000 || n.Type() != UintType || n.String() != "40000" {
+	if !ok || u != 40000 || n.Type() != Uint64Type || n.String() != "40000" {
 		t.Errorf("%d in; %d out!", 40000, u)
 	}
 

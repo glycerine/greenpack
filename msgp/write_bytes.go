@@ -169,7 +169,12 @@ func AppendByte(b []byte, u byte) []byte { return AppendUint8(b, uint8(u)) }
 func AppendUint16(b []byte, u uint16) []byte { return AppendUint64(b, uint64(u)) }
 
 // AppendUint32 appends a uint32 to the slice
-func AppendUint32(b []byte, u uint32) []byte { return AppendUint64(b, uint64(u)) }
+func AppendUint32(b []byte, u uint32) []byte {
+	o, n := ensure(b, 5)
+	putMuint32(o[n:], uint32(u))
+	return o
+	//return AppendUint64(b, uint64(u))
+}
 
 // AppendBytes appends bytes to the slice as MessagePack 'bin' data
 func AppendBytes(b []byte, bts []byte) []byte {

@@ -1,5 +1,9 @@
 package msgp
 
+import (
+	"fmt"
+)
+
 /* ----------------------------------
 	integer encoding utilities
 	(inline-able)
@@ -73,6 +77,7 @@ func putMuint64(b []byte, u uint64) {
 }
 
 func getMuint64(b []byte) uint64 {
+	fmt.Printf("\n getMuint64 called!\n")
 	return (uint64(b[1]) << 56) | (uint64(b[2]) << 48) |
 		(uint64(b[3]) << 40) | (uint64(b[4]) << 32) |
 		(uint64(b[5]) << 24) | (uint64(b[6]) << 16) |

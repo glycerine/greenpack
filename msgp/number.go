@@ -40,13 +40,13 @@ func (n *Number) AsInt(i int64) {
 		return
 	}
 
-	n.typ = IntType
+	n.typ = Int64Type
 	n.bits = uint64(i)
 }
 
 // AsUint sets the number to a uint64.
 func (n *Number) AsUint(u uint64) {
-	n.typ = UintType
+	n.typ = Uint64Type
 	n.bits = u
 }
 
@@ -68,13 +68,13 @@ func (n *Number) AsFloat64(f float64) {
 // returns whether or not that was the
 // underlying type.
 func (n *Number) Int() (int64, bool) {
-	return int64(n.bits), n.typ == IntType || n.typ == InvalidType
+	return int64(n.bits), n.typ == Int64Type || n.typ == InvalidType
 }
 
 // Uint casts the number as a uint64, and returns
 // whether or not that was the underlying type.
 func (n *Number) Uint() (uint64, bool) {
-	return n.bits, n.typ == UintType
+	return n.bits, n.typ == Uint64Type
 }
 
 // Float casts the number to a float64, and
@@ -95,7 +95,7 @@ func (n *Number) Float() (float64, bool) {
 // Float64Type, Float32Type, UintType, or IntType.
 func (n *Number) Type() Type {
 	if n.typ == InvalidType {
-		return IntType
+		return Int64Type
 	}
 	return n.typ
 }
@@ -121,14 +121,15 @@ func (n *Number) DecodeMsg(r *Reader) error {
 		}
 		n.AsFloat64(f)
 		return nil
-	case IntType:
+
+	case Int8Type, Int16Type, Int32Type, Int64Type:
 		i, err := r.ReadInt64()
 		if err != nil {
 			return err
 		}
 		n.AsInt(i)
 		return nil
-	case UintType:
+	case Uint8Type, Uint16Type, Uint32Type, Uint64Type:
 		u, err := r.ReadUint64()
 		if err != nil {
 			return err
@@ -136,7 +137,7 @@ func (n *Number) DecodeMsg(r *Reader) error {
 		n.AsUint(u)
 		return nil
 	default:
-		return TypeError{Encoded: typ, Method: IntType}
+		return TypeError{Encoded: typ, Method: Int64Type}
 	}
 }
 
@@ -145,14 +146,14 @@ func (n *Number) UnmarshalMsg(b []byte) ([]byte, error) {
 	var nbs *NilBitsStack
 	typ := NextType(b)
 	switch typ {
-	case IntType:
+	case Int8Type, Int16Type, Int32Type, Int64Type:
 		i, o, err := nbs.ReadInt64Bytes(b)
 		if err != nil {
 			return b, err
 		}
 		n.AsInt(i)
 		return o, nil
-	case UintType:
+	case Uint8Type, Uint16Type, Uint32Type, Uint64Type:
 		u, o, err := nbs.ReadUint64Bytes(b)
 		if err != nil {
 			return b, err
@@ -174,16 +175,16 @@ func (n *Number) UnmarshalMsg(b []byte) ([]byte, error) {
 		n.AsFloat32(f)
 		return o, nil
 	default:
-		return b, TypeError{Method: IntType, Encoded: typ}
+		return b, TypeError{Method: Int64Type, Encoded: typ}
 	}
 }
 
 // MarshalMsg implements msgp.Marshaler
 func (n *Number) MarshalMsg(b []byte) ([]byte, error) {
 	switch n.typ {
-	case IntType:
+	case Int8Type, Int16Type, Int32Type, Int64Type:
 		return AppendInt64(b, int64(n.bits)), nil
-	case UintType:
+	case Uint8Type, Uint16Type, Uint32Type, Uint64Type:
 		return AppendUint64(b, uint64(n.bits)), nil
 	case Float64Type:
 		return AppendFloat64(b, math.Float64frombits(n.bits)), nil
@@ -197,9 +198,9 @@ func (n *Number) MarshalMsg(b []byte) ([]byte, error) {
 // EncodeMsg implements msgp.Encodable
 func (n *Number) EncodeMsg(w *Writer) error {
 	switch n.typ {
-	case IntType:
+	case Int8Type, Int16Type, Int32Type, Int64Type:
 		return w.WriteInt64(int64(n.bits))
-	case UintType:
+	case Uint8Type, Uint16Type, Uint32Type, Uint64Type:
 		return w.WriteUint64(n.bits)
 	case Float64Type:
 		return w.WriteFloat64(math.Float64frombits(n.bits))
@@ -217,9 +218,9 @@ func (n *Number) Msgsize() int {
 		return Float32Size
 	case Float64Type:
 		return Float64Size
-	case IntType:
+	case Int8Type, Int16Type, Int32Type, Int64Type:
 		return Int64Size
-	case UintType:
+	case Uint8Type, Uint16Type, Uint32Type, Uint64Type:
 		return Uint64Size
 	default:
 		return 1 // fixint(0)
@@ -237,10 +238,10 @@ func (n *Number) MarshalJSON() ([]byte, error) {
 	case Float32Type, Float64Type:
 		f, _ := n.Float()
 		return strconv.AppendFloat(out, f, 'f', -1, 64), nil
-	case IntType:
+	case Int8Type, Int16Type, Int32Type, Int64Type:
 		i, _ := n.Int()
 		return strconv.AppendInt(out, i, 10), nil
-	case UintType:
+	case Uint8Type, Uint16Type, Uint32Type, Uint64Type:
 		u, _ := n.Uint()
 		return strconv.AppendUint(out, u, 10), nil
 	default:
@@ -256,10 +257,10 @@ func (n *Number) String() string {
 	case Float32Type, Float64Type:
 		f, _ := n.Float()
 		return strconv.FormatFloat(f, 'f', -1, 64)
-	case IntType:
+	case Int8Type, Int16Type, Int32Type, Int64Type:
 		i, _ := n.Int()
 		return strconv.FormatInt(i, 10)
-	case UintType:
+	case Uint8Type, Uint16Type, Uint32Type, Uint64Type:
 		u, _ := n.Uint()
 		return strconv.FormatUint(u, 10)
 	default:

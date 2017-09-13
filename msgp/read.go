@@ -57,8 +57,14 @@ const (
 	Float64Type
 	Float32Type
 	BoolType
-	IntType
-	UintType
+	Int8Type
+	Int16Type
+	Int32Type
+	Int64Type
+	Uint8Type
+	Uint16Type
+	Uint32Type
+	Uint64Type
 	NilType
 	ExtensionType
 
@@ -89,9 +95,9 @@ func (t Type) String() string {
 		return "float32"
 	case BoolType:
 		return "bool"
-	case UintType:
+	case Uint8Type, Uint16Type, Uint32Type, Uint64Type:
 		return "uint"
-	case IntType:
+	case Int8Type, Int16Type, Int32Type, Int64Type:
 		return "int"
 	case ExtensionType:
 		return "ext"
@@ -705,7 +711,7 @@ func (m *Reader) ReadInt64() (i int64, err error) {
 		return
 
 	default:
-		err = badPrefix(IntType, lead)
+		err = badPrefix(Int64Type, lead)
 		return
 	}
 }
@@ -823,7 +829,7 @@ func (m *Reader) ReadUint64() (u uint64, err error) {
 		return
 
 	default:
-		err = badPrefix(UintType, lead)
+		err = badPrefix(Uint64Type, lead)
 		return
 
 	}
@@ -1346,11 +1352,11 @@ func (m *Reader) ReadIntf() (i interface{}, err error) {
 		i, err = m.ReadBool()
 		return
 
-	case IntType:
+	case Int8Type, Int16Type, Int32Type, Int64Type:
 		i, err = m.ReadInt64()
 		return
 
-	case UintType:
+	case Uint8Type, Uint16Type, Uint32Type, Uint64Type:
 		i, err = m.ReadUint64()
 		return
 

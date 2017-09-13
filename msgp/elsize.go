@@ -17,14 +17,14 @@ var sizes = [256]bytespec{
 	mext32:    {size: 6, extra: extra32, typ: ExtensionType},
 	mfloat32:  {size: 5, extra: constsize, typ: Float32Type},
 	mfloat64:  {size: 9, extra: constsize, typ: Float64Type},
-	muint8:    {size: 2, extra: constsize, typ: UintType},
-	muint16:   {size: 3, extra: constsize, typ: UintType},
-	muint32:   {size: 5, extra: constsize, typ: UintType},
-	muint64:   {size: 9, extra: constsize, typ: UintType},
-	mint8:     {size: 2, extra: constsize, typ: IntType},
-	mint16:    {size: 3, extra: constsize, typ: IntType},
-	mint32:    {size: 5, extra: constsize, typ: IntType},
-	mint64:    {size: 9, extra: constsize, typ: IntType},
+	muint8:    {size: 2, extra: constsize, typ: Uint8Type},
+	muint16:   {size: 3, extra: constsize, typ: Uint16Type},
+	muint32:   {size: 5, extra: constsize, typ: Uint32Type},
+	muint64:   {size: 9, extra: constsize, typ: Uint64Type},
+	mint8:     {size: 2, extra: constsize, typ: Int8Type},
+	mint16:    {size: 3, extra: constsize, typ: Int16Type},
+	mint32:    {size: 5, extra: constsize, typ: Int32Type},
+	mint64:    {size: 9, extra: constsize, typ: Int64Type},
 	mfixext1:  {size: 3, extra: constsize, typ: ExtensionType},
 	mfixext2:  {size: 4, extra: constsize, typ: ExtensionType},
 	mfixext4:  {size: 6, extra: constsize, typ: ExtensionType},
@@ -44,12 +44,12 @@ func init() {
 
 	// fixint
 	for i := mfixint; i < 0x80; i++ {
-		sizes[i] = bytespec{size: 1, extra: constsize, typ: IntType}
+		sizes[i] = bytespec{size: 1, extra: constsize, typ: Int8Type}
 	}
 
 	// nfixint
 	for i := uint16(mnfixint); i < 0x100; i++ {
-		sizes[uint8(i)] = bytespec{size: 1, extra: constsize, typ: IntType}
+		sizes[uint8(i)] = bytespec{size: 1, extra: constsize, typ: Int8Type}
 	}
 
 	// fixstr gets constsize,
