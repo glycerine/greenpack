@@ -4,6 +4,8 @@ greenpack: a serialization convention for msgpack2; adds field versioning and ty
 `greenpack` is a simple convention for naming fields in `msgpack` data: we take the
 original field name and append a version number and basic type indicator.
 
+* See also the fork/cousin project https://github.com/glycerine/truepack if you encode/decode naked ints (not inside a struct) and want type info preserved.
+
 # the main idea
 
 ```
