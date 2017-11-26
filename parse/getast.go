@@ -731,7 +731,7 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 
 		// support int64/int32/int keys
 		if k, ok := e.Key.(*ast.Ident); ok {
-			in, err := fs.parseExpr(e.Value, false)
+			in, err := fs.parseExpr(e.Value, isIface)
 			if err != nil {
 				fatalf(err.Error())
 			}
@@ -853,7 +853,7 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 		return &gen.Slice{Els: els}, nil
 
 	case *ast.StarExpr:
-		v, err := fs.parseExpr(e.X, false)
+		v, err := fs.parseExpr(e.X, isIface)
 		if err != nil {
 			return nil, err
 		}

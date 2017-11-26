@@ -243,7 +243,7 @@ func Ident(id string, isIface bool) *BaseElem {
 	if ok {
 		return &BaseElem{Value: p, isIface: isIface}
 	}
-	be := &BaseElem{Value: IDENT}
+	be := &BaseElem{Value: IDENT, isIface: isIface}
 	be.Alias(id)
 	return be
 }
