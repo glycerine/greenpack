@@ -399,7 +399,7 @@ type Slice struct {
 }
 
 func (s *Slice) IsInterface() bool {
-	return false
+	return s.Els.IsInterface()
 }
 
 func (a *Slice) TypeClue() string {

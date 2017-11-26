@@ -509,6 +509,8 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		body := alltags.Get("msg")
 		tags := strings.Split(body, ",")
 
+		fmt.Printf("\n\n DEBUG: tags='%#v', body='%#v', alltags='%#v'\n", tags, body, alltags)
+
 		if len(tags) == 2 && tags[1] == "extension" {
 			extension = true
 		}
@@ -525,6 +527,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 			showzero = true
 		}
 		if len(tags) > 1 && anyMatches(tags[1:], "iface") {
+			fmt.Printf("\n\n DEBUG: iface tag found, for '%s'\n", f.Names[0])
 			isIface = true
 		}
 
