@@ -275,7 +275,28 @@ func (d *decodeGen) gBase(b *BaseElem) {
 		}
 	case IDENT:
 		if !b.IsInInterfaceSlice() {
-			d.p.printf("\nerr = %s.%sDecodeMsg(dc) // from IDENT in decode.go:280. IsInInterfaceSlice: %v, isInterface: %v", vname, d.cfg.MethodPrefix, b.IsInInterfaceSlice(), b.IsInterface())
+			if b.IsInterface() {
+				targ, conc, fact := gensym(), gensym(), gensym()
+				d.p.printf(`
+	conc_%s := dc.NextStructName()
+	if conc_%s != "" {
+		if cfac_%s, cfacOK_%s := interface{}(z).(msgp.ConcreteFactory); cfacOK_%s {
+			targ_%s := cfac_%s.NewValueAsInterface(conc_%s).(%s)
+			err = targ_%s.DecodeMsg(dc)
+			if err != nil {
+				return
+			}
+            %s = targ_%s
+			continue
+		}
+	} else {
+		err = %s.%sDecodeMsg(dc)  // vname='%s'; d.cfg.MethodPrefix='%s'; b='%#v'
+	}
+`, conc, conc, fact, fact, fact, targ, fact, conc, b.BaseType(), targ, vname, targ, vname, d.cfg.MethodPrefix, vname, d.cfg.MethodPrefix, b)
+
+			} else {
+				d.p.printf("\nerr = %s.%sDecodeMsg(dc) // from IDENT in decode.go:280. IsInInterfaceSlice: %v, isInterface: %v", vname, d.cfg.MethodPrefix, b.IsInInterfaceSlice(), b.IsInterface())
+			}
 		}
 	case Ext:
 		d.p.printf("\n if !dc.IsNil() {")
