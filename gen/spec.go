@@ -486,7 +486,7 @@ func (p *printer) unmarshalRangeBlock(idx string, iter string, t traversal, inne
               }
         `, iter, idx, target)
 
-		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from unmarshalRangeBlock in spec.go:486. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
+		p.printf("\nbts, err = %s[%s].UnmarshalMsg(bts) // from unmarshalRangeBlock in spec.go:486. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
 
 		next(t, inner)
 	} else {

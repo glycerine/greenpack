@@ -209,8 +209,10 @@ func (u *unmarshalGen) gBase(b *BaseElem) {
 		u.p.print(errcheck)
 		u.p.closeblock()
 	case IDENT:
-		u.p.printf("\n  bts, err = %s.%sUnmarshalMsg(bts);", lowered, u.cfg.MethodPrefix)
-		u.p.print(errcheck)
+		if !b.IsInInterfaceSlice() {
+			u.p.printf("\n  bts, err = %s.%sUnmarshalMsg(bts); // unmarshal.go:213 ; b.IsInInterfaceSlice()=%v", lowered, u.cfg.MethodPrefix, b.IsInInterfaceSlice())
+			//u.p.print(errcheck)
+		}
 	default:
 		//		u.p.printf("\n if nbs.AlwaysNil || msgp.IsNil(bts) { if !nbs.AlwaysNil { bts=bts[1:]}\n   %s \n} else {  %s, bts, err = nbs.Read%sBytes(bts)\n", b.ZeroLiteral(refname), refname, b.BaseName())
 		u.p.printf("\n %s, bts, err = nbs.Read%sBytes(bts)\n", refname, b.BaseName())

@@ -275,7 +275,7 @@ func (d *decodeGen) gBase(b *BaseElem) {
 		}
 	case IDENT:
 		if !b.IsInInterfaceSlice() {
-			d.p.printf("\nerr = %s.%sDecodeMsg(dc) // from IDENT in decode.go:280. IsInInterfaceSlice: %v", vname, d.cfg.MethodPrefix, b.IsInInterfaceSlice())
+			d.p.printf("\nerr = %s.%sDecodeMsg(dc) // from IDENT in decode.go:280. IsInInterfaceSlice: %v, isInterface: %v", vname, d.cfg.MethodPrefix, b.IsInInterfaceSlice(), b.IsInterface())
 		}
 	case Ext:
 		d.p.printf("\n if !dc.IsNil() {")

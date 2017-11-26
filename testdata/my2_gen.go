@@ -171,7 +171,7 @@ doneWithStruct5zgensym_72ba5d454ae3d9dd_6:
 					if z.Setm[zgensym_72ba5d454ae3d9dd_4] == nil {
 						z.Setm[zgensym_72ba5d454ae3d9dd_4] = new(inn)
 					}
-					err = z.Setm[zgensym_72ba5d454ae3d9dd_4].DecodeMsg(dc) // from IDENT in decode.go:280. IsInInterfaceSlice: false
+					err = z.Setm[zgensym_72ba5d454ae3d9dd_4].DecodeMsg(dc) // from IDENT in decode.go:280. IsInInterfaceSlice: false, isInterface: false
 					if err != nil {
 						return
 					}
@@ -611,10 +611,7 @@ doneWithStruct12zgensym_72ba5d454ae3d9dd_13:
 							if z.Setm[zgensym_72ba5d454ae3d9dd_4] == nil {
 								z.Setm[zgensym_72ba5d454ae3d9dd_4] = new(inn)
 							}
-							bts, err = z.Setm[zgensym_72ba5d454ae3d9dd_4].UnmarshalMsg(bts)
-							if err != nil {
-								return
-							}
+							bts, err = z.Setm[zgensym_72ba5d454ae3d9dd_4].UnmarshalMsg(bts) // unmarshal.go:213 ; b.IsInInterfaceSlice()=false
 							if err != nil {
 								return
 							}
@@ -1174,7 +1171,7 @@ doneWithStruct29zgensym_72ba5d454ae3d9dd_30:
 					if zgensym_72ba5d454ae3d9dd_28 == nil {
 						zgensym_72ba5d454ae3d9dd_28 = new(Tr)
 					}
-					err = zgensym_72ba5d454ae3d9dd_28.DecodeMsg(dc) // from IDENT in decode.go:280. IsInInterfaceSlice: false
+					err = zgensym_72ba5d454ae3d9dd_28.DecodeMsg(dc) // from IDENT in decode.go:280. IsInInterfaceSlice: false, isInterface: false
 					if err != nil {
 						return
 					}
@@ -1482,10 +1479,7 @@ doneWithStruct34zgensym_72ba5d454ae3d9dd_35:
 							if zgensym_72ba5d454ae3d9dd_28 == nil {
 								zgensym_72ba5d454ae3d9dd_28 = new(Tr)
 							}
-							bts, err = zgensym_72ba5d454ae3d9dd_28.UnmarshalMsg(bts)
-							if err != nil {
-								return
-							}
+							bts, err = zgensym_72ba5d454ae3d9dd_28.UnmarshalMsg(bts) // unmarshal.go:213 ; b.IsInInterfaceSlice()=false
 							if err != nil {
 								return
 							}
