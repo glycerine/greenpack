@@ -230,7 +230,7 @@ func (u *unmarshalGen) gBase(b *BaseElem) {
 	}
     bts, err = %s.%sUnmarshalMsg(bts)
 	
-`, conc, conc, conc, fact, fact, fact, targ, fact, conc, b.BaseType(), targ, vname, targ, vname, u.cfg.MethodPrefix, vname, u.cfg.MethodPrefix, b) // vname='%s'; d.cfg.MethodPrefix='%s'; b='%#v'
+`, conc, conc, conc, fact, fact, fact, targ, fact, conc, b.BaseType(), targ, vname, targ, vname, u.cfg.MethodPrefix)
 
 			} else {
 
