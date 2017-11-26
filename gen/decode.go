@@ -289,10 +289,10 @@ func (d *decodeGen) gBase(b *BaseElem) {
             %s = targ_%s
 			continue
 		}
-	} else {
-		err = %s.%sDecodeMsg(dc)  // vname='%s'; d.cfg.MethodPrefix='%s'; b='%#v'
 	}
-`, conc, conc, fact, fact, fact, targ, fact, conc, b.BaseType(), targ, vname, targ, vname, d.cfg.MethodPrefix, vname, d.cfg.MethodPrefix, b)
+	err = %s.%sDecodeMsg(dc)
+
+`, conc, conc, fact, fact, fact, targ, fact, conc, b.BaseType(), targ, vname, targ, vname, d.cfg.MethodPrefix)
 
 			} else {
 				d.p.printf("\nerr = %s.%sDecodeMsg(dc) // from IDENT in decode.go:280. IsInInterfaceSlice: %v, isInterface: %v", vname, d.cfg.MethodPrefix, b.IsInInterfaceSlice(), b.IsInterface())
