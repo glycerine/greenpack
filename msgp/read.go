@@ -259,12 +259,45 @@ func (m *Reader) NextStructName() string {
 	if ty != MapType {
 		return ""
 	}
-	skip := 2
-	p, err := m.R.Peek(skip)
+
+	// map header can be of varying size
+	hdsz := 1
+	var p []byte
+	var lead byte
+	p, err = m.R.Peek(2)
 	if err != nil {
 		return ""
 	}
-	lead := p[1]
+	lead = p[0]
+	if isfixmap(lead) {
+		hdsz = 1
+	} else {
+		switch lead {
+		case mmap16:
+			hdsz = 3
+		case mmap32:
+			hdsz = 5
+		default:
+			//err = badPrefix(MapType, lead)
+			return ""
+		}
+	}
+
+	// now we've got the map header out of the
+	// way in hdsz bytes
+	p, err = m.R.Peek(hdsz + 3)
+	if err != nil {
+		return ""
+	}
+	keystart := p[hdsz:]
+	if keystart[0] != 0xa1 || keystart[1] != 0x40 {
+		return "" // not the "@" key with value the struct name
+	}
+
+	valstart := hdsz + 2
+	valTypeBytes := 1
+	skip := 1
+	lead = p[valstart]
 	var read int
 	if isfixstr(lead) {
 		// lead is a fixstr, good
@@ -272,26 +305,29 @@ func (m *Reader) NextStructName() string {
 	} else {
 		switch lead {
 		case mstr8, mbin8:
-			skip = 3
+			valTypeBytes = 2
+			skip = valstart + valTypeBytes
 			p, err = m.R.Peek(skip)
 			if err != nil {
 				return ""
 			}
-			read = int(p[2])
+			read = int(p[valstart+1])
 		case mstr16, mbin16:
-			skip = 4
+			valTypeBytes = 3
+			skip = valstart + valTypeBytes
 			p, err = m.R.Peek(skip)
 			if err != nil {
 				return ""
 			}
-			read = int(big.Uint16(p[2:]))
+			read = int(big.Uint16(p[valstart+1:]))
 		case mstr32, mbin32:
-			skip = 6
+			valTypeBytes = 5
+			skip = valstart + valTypeBytes
 			p, err = m.R.Peek(skip)
 			if err != nil {
 				return ""
 			}
-			read = int(big.Uint32(p[2:]))
+			read = int(big.Uint32(p[valstart+1:]))
 		default:
 			return "" // not a string
 		}
