@@ -242,7 +242,7 @@ func (f *FileSet) process() error {
 parse:
 	for name, def := range f.Specs {
 		pushstate(name)
-		el, err := f.parseExpr(def)
+		el, err := f.parseExpr(def, false)
 		if err != nil {
 			return err
 		}
@@ -509,8 +509,6 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		body := alltags.Get("msg")
 		tags := strings.Split(body, ",")
 
-		fmt.Printf("\n\n DEBUG: tags='%#v', body='%#v', alltags='%#v'\n", tags, body, alltags)
-
 		if len(tags) == 2 && tags[1] == "extension" {
 			extension = true
 		}
@@ -527,7 +525,6 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 			showzero = true
 		}
 		if len(tags) > 1 && anyMatches(tags[1:], "iface") {
-			fmt.Printf("\n\n DEBUG: iface tag found, for '%s'\n", f.Names[0])
 			isIface = true
 		}
 
@@ -586,7 +583,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 
 	}
 
-	ex, err := fs.parseExpr(f.Type)
+	ex, err := fs.parseExpr(f.Type, isIface)
 	if err != nil {
 		fatalf(err.Error())
 		return nil, err
@@ -720,12 +717,12 @@ func stringify(e ast.Expr) string {
 // - *ast.StructType (struct {})
 // - *ast.SelectorExpr (a.B)
 // - *ast.InterfaceType (interface {})
-func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
+func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 	switch e := e.(type) {
 
 	case *ast.MapType:
 		if k, ok := e.Key.(*ast.Ident); ok && k.Name == "string" {
-			in, err := fs.parseExpr(e.Value)
+			in, err := fs.parseExpr(e.Value, false)
 			panicOn(err)
 			if in != nil {
 				return &gen.Map{Value: in, KeyTyp: "String", KeyDeclTyp: "string"}, nil
@@ -734,7 +731,7 @@ func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
 
 		// support int64/int32/int keys
 		if k, ok := e.Key.(*ast.Ident); ok {
-			in, err := fs.parseExpr(e.Value)
+			in, err := fs.parseExpr(e.Value, false)
 			if err != nil {
 				fatalf(err.Error())
 			}
@@ -753,16 +750,13 @@ func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
 		return nil, nil
 
 	case *ast.Ident:
-		var isIface bool
-		if e.Obj != nil && fs != nil && fs.PackageInfo != nil &&
+		if !isIface && e.Obj != nil && fs != nil && fs.PackageInfo != nil &&
 			len(fs.PackageInfo.Info.Types) > 0 {
 
 			if tv, ok := fs.PackageInfo.Info.Types[e]; ok {
 				isIface = types.IsInterface(tv.Type)
 			}
 		}
-		fmt.Printf("\nDEBUG-HARDCODING isIface to true\n")
-		isIface = true
 		b := gen.Ident(e.Name, isIface)
 
 		// work to resove this expression
@@ -786,7 +780,7 @@ func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
 
 		// return early if we don't know
 		// what the slice element type is
-		els, err := fs.parseExpr(e.Elt)
+		els, err := fs.parseExpr(e.Elt, isIface)
 		if err != nil {
 			return nil, err
 		}
@@ -859,7 +853,7 @@ func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
 		return &gen.Slice{Els: els}, nil
 
 	case *ast.StarExpr:
-		v, err := fs.parseExpr(e.X)
+		v, err := fs.parseExpr(e.X, false)
 		if err != nil {
 			return nil, err
 		}
@@ -885,9 +879,7 @@ func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
 		return nil, nil
 
 	case *ast.SelectorExpr:
-		//return gen.Ident(stringify(e)), nil
-		var isIface bool
-		if e.Sel.Obj != nil && fs != nil && fs.PackageInfo != nil &&
+		if !isIface && e.Sel.Obj != nil && fs != nil && fs.PackageInfo != nil &&
 			len(fs.PackageInfo.Info.Types) > 0 {
 
 			if tv, ok := fs.PackageInfo.Info.Types[e]; ok {
