@@ -21,7 +21,8 @@ type GreenConfig struct {
 	SkipZidClue bool
 	Msgpack2    bool // -msgpack2 is an alias for -omit-clue
 
-	ShowVersion bool
+	ShowVersion           bool
+	NoEmbeddedStructNames bool
 }
 
 // call DefineFlags before myflags.Parse()
@@ -40,6 +41,7 @@ func (c *GreenConfig) DefineFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&c.SkipZidClue, "omit-clue", false, "don't append zid and clue to field name (makes things just like msgpack2 traditional encoding, without version + type clue)")
 	fs.BoolVar(&c.Msgpack2, "msgpack2", false, "(alias for -omit-clue) don't append zid and clue to field name (makes things just like msgpack2 traditional encoding, without version + type clue)")
 	fs.BoolVar(&c.ShowVersion, "version", false, "print version info and exit")
+	fs.BoolVar(&c.NoEmbeddedStructNames, "no-structnames-onwire", false, "don't embed the name of the struct in the serialized greenpack. Skipping the embedded struct names saves time and space and matches what protocol buffers/thrift/capnproto/msgpack do. You must know the type on the wire you expect; or embed a type tag in one universal wrapper struct. Embedded struct names are a feature of GreenPack to help with dynamic language bindings and unmarshalling interface types. Given an interface, without the concrete type, we don't know what to unmarshal.")
 }
 
 // call c.ValidateConfig() after myflags.Parse()

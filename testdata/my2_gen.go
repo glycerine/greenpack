@@ -245,7 +245,17 @@ func (z *Tr) EncodeMsg(en *msgp.Writer) (err error) {
 	fieldsInUse_zgensym_72ba5d454ae3d9dd_11 := z.fieldsNotEmpty(empty_zgensym_72ba5d454ae3d9dd_10[:])
 
 	// map header
-	err = en.WriteMapHeader(fieldsInUse_zgensym_72ba5d454ae3d9dd_11)
+	err = en.WriteMapHeader(fieldsInUse_zgensym_72ba5d454ae3d9dd_11 + 1)
+	if err != nil {
+		return err
+	}
+
+	// runtime struct type identification for 'Tr'
+	err = en.Append(0xa1, 0x40)
+	if err != nil {
+		return err
+	}
+	err = en.WriteStringFromBytes([]byte{0x54, 0x72})
 	if err != nil {
 		return err
 	}
@@ -822,7 +832,17 @@ func (z *inn) EncodeMsg(en *msgp.Writer) (err error) {
 	fieldsInUse_zgensym_72ba5d454ae3d9dd_23 := z.fieldsNotEmpty(empty_zgensym_72ba5d454ae3d9dd_22[:])
 
 	// map header
-	err = en.WriteMapHeader(fieldsInUse_zgensym_72ba5d454ae3d9dd_23)
+	err = en.WriteMapHeader(fieldsInUse_zgensym_72ba5d454ae3d9dd_23 + 1)
+	if err != nil {
+		return err
+	}
+
+	// runtime struct type identification for 'inn'
+	err = en.Append(0xa1, 0x40)
+	if err != nil {
+		return err
+	}
+	err = en.WriteStringFromBytes([]byte{0x69, 0x6e, 0x6e})
 	if err != nil {
 		return err
 	}
@@ -1233,7 +1253,17 @@ func (z *u) EncodeMsg(en *msgp.Writer) (err error) {
 	fieldsInUse_zgensym_72ba5d454ae3d9dd_33 := z.fieldsNotEmpty(empty_zgensym_72ba5d454ae3d9dd_32[:])
 
 	// map header
-	err = en.WriteMapHeader(fieldsInUse_zgensym_72ba5d454ae3d9dd_33)
+	err = en.WriteMapHeader(fieldsInUse_zgensym_72ba5d454ae3d9dd_33 + 1)
+	if err != nil {
+		return err
+	}
+
+	// runtime struct type identification for 'u'
+	err = en.Append(0xa1, 0x40)
+	if err != nil {
+		return err
+	}
+	err = en.WriteStringFromBytes([]byte{0x75})
 	if err != nil {
 		return err
 	}

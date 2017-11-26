@@ -128,7 +128,14 @@ func (e *encodeGen) structmap(s *Struct) {
 		e.p.printf("%s := %s.fieldsNotEmpty(%s[:])\n",
 			inUse, s.vname, empty)
 		e.p.printf("\n// map header\n")
-		e.p.printf("	err = en.WriteMapHeader(%s)\n", inUse)
+
+		if !e.cfg.NoEmbeddedStructNames {
+			// +1 for the -1:structName type-identifier.
+			e.p.printf("	err = en.WriteMapHeader(%s+1)\n", inUse)
+		} else {
+			e.p.printf("	err = en.WriteMapHeader(%s)\n", inUse)
+		}
+
 		e.p.printf("	if err != nil {\n")
 		e.p.printf("		return err\n}\n")
 	} else {
@@ -136,6 +143,23 @@ func (e *encodeGen) structmap(s *Struct) {
 		e.p.printf("\n// map header, size %d", nfields)
 		e.Fuse(data)
 		e.fuseHook()
+	}
+
+	if !e.cfg.NoEmbeddedStructNames {
+		// record the struct name under integer key -1
+		recv := s.TypeName() // imutMethodReceiver(s)
+		e.p.printf("\n// runtime struct type identification for '%s'\n", recv)
+		hexname := ""
+		for i := range recv {
+			hexname += fmt.Sprintf("0x%x,", recv[i])
+		}
+		e.p.printf("err = en.Append(0xa1, 0x40)\n") // "@" sign key, value has type name
+		e.p.printf("	if err != nil {\n")
+		e.p.printf("		return err\n}\n")
+
+		e.p.printf("err = en.WriteStringFromBytes([]byte{%s})\n", hexname)
+		e.p.printf("	if err != nil {\n")
+		e.p.printf("		return err\n}\n")
 	}
 
 	for i := range s.Fields {

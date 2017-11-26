@@ -138,7 +138,17 @@ func (z OmitClueTestStruct) EncodeMsg(en *msgp.Writer) (err error) {
 	fieldsInUse_zgensym_cc028b3bcf246c08_3 := z.fieldsNotEmpty(empty_zgensym_cc028b3bcf246c08_2[:])
 
 	// map header
-	err = en.WriteMapHeader(fieldsInUse_zgensym_cc028b3bcf246c08_3)
+	err = en.WriteMapHeader(fieldsInUse_zgensym_cc028b3bcf246c08_3 + 1)
+	if err != nil {
+		return err
+	}
+
+	// runtime struct type identification for 'OmitClueTestStruct'
+	err = en.Append(0xa1, 0x40)
+	if err != nil {
+		return err
+	}
+	err = en.WriteStringFromBytes([]byte{0x4f, 0x6d, 0x69, 0x74, 0x43, 0x6c, 0x75, 0x65, 0x54, 0x65, 0x73, 0x74, 0x53, 0x74, 0x72, 0x75, 0x63, 0x74})
 	if err != nil {
 		return err
 	}

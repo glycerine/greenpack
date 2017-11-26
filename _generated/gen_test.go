@@ -151,8 +151,8 @@ func Test11111HonorDefaultOmitEmpty(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(buf.Bytes()) != 1 {
-		t.Fatalf("should have encoding of 1 byte since omitempty is on by default")
+	if len(buf.Bytes()) != 18 {
+		t.Fatalf("should have encoding of 18 bytes since omitempty is on by default, had %v", len(buf.Bytes()))
 	}
 
 	tnew := new(SimpleTestType)

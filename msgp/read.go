@@ -251,7 +251,7 @@ func (m *Reader) BufferSize() int { return m.R.BufferSize() }
 // struct (map) for its (-1: name) key-value pair, and returns the name
 // or empty string if not found. Also empty string if not
 // a map type.
-func (m *Reader) NextStructName(flds []string) string {
+func (m *Reader) NextStructName() string {
 	ty, err := m.NextType()
 	if err != nil {
 		return ""
