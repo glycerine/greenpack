@@ -340,7 +340,7 @@ func (m *Reader) NextStructName() string {
 	if err != nil {
 		return ""
 	}
-
+	//_, _ = m.R.Skip(skip + read)
 	return string(p[skip:])
 }
 
