@@ -761,7 +761,8 @@ func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
 				isIface = types.IsInterface(tv.Type)
 			}
 		}
-
+		fmt.Printf("\nDEBUG-HARDCODING isIface to true\n")
+		isIface = true
 		b := gen.Ident(e.Name, isIface)
 
 		// work to resove this expression
