@@ -409,7 +409,7 @@ func (z *Tr) MarshalMsg(b []byte) (o []byte, err error) {
 			if z.Setm[zgensym_72ba5d454ae3d9dd_4] == nil {
 				o = msgp.AppendNil(o)
 			} else {
-				o, err = z.Setm[zgensym_72ba5d454ae3d9dd_4].MarshalMsg(o)
+				o, err = z.Setm[zgensym_72ba5d454ae3d9dd_4].MarshalMsg(o) // not is.iface, gen/marshal.go:243
 				if err != nil {
 					return
 				}
@@ -1343,7 +1343,7 @@ func (z *u) MarshalMsg(b []byte) (o []byte, err error) {
 			if zgensym_72ba5d454ae3d9dd_28 == nil {
 				o = msgp.AppendNil(o)
 			} else {
-				o, err = zgensym_72ba5d454ae3d9dd_28.MarshalMsg(o)
+				o, err = zgensym_72ba5d454ae3d9dd_28.MarshalMsg(o) // not is.iface, gen/marshal.go:243
 				if err != nil {
 					return
 				}

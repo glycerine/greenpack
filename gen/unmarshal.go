@@ -228,6 +228,10 @@ func (u *unmarshalGen) gBase(b *BaseElem) {
 			continue
 		}
 	}
+    if msgp.IsNil(bts) {
+       bts = bts[1:]
+       continue
+    }
     bts, err = %s.%sUnmarshalMsg(bts)
 	
 `, conc, conc, conc, fact, fact, fact, targ, fact, conc, b.BaseType(), targ, vname, targ, vname, u.cfg.MethodPrefix)

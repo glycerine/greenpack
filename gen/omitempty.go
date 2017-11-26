@@ -51,6 +51,10 @@ func (s *omitEmpty) gBase(b *BaseElem) {
 		return
 	}
 
+	if b.isIface {
+		s.p.printf("%s", IsNilInterface(b.Varname()))
+		return
+	}
 	switch b.Value {
 	case Bytes:
 		s.p.printf("%s", IsLenZero(b.Varname()))
@@ -77,6 +81,11 @@ func IsEmptyNumber(f string) string {
 
 func IsLenZero(f string) string {
 	return fmt.Sprintf("(len(%s) == 0) // string, omitempty\n",
+		f)
+}
+
+func IsNilInterface(f string) string {
+	return fmt.Sprintf("(%s == nil) // interface, omitempty\n",
 		f)
 }
 

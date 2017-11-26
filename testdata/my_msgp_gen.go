@@ -280,7 +280,7 @@ func (z *Big) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		o = append(o, 0xaf, 0x53, 0x6c, 0x69, 0x63, 0x65, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x30, 0x5f, 0x73, 0x6c, 0x63)
 		o = msgp.AppendArrayHeader(o, uint32(len(z.Slice)))
 		for zgensym_58b5c2649cecee38_2 := range z.Slice {
-			o, err = z.Slice[zgensym_58b5c2649cecee38_2].MSGPMarshalMsg(o)
+			o, err = z.Slice[zgensym_58b5c2649cecee38_2].MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 			if err != nil {
 				return
 			}
@@ -296,7 +296,7 @@ func (z *Big) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 			if zgensym_58b5c2649cecee38_4 == nil {
 				o = msgp.AppendNil(o)
 			} else {
-				o, err = zgensym_58b5c2649cecee38_4.MSGPMarshalMsg(o)
+				o, err = zgensym_58b5c2649cecee38_4.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 				if err != nil {
 					return
 				}
@@ -310,7 +310,7 @@ func (z *Big) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		if z.Myptr == nil {
 			o = msgp.AppendNil(o)
 		} else {
-			o, err = z.Myptr.MSGPMarshalMsg(o)
+			o, err = z.Myptr.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 			if err != nil {
 				return
 			}
@@ -713,7 +713,7 @@ func (z *S2) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		if z.MyTree == nil {
 			o = msgp.AppendNil(o)
 		} else {
-			o, err = z.MyTree.MSGPMarshalMsg(o)
+			o, err = z.MyTree.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 			if err != nil {
 				return
 			}
@@ -1128,7 +1128,7 @@ func (z *Tree) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		o = append(o, 0xae, 0x43, 0x68, 0x6c, 0x64, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x30, 0x5f, 0x73, 0x6c, 0x63)
 		o = msgp.AppendArrayHeader(o, uint32(len(z.Chld)))
 		for zgensym_58b5c2649cecee38_22 := range z.Chld {
-			o, err = z.Chld[zgensym_58b5c2649cecee38_22].MSGPMarshalMsg(o)
+			o, err = z.Chld[zgensym_58b5c2649cecee38_22].MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 			if err != nil {
 				return
 			}
@@ -1147,7 +1147,7 @@ func (z *Tree) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		if z.Par == nil {
 			o = msgp.AppendNil(o)
 		} else {
-			o, err = z.Par.MSGPMarshalMsg(o)
+			o, err = z.Par.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 			if err != nil {
 				return
 			}
