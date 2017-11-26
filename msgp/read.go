@@ -251,7 +251,7 @@ func (m *Reader) BufferSize() int { return m.R.BufferSize() }
 // struct (map) for its (-1: name) key-value pair, and returns the name
 // or empty string if not found. Also empty string if not
 // a map type.
-func (m *Reader) NextStructName() string {
+func (m *Reader) NextStructName(flds []string) string {
 	ty, err := m.NextType()
 	if err != nil {
 		return ""
@@ -259,15 +259,12 @@ func (m *Reader) NextStructName() string {
 	if ty != MapType {
 		return ""
 	}
-	skip := 3
+	skip := 2
 	p, err := m.R.Peek(skip)
 	if err != nil {
 		return ""
 	}
-	if p[1] != 0xff {
-		return "" // not the -1 struct name
-	}
-	lead := p[2]
+	lead := p[1]
 	var read int
 	if isfixstr(lead) {
 		// lead is a fixstr, good
@@ -275,26 +272,26 @@ func (m *Reader) NextStructName() string {
 	} else {
 		switch lead {
 		case mstr8, mbin8:
+			skip = 3
+			p, err = m.R.Peek(skip)
+			if err != nil {
+				return ""
+			}
+			read = int(p[2])
+		case mstr16, mbin16:
 			skip = 4
 			p, err = m.R.Peek(skip)
 			if err != nil {
 				return ""
 			}
-			read = int(p[3])
-		case mstr16, mbin16:
-			skip = 5
-			p, err = m.R.Peek(skip)
-			if err != nil {
-				return ""
-			}
-			read = int(big.Uint16(p[3:]))
+			read = int(big.Uint16(p[2:]))
 		case mstr32, mbin32:
-			skip = 7
+			skip = 6
 			p, err = m.R.Peek(skip)
 			if err != nil {
 				return ""
 			}
-			read = int(big.Uint32(p[3:]))
+			read = int(big.Uint32(p[2:]))
 		default:
 			return "" // not a string
 		}
