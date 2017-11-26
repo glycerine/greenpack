@@ -411,3 +411,72 @@ func (p *printer) ok() bool { return p.err == nil }
 func tobaseConvert(b *BaseElem) string {
 	return b.ToBase() + "(" + b.Varname() + ")"
 }
+
+func (p *printer) decodeRangeBlock(idx string, iter string, t traversal, inner Elem) {
+	if inner.IsInterface() {
+		target, concreteName := gensym(), gensym()
+		cfac := gensym()
+		p.printf(`
+		// NB: we have a slice of interfaces, so we need to
+		//  fill target with the concrete implementation
+		concreteName_%s := dc.NextStructName()
+        `, concreteName)
+
+		p.printf("\n for %s := range %s {\n", idx, iter)
+		p.printf("target_%s :=  %s[%s]\n", target, iter, idx)
+		p.printf(`if concreteName_%s != "" {
+				if cfac_%s, cfac_%s_OK := interface{}(z).(msgp.ConcreteFactory); cfac_%s_OK {
+					target_%s = cfac_%s.NewValueAsInterface(concreteName_%s).(%s)
+				}
+  			    err = target_%s.DecodeMsg(dc)
+			    if err != nil {
+				    return
+			    }
+		`, concreteName, cfac, cfac, cfac, target, cfac, concreteName, inner.TypeName(), target)
+		p.printf(`
+                %s[%s] = target_%s
+                continue
+              }
+        `, iter, idx, target)
+		next(t, inner)
+	} else {
+		p.printf("\n for %s := range %s {", idx, iter)
+		next(t, inner)
+	}
+	p.closeblock()
+}
+
+func (p *printer) unmarshalRangeBlock(idx string, iter string, t traversal, inner Elem) {
+	if inner.IsInterface() {
+		target, concreteName := gensym(), gensym()
+		cfac := gensym()
+		p.printf(`
+		// NB: we have a slice of interfaces, so we need to
+		//  fill target with the concrete implementation
+		concreteName_%s := dc.NextStructName()
+        `, concreteName)
+
+		p.printf("\n for %s := range %s {\n", idx, iter)
+		p.printf("target_%s :=  %s[%s]\n", target, iter, idx)
+		p.printf(`if concreteName_%s != "" {
+				if cfac_%s, cfac_%s_OK := interface{}(z).(msgp.ConcreteFactory); cfac_%s_OK {
+					target_%s = cfac_%s.NewValueAsInterface(concreteName_%s).(%s)
+				}
+  			    bts, err = target_%s.UnmarshalMsg(bts)
+			    if err != nil {
+				    return
+			    }
+		`, concreteName, cfac, cfac, cfac, target, cfac, concreteName, inner.TypeName(), target)
+		p.printf(`
+                %s[%s] = target_%s
+                continue
+              }
+        `, iter, idx, target)
+
+		next(t, inner)
+	} else {
+		p.printf("\n for %s := range %s {", idx, iter)
+		next(t, inner)
+	}
+	p.closeblock()
+}

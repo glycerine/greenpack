@@ -501,6 +501,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 	var deprecated bool
 	var showzero bool
 	var zebraId int64 = -1
+	var isIface bool
 
 	// parse tag; otherwise field name is field tag
 	if f.Tag != nil {
@@ -590,11 +591,20 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		// so we can't return early here.
 	}
 
+	if fs != nil && fs.PackageInfo != nil &&
+		len(fs.PackageInfo.Info.Types) > 0 {
+
+		if tv, ok := fs.PackageInfo.Info.Types[f.Type]; ok {
+			isIface = types.IsInterface(tv.Type)
+		}
+	}
+
 	sf[0].Deprecated = deprecated
 	sf[0].OmitEmpty = omitempty
 	sf[0].ZebraId = zebraId
 	sf[0].Skip = skip
 	sf[0].ShowZero = showzero
+	sf[0].IsIface = isIface
 
 	// parse field name
 	switch len(f.Names) {
@@ -616,6 +626,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 				ZebraId:         zebraId,
 				Skip:            skip,
 				FieldTagZidClue: msgp.Clue2Field(nm.Name, ex.TypeClue(), zebraId),
+				IsIface:         isIface,
 			})
 		}
 		return sf, nil
@@ -735,7 +746,16 @@ func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
 		return nil, nil
 
 	case *ast.Ident:
-		b := gen.Ident(e.Name)
+		var isIface bool
+		if e.Obj != nil && fs != nil && fs.PackageInfo != nil &&
+			len(fs.PackageInfo.Info.Types) > 0 {
+
+			if tv, ok := fs.PackageInfo.Info.Types[e]; ok {
+				isIface = types.IsInterface(tv.Type)
+			}
+		}
+
+		b := gen.Ident(e.Name, isIface)
 
 		// work to resove this expression
 		// can be done later, once we've resolved
@@ -824,14 +844,6 @@ func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
 				default:
 					panic(fmt.Errorf("what to do with type %T here???", cnst))
 				}
-				/*
-					//fmt.Printf("\n selector using default return path...\n")
-						return &gen.Array{
-							SizeNamed:    stringify(s),
-							SizeResolved: stringify(s), // not really resolved, but don't leave it blank.
-							Els:          els,
-						}, nil
-				*/
 			default:
 				return nil, nil
 			}
@@ -865,7 +877,16 @@ func (fs *FileSet) parseExpr(e ast.Expr) (gen.Elem, error) {
 		return nil, nil
 
 	case *ast.SelectorExpr:
-		return gen.Ident(stringify(e)), nil
+		//return gen.Ident(stringify(e)), nil
+		var isIface bool
+		if e.Sel.Obj != nil && fs != nil && fs.PackageInfo != nil &&
+			len(fs.PackageInfo.Info.Types) > 0 {
+
+			if tv, ok := fs.PackageInfo.Info.Types[e]; ok {
+				isIface = types.IsInterface(tv.Type)
+			}
+		}
+		return gen.Ident(stringify(e), isIface), nil
 
 	case *ast.InterfaceType:
 		// support `interface{}`

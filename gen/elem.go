@@ -220,6 +220,7 @@ type Elem interface {
 	// for template instantiation with custom method prefix
 	MethodPrefix() string
 	SetHasMethodPrefix(hmp HasMethodPrefix)
+	IsInterface() bool
 
 	// The clue is a 3-character string added
 	// to on-the-wire field name
@@ -237,10 +238,10 @@ type Elem interface {
 
 // Ident returns the *BaseElem that corresponds
 // to the provided identity.
-func Ident(id string) *BaseElem {
+func Ident(id string, isIface bool) *BaseElem {
 	p, ok := primitives[id]
 	if ok {
-		return &BaseElem{Value: p}
+		return &BaseElem{Value: p, isIface: isIface}
 	}
 	be := &BaseElem{Value: IDENT}
 	be.Alias(id)
@@ -253,6 +254,10 @@ type Array struct {
 	SizeNamed    string // array size
 	SizeResolved string // array size
 	Els          Elem   // child
+}
+
+func (s *Array) IsInterface() bool {
+	return false
 }
 
 func (a *Array) TypeClue() string {
@@ -329,6 +334,10 @@ func (m *Map) TypeClue() string {
 	return "map"
 }
 
+func (s *Map) IsInterface() bool {
+	return false
+}
+
 func (m *Map) GetZtype() (r green.Ztype) {
 
 	r.Kind = green.MapCat
@@ -389,6 +398,10 @@ type Slice struct {
 	Els   Elem // The type of each element
 }
 
+func (s *Slice) IsInterface() bool {
+	return false
+}
+
 func (a *Slice) TypeClue() string {
 	return "slc"
 }
@@ -438,6 +451,10 @@ func (s *Slice) Complexity() int {
 type Ptr struct {
 	common
 	Value Elem
+}
+
+func (s *Ptr) IsInterface() bool {
+	return false
 }
 
 func (s *Ptr) TypeClue() string {
@@ -524,6 +541,10 @@ type Struct struct {
 	SkipCount int
 }
 
+func (s *Struct) IsInterface() bool {
+	return false
+}
+
 func (s *Struct) TypeClue() string {
 	return "rct"
 }
@@ -592,12 +613,17 @@ type StructField struct {
 	Deprecated bool   // if the tag `deprecated:"true"` was found
 	Skip       bool   // if msg:"-" or field is type struct{}
 	ShowZero   bool   // if msg:",showzero" tag was found.
+	IsIface    bool   // the field type is an interface?
 
 	// ZebraId defaults to -1, meaning not-tagged with a zebra id.
 	// if ZebraId >= 0, then the tag `zebra:"N"` was found, with ZebraId == N.
 	ZebraId int64
 
 	FieldTagZidClue string
+}
+
+func (s *StructField) IsInterface() bool {
+	return s.IsIface
 }
 
 // BaseElem is an element that
@@ -611,6 +637,11 @@ type BaseElem struct {
 	Convert      bool      // should we do an explicit conversion?
 	mustinline   bool      // must inline; not printable
 	needsref     bool      // needs reference for shim
+	isIface      bool
+}
+
+func (s *BaseElem) IsInterface() bool {
+	return s.isIface
 }
 
 func (s *BaseElem) GetZtype() (r green.Ztype) {
