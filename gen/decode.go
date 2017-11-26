@@ -274,7 +274,11 @@ func (d *decodeGen) gBase(b *BaseElem) {
 			d.p.printf("\n%s, err = dc.ReadBytes(%s)", vname, vname)
 		}
 	case IDENT:
-		d.p.printf("\nerr = %s.%sDecodeMsg(dc)", vname, d.cfg.MethodPrefix)
+		//		if b.isIface {
+		//
+		//		} else {
+		d.p.printf("\nerr = %s.%sDecodeMsg(dc) // from IDENT in decode.go:280", vname, d.cfg.MethodPrefix)
+		//		}
 	case Ext:
 		d.p.printf("\n if !dc.IsNil() {")
 		d.p.printf("\nerr = dc.ReadExtension(%s)\n} else { err = dc.ReadNil() }\n", vname)
