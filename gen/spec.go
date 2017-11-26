@@ -455,8 +455,7 @@ func (p *printer) unmarshalRangeBlock(idx string, iter string, t traversal, inne
 		cfac := gensym()
 		p.printf(`
 		// NB: we have a slice of interfaces, so we need to
-		//  fill target with the concrete implementation
-        var concreteName_%s string`)
+		//  fill target with the concrete implementation`)
 
 		p.printf("\n for %s := range %s {\n", idx, iter)
 
