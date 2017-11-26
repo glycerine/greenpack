@@ -414,6 +414,7 @@ func tobaseConvert(b *BaseElem) string {
 
 func (p *printer) decodeRangeBlock(idx string, iter string, t traversal, inner Elem) {
 	if inner.IsInterface() {
+		inner.SetIsInInterfaceSlice()
 		target, concreteName := gensym(), gensym()
 		cfac := gensym()
 		p.printf(`
@@ -441,6 +442,9 @@ func (p *printer) decodeRangeBlock(idx string, iter string, t traversal, inner E
                 continue
               }
         `, iter, idx, target)
+
+		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:446. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
+
 		next(t, inner)
 	} else {
 		p.printf("\n for %s := range %s {", idx, iter)
@@ -451,6 +455,8 @@ func (p *printer) decodeRangeBlock(idx string, iter string, t traversal, inner E
 
 func (p *printer) unmarshalRangeBlock(idx string, iter string, t traversal, inner Elem) {
 	if inner.IsInterface() {
+		inner.SetIsInInterfaceSlice()
+
 		target, concreteName := gensym(), gensym()
 		cfac := gensym()
 		p.printf(`
@@ -479,6 +485,8 @@ func (p *printer) unmarshalRangeBlock(idx string, iter string, t traversal, inne
                 continue
               }
         `, iter, idx, target)
+
+		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from unmarshalRangeBlock in spec.go:486. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
 
 		next(t, inner)
 	} else {

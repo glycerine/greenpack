@@ -221,6 +221,8 @@ type Elem interface {
 	MethodPrefix() string
 	SetHasMethodPrefix(hmp HasMethodPrefix)
 	IsInterface() bool
+	IsInInterfaceSlice() bool
+	SetIsInInterfaceSlice()
 
 	// The clue is a 3-character string added
 	// to on-the-wire field name
@@ -259,6 +261,12 @@ type Array struct {
 func (s *Array) IsInterface() bool {
 	return false
 }
+
+func (s *Array) IsInInterfaceSlice() bool {
+	return false
+}
+
+func (s *Array) SetIsInInterfaceSlice() {}
 
 func (a *Array) TypeClue() string {
 	return "ary"
@@ -338,6 +346,10 @@ func (s *Map) IsInterface() bool {
 	return false
 }
 
+func (s *Map) IsInInterfaceSlice() bool {
+	return false
+}
+
 func (m *Map) GetZtype() (r green.Ztype) {
 
 	r.Kind = green.MapCat
@@ -351,6 +363,8 @@ func (m *Map) GetZtype() (r green.Ztype) {
 	r.Range = &rng
 	return
 }
+
+func (m *Map) SetIsInInterfaceSlice() {}
 
 func (m *Map) ZeroLiteral(v string) string {
 	template := `
@@ -400,6 +414,14 @@ type Slice struct {
 
 func (s *Slice) IsInterface() bool {
 	return s.Els.IsInterface()
+}
+
+func (s *Slice) IsInInterfaceSlice() bool {
+	return false
+}
+
+func (s *Slice) SetIsInInterfaceSlice() {
+	s.Els.SetIsInInterfaceSlice()
 }
 
 func (a *Slice) TypeClue() string {
@@ -456,6 +478,12 @@ type Ptr struct {
 func (s *Ptr) IsInterface() bool {
 	return false
 }
+
+func (s *Ptr) IsInInterfaceSlice() bool {
+	return false
+}
+
+func (s *Ptr) SetIsInInterfaceSlice() {}
 
 func (s *Ptr) TypeClue() string {
 	return "ptr"
@@ -545,6 +573,10 @@ func (s *Struct) IsInterface() bool {
 	return false
 }
 
+func (s *Struct) IsInInterfaceSlice() bool {
+	return false
+}
+
 func (s *Struct) TypeClue() string {
 	return "rct"
 }
@@ -554,6 +586,8 @@ func (s *Struct) GetZtype() (r green.Ztype) {
 	r.Str = r.Kind.String() // s.TypeName()
 	return
 }
+
+func (s *Struct) SetIsInInterfaceSlice() {}
 
 func (s *Struct) ZeroLiteral(v string) string {
 	return fmt.Sprintf(`%s = %s{}`, v, s.TypeName())
@@ -631,13 +665,14 @@ func (s *StructField) IsInterface() bool {
 // MessagePack type.
 type BaseElem struct {
 	common
-	ShimToBase   string    // shim to base type, or empty
-	ShimFromBase string    // shim from base type, or empty
-	Value        Primitive // Type of element
-	Convert      bool      // should we do an explicit conversion?
-	mustinline   bool      // must inline; not printable
-	needsref     bool      // needs reference for shim
-	isIface      bool
+	ShimToBase     string    // shim to base type, or empty
+	ShimFromBase   string    // shim from base type, or empty
+	Value          Primitive // Type of element
+	Convert        bool      // should we do an explicit conversion?
+	mustinline     bool      // must inline; not printable
+	needsref       bool      // needs reference for shim
+	isIface        bool
+	isInIfaceSlice bool
 }
 
 func (s *BaseElem) IsInterface() bool {
@@ -799,6 +834,14 @@ func (s *BaseElem) ZeroLiteral(v string) string {
 
 func (s *BaseElem) TypeClue() string {
 	return prim2clue[s.Value]
+}
+
+func (s *BaseElem) IsInInterfaceSlice() bool {
+	return s.isInIfaceSlice
+}
+
+func (s *BaseElem) SetIsInInterfaceSlice() {
+	s.isInIfaceSlice = true
 }
 
 func (k Primitive) String() string {
