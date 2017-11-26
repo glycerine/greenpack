@@ -524,6 +524,10 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		if len(tags) > 1 && anyMatches(tags[1:], "showzero") {
 			showzero = true
 		}
+		if len(tags) > 1 && anyMatches(tags[1:], "iface") {
+			isIface = true
+		}
+
 		// ignore "-" fields
 		if tags[0] == "-" {
 			skip = true
