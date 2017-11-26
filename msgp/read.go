@@ -296,7 +296,7 @@ func (m *Reader) NextStructName() string {
 
 	valstart := hdsz + 2
 	valTypeBytes := 1
-	skip := 1
+	skip := valstart + valTypeBytes
 	lead = p[valstart]
 	var read int
 	if isfixstr(lead) {
