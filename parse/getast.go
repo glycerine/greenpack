@@ -595,7 +595,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		// so we can't return early here.
 	}
 
-	if fs != nil && fs.PackageInfo != nil &&
+	if !isIface && fs != nil && fs.PackageInfo != nil &&
 		len(fs.PackageInfo.Info.Types) > 0 {
 
 		if tv, ok := fs.PackageInfo.Info.Types[f.Type]; ok {
