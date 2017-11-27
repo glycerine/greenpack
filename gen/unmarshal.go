@@ -238,7 +238,7 @@ func (u *unmarshalGen) gBase(b *BaseElem) {
 
 			} else {
 
-				u.p.printf("\n  bts, err = %s.%sUnmarshalMsg(bts); // unmarshal.go:213 ; b.IsInInterfaceSlice()=%v", lowered, u.cfg.MethodPrefix, b.IsInInterfaceSlice())
+				u.p.printf("\n  bts, err = %s.%sUnmarshalMsg(bts);", lowered, u.cfg.MethodPrefix)
 				//u.p.print(errcheck)
 			}
 		}

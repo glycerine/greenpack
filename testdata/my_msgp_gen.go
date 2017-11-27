@@ -420,7 +420,7 @@ doneWithStruct7zgensym_58b5c2649cecee38_8:
 					z.Slice = make([]S2, zgensym_58b5c2649cecee38_9)
 				}
 				for zgensym_58b5c2649cecee38_2 := range z.Slice {
-					bts, err = z.Slice[zgensym_58b5c2649cecee38_2].MSGPUnmarshalMsg(bts) // unmarshal.go:213 ; b.IsInInterfaceSlice()=false
+					bts, err = z.Slice[zgensym_58b5c2649cecee38_2].MSGPUnmarshalMsg(bts)
 					if err != nil {
 						return
 					}
@@ -474,7 +474,7 @@ doneWithStruct7zgensym_58b5c2649cecee38_8:
 							if zgensym_58b5c2649cecee38_4 == nil {
 								zgensym_58b5c2649cecee38_4 = new(S2)
 							}
-							bts, err = zgensym_58b5c2649cecee38_4.MSGPUnmarshalMsg(bts) // unmarshal.go:213 ; b.IsInInterfaceSlice()=false
+							bts, err = zgensym_58b5c2649cecee38_4.MSGPUnmarshalMsg(bts)
 							if err != nil {
 								return
 							}
@@ -502,7 +502,7 @@ doneWithStruct7zgensym_58b5c2649cecee38_8:
 					if z.Myptr == nil {
 						z.Myptr = new(S2)
 					}
-					bts, err = z.Myptr.MSGPUnmarshalMsg(bts) // unmarshal.go:213 ; b.IsInInterfaceSlice()=false
+					bts, err = z.Myptr.MSGPUnmarshalMsg(bts)
 					if err != nil {
 						return
 					}
@@ -892,7 +892,7 @@ doneWithStruct16zgensym_58b5c2649cecee38_17:
 					if z.MyTree == nil {
 						z.MyTree = new(Tree)
 					}
-					bts, err = z.MyTree.MSGPUnmarshalMsg(bts) // unmarshal.go:213 ; b.IsInInterfaceSlice()=false
+					bts, err = z.MyTree.MSGPUnmarshalMsg(bts)
 					if err != nil {
 						return
 					}
@@ -1239,7 +1239,7 @@ doneWithStruct23zgensym_58b5c2649cecee38_24:
 					z.Chld = make([]Tree, zgensym_58b5c2649cecee38_25)
 				}
 				for zgensym_58b5c2649cecee38_22 := range z.Chld {
-					bts, err = z.Chld[zgensym_58b5c2649cecee38_22].MSGPUnmarshalMsg(bts) // unmarshal.go:213 ; b.IsInInterfaceSlice()=false
+					bts, err = z.Chld[zgensym_58b5c2649cecee38_22].MSGPUnmarshalMsg(bts)
 					if err != nil {
 						return
 					}
@@ -1271,7 +1271,7 @@ doneWithStruct23zgensym_58b5c2649cecee38_24:
 					if z.Par == nil {
 						z.Par = new(S2)
 					}
-					bts, err = z.Par.MSGPUnmarshalMsg(bts) // unmarshal.go:213 ; b.IsInInterfaceSlice()=false
+					bts, err = z.Par.MSGPUnmarshalMsg(bts)
 					if err != nil {
 						return
 					}
