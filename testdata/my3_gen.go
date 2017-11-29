@@ -316,6 +316,6 @@ var unmarshalMsgFieldSkip4zgensym_cc028b3bcf246c08_5 = []bool{false, false}
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z OmitClueTestStruct) Msgsize() (s int) {
-	s = 1 + 12 + msgp.StringPrefixSize + len(z.S) + 12 + msgp.Int64Size
+	s = 1 + 2 + msgp.StringPrefixSize + len(z.S) + 2 + msgp.Int64Size
 	return
 }

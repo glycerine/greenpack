@@ -100,6 +100,8 @@ func (s *sizeGen) gStruct(st *Struct) {
 	if !s.p.ok() {
 		return
 	}
+	skipclue := s.cfg.SkipZidClue || s.cfg.Msgpack2
+
 	nfields := uint32(len(st.Fields) - st.SkipCount)
 
 	if s.cfg.AllTuple || st.AsTuple {
@@ -123,7 +125,14 @@ func (s *sizeGen) gStruct(st *Struct) {
 				continue
 			}
 			data = data[:0]
-			data = msgp.AppendString(data, st.Fields[i].FieldTagZidClue)
+
+			var appendme string
+			if skipclue {
+				appendme = st.Fields[i].FieldTag
+			} else {
+				appendme = st.Fields[i].FieldTagZidClue
+			}
+			data = msgp.AppendString(data, appendme)
 
 			s.addConstant(strconv.Itoa(len(data)))
 			next(s, st.Fields[i].FieldElem)
