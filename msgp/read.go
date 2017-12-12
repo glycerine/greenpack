@@ -8,6 +8,15 @@ import (
 	"time"
 )
 
+// everything generallly needed to be Serializable/Unserializable
+type Serz interface {
+	Unmarshaler
+	Decodable
+	Marshaler
+	Encodable
+	Sizer
+}
+
 // PreSave will be called before EncodeMsg/MarshalMsg
 // if your struct implements it.
 type PreSave interface {
