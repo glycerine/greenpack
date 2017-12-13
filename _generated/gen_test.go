@@ -248,3 +248,37 @@ func Test445DedupOfSamePointerWorks(t *testing.T) {
 		panic(fmt.Sprintf("expected pointers behind interfaces to be the same"))
 	}
 }
+
+// Dedup Test3
+func Test446DedupOfSamePointerWorks(t *testing.T) {
+
+	// dedup within slices of pointers
+
+	//ptr := &Target{ID: 3}
+	iface := &Greeter{Style: 7}
+	nd := &NeedsDedup{
+		//MyPtr0: ptr,
+		//MyPtr1: ptr,
+		//		MyIface0: iface,
+		//		MyIface1: iface,
+		Slice:    []Hello{iface},
+		SlicePtr: []*Greeter{iface},
+	}
+
+	var buf bytes.Buffer
+	wr := msgp.NewWriter(&buf)
+	//wr.ResetDedup()
+	panicOn(nd.EncodeMsg(wr))
+	wr.Flush()
+
+	//fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.PointerCount(), buf.Bytes(), string(buf.Bytes()))
+
+	rd := msgp.NewReader(&buf)
+	//rd.ResetDedup()
+	var nd2 NeedsDedup
+	panicOn(nd2.DecodeMsg(rd))
+	// check across slices of interfaces and slices of pointers for dedup.
+	if nd2.Slice[0].(*Greeter) != nd2.SlicePtr[0] {
+		panic(fmt.Sprintf("expected pointers/interfaces to be the same"))
+	}
+}

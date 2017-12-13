@@ -1,7 +1,6 @@
 package _generated
 
 import (
-	"fmt"
 	"github.com/glycerine/greenpack/msgp"
 	"os"
 	"time"
@@ -339,11 +338,12 @@ type NeedsDedup struct {
 	MyIface0 Hello `msg:",iface"`
 	MyIface1 Hello `msg:",iface"`
 
-	Slice []Hello `msg:",iface"`
+	Slice    []Hello `msg:",iface"`
+	SlicePtr []*Greeter
 }
 
 func (nd *NeedsDedup) NewValueAsInterface(zid int64, typename string) interface{} {
-	fmt.Printf("\n DEBUG, in NeedsDedup.NewValueAsInterface(): typename = '%s'\n", typename)
+	//fmt.Printf("\n DEBUG, in NeedsDedup.NewValueAsInterface(): typename = '%s'\n", typename)
 	if typename == "Greeter" {
 		return &Greeter{}
 	}

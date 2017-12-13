@@ -209,7 +209,6 @@ func (m *Reader) IndexEachPtrForDedup(ptr interface{}) {
 		return
 	}
 	m.dedupPointers = append(m.dedupPointers, ptr)
-	fmt.Printf("DEBUG: IndexEachPtrForDedup called! with ptr='%#v'. len is now %v", ptr, len(m.dedupPointers))
 }
 
 func (m *Reader) NextIsDup() (interface{}, bool) {
@@ -226,7 +225,6 @@ func (m *Reader) NextIsDup() (interface{}, bool) {
 		return nil, false
 	}
 	ptr := m.DedupPtr(k)
-	fmt.Printf("\n DEBUG: Reader.NextIsDup() returning true! found k=%v. with val: '%#v'", k, ptr)
 	return ptr, true
 }
 

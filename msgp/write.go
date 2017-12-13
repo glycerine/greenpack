@@ -178,7 +178,6 @@ func (mw *Writer) IsDup(v interface{}) (res bool, err error) {
 	k, dup := mw.ptrWrit[v]
 	if !dup {
 		mw.ptrWrit[v] = mw.ptrCountNext
-		fmt.Printf("\n DEBUG: write.go IsDup wrote unique pointer '%#v' to location %v\n", v, mw.ptrCountNext)
 		mw.ptrCountNext++
 		return false, nil
 	}
