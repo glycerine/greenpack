@@ -1,12 +1,16 @@
 package msgp
 
 import (
+	"fmt"
 	"github.com/philhofer/fwd"
 	"io"
 	"math"
+	"reflect"
 	"sync"
 	"time"
 )
+
+var _ = fmt.Printf
 
 // everything generallly needed to be Serializable/Unserializable
 type Serz interface {
@@ -153,6 +157,7 @@ func NewReader(r io.Reader) *Reader {
 		p.R = fwd.NewReader(r)
 	} else {
 		p.R.Reset(r)
+		p.ResetDedup()
 	}
 	return p
 }
@@ -178,6 +183,51 @@ type Reader struct {
 	scratch []byte
 
 	NilTracker
+	dedupPointers []interface{}
+	//dedupPointers []reflect.Value
+}
+
+func (r *Reader) ResetDedup() {
+	r.dedupPointers = r.dedupPointers[:0]
+}
+
+func (r *Reader) DedupPtr(k int) interface{} {
+	if k >= 0 && k < len(r.dedupPointers) {
+		return r.dedupPointers[k]
+	}
+	panic(fmt.Sprintf("Reader.DedupPtr requested for k=%v but that was out of range! (avail=%v)", k, len(r.dedupPointers)))
+	return nil
+}
+
+func (m *Reader) IndexEachPtrForDedup(ptr interface{}) {
+	// don't index nils.
+	if ptr == nil {
+		return
+	}
+	va := reflect.ValueOf(ptr)
+	if va.IsNil() {
+		return
+	}
+	m.dedupPointers = append(m.dedupPointers, ptr)
+	fmt.Printf("DEBUG: IndexEachPtrForDedup called! with ptr='%#v'. len is now %v", ptr, len(m.dedupPointers))
+}
+
+func (m *Reader) NextIsDup() (interface{}, bool) {
+
+	typ, err := m.peekExtensionType()
+	if err != nil {
+		return nil, false
+	}
+	if typ != DedupExtension {
+		return nil, false
+	}
+	k, err := m.ReadDedupExt()
+	if err != nil {
+		return nil, false
+	}
+	ptr := m.DedupPtr(k)
+	fmt.Printf("\n DEBUG: Reader.NextIsDup() returning true! found k=%v. with val: '%#v'", k, ptr)
+	return ptr, true
 }
 
 // NilTracker maintains a stack to assit
@@ -228,6 +278,22 @@ func (r *NilTracker) PopAlwaysNil() {
 	a := r.LifoAlwaysNil[n-1]
 	r.LifoAlwaysNil = r.LifoAlwaysNil[:n-1]
 	r.AlwaysNil = a
+}
+
+func (m *Reader) ReadDedupExt() (int, error) {
+	ext := RawExtension{
+		Type: DedupExtension,
+	}
+	err := m.ReadExtension(&ext)
+	if err != nil {
+		return -1, err
+	}
+	var nbs NilBitsStack
+	k, _, err := nbs.ReadIntBytes(ext.Data)
+	if err != nil {
+		return -1, err
+	}
+	return k, nil
 }
 
 // Read implements `io.Reader`

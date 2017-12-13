@@ -100,11 +100,12 @@ func (d *decodeGen) Execute(p Elem) error {
     dc.PushAlwaysNil()
   }
 `)
+		d.p.dedupReadTop(false)
 	}
 
 	// next will increment k, but we want the first, top level DecodeMsg
 	// to refer to this same k ...
-	next(d, p)
+	next(d, p, nil)
 
 	if !d.cfg.AllTuple {
 
@@ -113,6 +114,7 @@ func (d *decodeGen) Execute(p Elem) error {
 		dc.PopAlwaysNil()
 	}
 `)
+		d.p.dedupReadCleanup(false)
 	}
 
 	d.p.postLoadHook()
@@ -122,7 +124,7 @@ func (d *decodeGen) Execute(p Elem) error {
 	return d.p.err
 }
 
-func (d *decodeGen) gStruct(s *Struct) {
+func (d *decodeGen) gStruct(s *Struct, x *extra) {
 	d.depth++
 	defer func() {
 		d.depth--
@@ -161,7 +163,7 @@ func (d *decodeGen) structAsTuple(s *Struct) {
 		if !d.p.ok() {
 			return
 		}
-		next(d, s.Fields[i].FieldElem)
+		next(d, s.Fields[i].FieldElem, nil)
 	}
 }
 
@@ -235,7 +237,7 @@ func (d *decodeGen) structAsMap(s *Struct) {
 		d.p.printf("\n%s[%d]=true;", found, i)
 		//d.p.printf("\n fmt.Printf(\"I found field '%s' at depth=%d. dc.AlwaysNil = %%v\", dc.AlwaysNil);\n", fld, d.depth)
 		d.depth++
-		next(d, s.Fields[i].FieldElem)
+		next(d, s.Fields[i].FieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})
 		d.depth--
 		if !d.p.ok() {
 			return
@@ -249,7 +251,7 @@ func (d *decodeGen) structAsMap(s *Struct) {
 	d.p.printf("\n if nextMiss%s != -1 {dc.PopAlwaysNil(); }\n", nStr)
 }
 
-func (d *decodeGen) gBase(b *BaseElem) {
+func (d *decodeGen) gBase(b *BaseElem, x *extra) {
 	if !d.p.ok() {
 		return
 	}
@@ -279,6 +281,12 @@ func (d *decodeGen) gBase(b *BaseElem) {
 			if b.IsInterface() {
 				targ, conc, fact := gensym(), gensym(), gensym()
 				d.p.printf(`
+if kptr, dup := dc.NextIsDup(); dup {
+	%s = kptr.(%s)
+	continue
+}
+`, vname, b.BaseType())
+				d.p.printf(`
 	conc_%s := dc.NextStructName()
 	if conc_%s != "" {
 		if cfac_%s, cfacOK_%s := interface{}(z).(msgp.ConcreteFactory); cfacOK_%s {
@@ -288,13 +296,15 @@ func (d *decodeGen) gBase(b *BaseElem) {
 				return
 			}
             %s = targ_%s
+            dc.IndexEachPtrForDedup(%s)
 			continue
 		}
 	}
     if %s != nil {
 	  err = %s.%sDecodeMsg(dc)
     }
-`, conc, conc, fact, fact, fact, targ, fact, myzid, conc, b.BaseType(), targ, vname, targ, vname, vname, d.cfg.MethodPrefix)
+    dc.IndexEachPtrForDedup(%s)
+`, conc, conc, fact, fact, fact, targ, fact, myzid, conc, b.BaseType(), targ, vname, targ, vname, vname, vname, d.cfg.MethodPrefix, vname)
 
 			} else {
 				d.p.printf("\nerr = %s.%sDecodeMsg(dc)", vname, d.cfg.MethodPrefix)
@@ -319,7 +329,7 @@ func (d *decodeGen) gBase(b *BaseElem) {
 	d.p.print(errcheck)
 }
 
-func (d *decodeGen) gMap(m *Map) {
+func (d *decodeGen) gMap(m *Map, x *extra) {
 	d.depth++
 	defer func() {
 		d.depth--
@@ -341,12 +351,12 @@ func (d *decodeGen) gMap(m *Map) {
 	d.p.declare(m.Keyidx, m.KeyDeclTyp)
 	d.p.declare(m.Validx, m.Value.TypeName())
 	d.assignAndCheck(m.Keyidx, m.KeyTyp)
-	next(d, m.Value)
+	next(d, m.Value, nil)
 	d.p.mapAssign(m)
 	d.p.closeblock()
 }
 
-func (d *decodeGen) gSlice(s *Slice) {
+func (d *decodeGen) gSlice(s *Slice, x *extra) {
 	if !d.p.ok() {
 		return
 	}
@@ -357,7 +367,7 @@ func (d *decodeGen) gSlice(s *Slice) {
 	d.p.decodeRangeBlock(s.Index, s, d, s.Els)
 }
 
-func (d *decodeGen) gArray(a *Array) {
+func (d *decodeGen) gArray(a *Array, x *extra) {
 	if !d.p.ok() {
 		return
 	}
@@ -387,7 +397,7 @@ func (d *decodeGen) gArray(a *Array) {
 	d.p.decodeRangeBlock(a.Index, a, d, a.Els)
 }
 
-func (d *decodeGen) gPtr(p *Ptr) {
+func (d *decodeGen) gPtr(p *Ptr, x *extra) {
 	if !d.p.ok() {
 		return
 	}
@@ -403,10 +413,10 @@ func (d *decodeGen) gPtr(p *Ptr) {
 	vname := p.Varname()
 	base, isBase := p.Value.(*BaseElem)
 	if isBase {
-		//d.p.printf("\n // we have a BaseElem: %#v  \n", base)
+		d.p.printf("\n // we have a BaseElem: %#v  \n", base) // TODO, comment back out.
 		switch base.Value {
 		case IDENT:
-			//d.p.printf("\n // we have an IDENT: \n")
+			d.p.printf("\n // we have an IDENT: \n") // TODO, comment back out.
 			d.p.printf(
 				`
                 if %s != nil {
@@ -430,9 +440,9 @@ func (d *decodeGen) gPtr(p *Ptr) {
 		}
 	} else {
 		// !isBase
-		d.p.printf("\n%s = nil\n} else {", vname)
+		d.p.printf("\n%s = nil\n} else if kptr, dup := dc.NextIsDup(); dup { %s = kptr.(%s) } else {", vname, vname, p.TypeName())
 	}
-	d.p.initPtr(p)
-	next(d, p.Value)
+	d.p.initPtr(p, true)
+	next(d, p.Value, nil)
 	d.p.closeblock()
 }

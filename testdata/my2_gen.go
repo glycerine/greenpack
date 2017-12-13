@@ -157,6 +157,10 @@ doneWithStruct5zgensym_72ba5d454ae3d9dd_6:
 						return
 					}
 
+					// we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Setm[zgensym_72ba5d454ae3d9dd_4]", alias:"inn", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+
+					// we have an IDENT:
+
 					if z.Setm[zgensym_72ba5d454ae3d9dd_4] != nil {
 						dc.PushAlwaysNil()
 						err = z.Setm[zgensym_72ba5d454ae3d9dd_4].DecodeMsg(dc)
@@ -171,6 +175,8 @@ doneWithStruct5zgensym_72ba5d454ae3d9dd_6:
 					if z.Setm[zgensym_72ba5d454ae3d9dd_4] == nil {
 						z.Setm[zgensym_72ba5d454ae3d9dd_4] = new(inn)
 					}
+					dc.IndexEachPtrForDedup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
+
 					err = z.Setm[zgensym_72ba5d454ae3d9dd_4].DecodeMsg(dc)
 					if err != nil {
 						return
@@ -339,15 +345,36 @@ func (z *Tr) EncodeMsg(en *msgp.Writer) (err error) {
 			return
 		}
 		for zgensym_72ba5d454ae3d9dd_4 := range z.Setm {
+			// gPtr.encodeGen():
+
 			if z.Setm[zgensym_72ba5d454ae3d9dd_4] == nil {
 				err = en.WriteNil()
 				if err != nil {
 					return
 				}
 			} else {
-				err = z.Setm[zgensym_72ba5d454ae3d9dd_4].EncodeMsg(en)
+				// record the pointer for deduplication
+				var dup bool
+				dup, err = en.IsDup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
 				if err != nil {
 					return
+				}
+				if !dup {
+
+					// encodeGen.gBase IDENT
+
+					// record the interface for deduplication
+					var dup bool
+					dup, err = en.IsDup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
+					if err != nil {
+						return
+					}
+					if !dup {
+						err = z.Setm[zgensym_72ba5d454ae3d9dd_4].EncodeMsg(en)
+						if err != nil {
+							return
+						}
+					}
 				}
 			}
 		}
@@ -406,9 +433,13 @@ func (z *Tr) MarshalMsg(b []byte) (o []byte, err error) {
 		o = append(o, 0xae, 0x53, 0x65, 0x74, 0x6d, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x34, 0x5f, 0x73, 0x6c, 0x63)
 		o = msgp.AppendArrayHeader(o, uint32(len(z.Setm)))
 		for zgensym_72ba5d454ae3d9dd_4 := range z.Setm {
+			// marshalGen.gPtr()
+
 			if z.Setm[zgensym_72ba5d454ae3d9dd_4] == nil {
 				o = msgp.AppendNil(o)
 			} else {
+				// hmm.. no en, no place to check en.IsDup(z)
+
 				o, err = z.Setm[zgensym_72ba5d454ae3d9dd_4].MarshalMsg(o) // not is.iface, gen/marshal.go:243
 				if err != nil {
 					return
@@ -594,6 +625,10 @@ doneWithStruct12zgensym_72ba5d454ae3d9dd_13:
 					z.Setm = make([]*inn, zgensym_72ba5d454ae3d9dd_16)
 				}
 				for zgensym_72ba5d454ae3d9dd_4 := range z.Setm {
+					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Setm[zgensym_72ba5d454ae3d9dd_4]", alias:"inn", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+
+					// unmarshalGen.gPtr(): we have an IDENT:
+
 					if nbs.AlwaysNil {
 						if z.Setm[zgensym_72ba5d454ae3d9dd_4] != nil {
 							z.Setm[zgensym_72ba5d454ae3d9dd_4].UnmarshalMsg(msgp.OnlyNilSlice)
@@ -611,6 +646,7 @@ doneWithStruct12zgensym_72ba5d454ae3d9dd_13:
 							if z.Setm[zgensym_72ba5d454ae3d9dd_4] == nil {
 								z.Setm[zgensym_72ba5d454ae3d9dd_4] = new(inn)
 							}
+
 							bts, err = z.Setm[zgensym_72ba5d454ae3d9dd_4].UnmarshalMsg(bts)
 							if err != nil {
 								return
@@ -1157,6 +1193,10 @@ doneWithStruct29zgensym_72ba5d454ae3d9dd_30:
 						return
 					}
 
+					// we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"zgensym_72ba5d454ae3d9dd_28", alias:"Tr", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+
+					// we have an IDENT:
+
 					if zgensym_72ba5d454ae3d9dd_28 != nil {
 						dc.PushAlwaysNil()
 						err = zgensym_72ba5d454ae3d9dd_28.DecodeMsg(dc)
@@ -1171,6 +1211,8 @@ doneWithStruct29zgensym_72ba5d454ae3d9dd_30:
 					if zgensym_72ba5d454ae3d9dd_28 == nil {
 						zgensym_72ba5d454ae3d9dd_28 = new(Tr)
 					}
+					dc.IndexEachPtrForDedup(zgensym_72ba5d454ae3d9dd_28)
+
 					err = zgensym_72ba5d454ae3d9dd_28.DecodeMsg(dc)
 					if err != nil {
 						return
@@ -1280,15 +1322,36 @@ func (z *u) EncodeMsg(en *msgp.Writer) (err error) {
 			if err != nil {
 				return
 			}
+			// gPtr.encodeGen():
+
 			if zgensym_72ba5d454ae3d9dd_28 == nil {
 				err = en.WriteNil()
 				if err != nil {
 					return
 				}
 			} else {
-				err = zgensym_72ba5d454ae3d9dd_28.EncodeMsg(en)
+				// record the pointer for deduplication
+				var dup bool
+				dup, err = en.IsDup(zgensym_72ba5d454ae3d9dd_28)
 				if err != nil {
 					return
+				}
+				if !dup {
+
+					// encodeGen.gBase IDENT
+
+					// record the interface for deduplication
+					var dup bool
+					dup, err = en.IsDup(zgensym_72ba5d454ae3d9dd_28)
+					if err != nil {
+						return
+					}
+					if !dup {
+						err = zgensym_72ba5d454ae3d9dd_28.EncodeMsg(en)
+						if err != nil {
+							return
+						}
+					}
 				}
 			}
 		}
@@ -1340,9 +1403,13 @@ func (z *u) MarshalMsg(b []byte) (o []byte, err error) {
 		o = msgp.AppendMapHeader(o, uint32(len(z.m)))
 		for zgensym_72ba5d454ae3d9dd_27, zgensym_72ba5d454ae3d9dd_28 := range z.m {
 			o = msgp.AppendString(o, zgensym_72ba5d454ae3d9dd_27)
+			// marshalGen.gPtr()
+
 			if zgensym_72ba5d454ae3d9dd_28 == nil {
 				o = msgp.AppendNil(o)
 			} else {
+				// hmm.. no en, no place to check en.IsDup(z)
+
 				o, err = zgensym_72ba5d454ae3d9dd_28.MarshalMsg(o) // not is.iface, gen/marshal.go:243
 				if err != nil {
 					return
@@ -1462,6 +1529,10 @@ doneWithStruct34zgensym_72ba5d454ae3d9dd_35:
 					if err != nil {
 						return
 					}
+					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"zgensym_72ba5d454ae3d9dd_28", alias:"Tr", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+
+					// unmarshalGen.gPtr(): we have an IDENT:
+
 					if nbs.AlwaysNil {
 						if zgensym_72ba5d454ae3d9dd_28 != nil {
 							zgensym_72ba5d454ae3d9dd_28.UnmarshalMsg(msgp.OnlyNilSlice)
@@ -1479,6 +1550,7 @@ doneWithStruct34zgensym_72ba5d454ae3d9dd_35:
 							if zgensym_72ba5d454ae3d9dd_28 == nil {
 								zgensym_72ba5d454ae3d9dd_28 = new(Tr)
 							}
+
 							bts, err = zgensym_72ba5d454ae3d9dd_28.UnmarshalMsg(bts)
 							if err != nil {
 								return

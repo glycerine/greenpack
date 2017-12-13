@@ -2,6 +2,7 @@ package _generated
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/glycerine/greenpack/msgp"
 	"reflect"
 	"testing"
@@ -166,5 +167,84 @@ func Test11111HonorDefaultOmitEmpty(t *testing.T) {
 		t.Logf("in: %#v", tt)
 		t.Logf("out: %#v", tnew)
 		t.Fatal("objects not equal")
+	}
+}
+
+func panicOn(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+// Dedup Test
+func Test444DedupOfSamePointerWorks(t *testing.T) {
+
+	ptr := &Target{ID: 3}
+	iface := &Greeter{Style: 7}
+	nd := &NeedsDedup{
+		MyPtr0:   ptr,
+		MyPtr1:   ptr,
+		MyIface0: iface,
+		MyIface1: iface,
+		Slice:    []Hello{iface, iface},
+	}
+
+	var buf bytes.Buffer
+	wr := msgp.NewWriter(&buf)
+	//wr.ResetDedup()
+	panicOn(nd.EncodeMsg(wr))
+	wr.Flush()
+
+	//fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.PointerCount(), buf.Bytes(), string(buf.Bytes()))
+
+	rd := msgp.NewReader(&buf)
+	//rd.ResetDedup()
+	var nd2 NeedsDedup
+	panicOn(nd2.DecodeMsg(rd))
+	if nd2.MyPtr0 != nd2.MyPtr1 {
+		panic(fmt.Sprintf("expected pointers to be the same"))
+	}
+	if nd2.MyIface0.(*Greeter) != nd2.MyIface1.(*Greeter) {
+		panic(fmt.Sprintf("expected pointers behind interfaces to be the same"))
+	}
+	// check slices of interfaces for dedup too.
+	if nd2.Slice[0].(*Greeter) != nd2.Slice[1].(*Greeter) {
+		panic(fmt.Sprintf("expected pointers behind interfaces to be the same"))
+	}
+	if nd2.Slice[0].(*Greeter) != nd2.MyIface0.(*Greeter) {
+		panic(fmt.Sprintf("expected pointers behind interfaces to be the same"))
+	}
+}
+
+// Dedup Test2
+func Test445DedupOfSamePointerWorks(t *testing.T) {
+
+	// dedup within interface slice alone?
+
+	//ptr := &Target{ID: 3}
+	iface := &Greeter{Style: 7}
+	nd := &NeedsDedup{
+		//MyPtr0: ptr,
+		//MyPtr1: ptr,
+		//		MyIface0: iface,
+		//		MyIface1: iface,
+		Slice: []Hello{iface, iface},
+	}
+
+	var buf bytes.Buffer
+	wr := msgp.NewWriter(&buf)
+	//wr.ResetDedup()
+	panicOn(nd.EncodeMsg(wr))
+	wr.Flush()
+
+	//fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.PointerCount(), buf.Bytes(), string(buf.Bytes()))
+
+	rd := msgp.NewReader(&buf)
+	//rd.ResetDedup()
+	var nd2 NeedsDedup
+	panicOn(nd2.DecodeMsg(rd))
+	// check slices of interfaces for dedup too.
+	if nd2.Slice[0].(*Greeter) != nd2.Slice[1].(*Greeter) {
+		panic(fmt.Sprintf("expected pointers behind interfaces to be the same"))
 	}
 }

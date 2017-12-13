@@ -1,12 +1,13 @@
 package _generated
 
 import (
+	"fmt"
 	"github.com/glycerine/greenpack/msgp"
 	"os"
 	"time"
 )
 
-//go:generate greenpack -o generated.go
+//go:generate greenpack -no-dedup -o generated.go
 
 // All of the struct
 // definitions in this
@@ -314,4 +315,37 @@ type Tree struct {
 	Children []Tree
 	Element  int
 	Parent   *Wrapper
+}
+
+type Target struct {
+	ID int
+}
+
+type Greeter struct {
+	Style int
+}
+
+func (t *Greeter) Hi() {}
+
+type Hello interface {
+	Hi()
+	msgp.Serz
+}
+
+type NeedsDedup struct {
+	MyPtr0 *Target
+	MyPtr1 *Target
+
+	MyIface0 Hello `msg:",iface"`
+	MyIface1 Hello `msg:",iface"`
+
+	Slice []Hello `msg:",iface"`
+}
+
+func (nd *NeedsDedup) NewValueAsInterface(zid int64, typename string) interface{} {
+	fmt.Printf("\n DEBUG, in NeedsDedup.NewValueAsInterface(): typename = '%s'\n", typename)
+	if typename == "Greeter" {
+		return &Greeter{}
+	}
+	panic("unknown typename")
 }

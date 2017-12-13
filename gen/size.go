@@ -91,12 +91,12 @@ func (s *sizeGen) Execute(p Elem) error {
 
 	s.p.printf("\nfunc (%s %s) %sMsgsize() (s int) {", p.Varname(), imutMethodReceiver(p), s.cfg.MethodPrefix)
 	s.state = assign
-	next(s, p)
+	next(s, p, nil)
 	s.p.nakedReturn()
 	return s.p.err
 }
 
-func (s *sizeGen) gStruct(st *Struct) {
+func (s *sizeGen) gStruct(st *Struct, x *extra) {
 	if !s.p.ok() {
 		return
 	}
@@ -115,7 +115,7 @@ func (s *sizeGen) gStruct(st *Struct) {
 			if !s.p.ok() {
 				return
 			}
-			next(s, st.Fields[i].FieldElem)
+			next(s, st.Fields[i].FieldElem, nil)
 		}
 	} else {
 		data := msgp.AppendMapHeader(nil, nfields)
@@ -135,20 +135,20 @@ func (s *sizeGen) gStruct(st *Struct) {
 			data = msgp.AppendString(data, appendme)
 
 			s.addConstant(strconv.Itoa(len(data)))
-			next(s, st.Fields[i].FieldElem)
+			next(s, st.Fields[i].FieldElem, nil)
 		}
 	}
 }
 
-func (s *sizeGen) gPtr(p *Ptr) {
+func (s *sizeGen) gPtr(p *Ptr, x *extra) {
 	s.state = add // inner must use add
 	s.p.printf("\nif %s == nil {\ns += msgp.NilSize\n} else {", p.Varname())
-	next(s, p.Value)
+	next(s, p.Value, nil)
 	s.state = add // closing block; reset to add
 	s.p.closeblock()
 }
 
-func (s *sizeGen) gSlice(sl *Slice) {
+func (s *sizeGen) gSlice(sl *Slice, x *extra) {
 	if !s.p.ok() {
 		return
 	}
@@ -169,7 +169,7 @@ func (s *sizeGen) gSlice(sl *Slice) {
 	s.state = add
 }
 
-func (s *sizeGen) gArray(a *Array) {
+func (s *sizeGen) gArray(a *Array, x *extra) {
 	if !s.p.ok() {
 		return
 	}
@@ -189,7 +189,7 @@ func (s *sizeGen) gArray(a *Array) {
 	s.state = add
 }
 
-func (s *sizeGen) gMap(m *Map) {
+func (s *sizeGen) gMap(m *Map, x *extra) {
 	s.addConstant(builtinSize(mapHeader))
 	vn := m.Varname()
 	s.p.printf("\nif %s != nil {", vn)
@@ -203,13 +203,13 @@ func (s *sizeGen) gMap(m *Map) {
 		s.p.printf("\ns += msgp.%sSize", m.KeyTyp)
 	}
 	s.state = expr
-	next(s, m.Value)
+	next(s, m.Value, nil)
 	s.p.closeblock()
 	s.p.closeblock()
 	s.state = add
 }
 
-func (s *sizeGen) gBase(b *BaseElem) {
+func (s *sizeGen) gBase(b *BaseElem, x *extra) {
 	if !s.p.ok() {
 		return
 	}

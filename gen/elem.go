@@ -659,6 +659,9 @@ type StructField struct {
 	ShowZero   bool   // if msg:",showzero" tag was found.
 	IsIface    bool   // the field type is an interface?
 
+	// for dedup
+	IsPointer bool // the field is a pointer
+
 	// ZebraId defaults to -1, meaning not-tagged with a zebra id.
 	// if ZebraId >= 0, then the tag `zebra:"N"` was found, with ZebraId == N.
 	ZebraId int64

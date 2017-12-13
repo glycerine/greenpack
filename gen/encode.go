@@ -67,13 +67,21 @@ func (e *encodeGen) Execute(p Elem) error {
 	e.p.comment(fmt.Sprintf("%sEncodeMsg implements msgp.Encodable", e.cfg.MethodPrefix))
 
 	e.p.printf("\nfunc (%s %s) %sEncodeMsg(en *msgp.Writer) (err error) {", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	hasPtr := false
+	if hasPointersOrInterfaces(p) {
+		hasPtr = true
+		//e.p.dedupWriteTop(false)
+	}
 	e.p.preSaveHook()
-	next(e, p)
+	next(e, p, nil)
+	if hasPtr {
+		e.p.dedupWriteCleanup(false)
+	}
 	e.p.nakedReturn()
 	return e.p.err
 }
 
-func (e *encodeGen) gStruct(s *Struct) {
+func (e *encodeGen) gStruct(s *Struct, x *extra) {
 	if !e.p.ok() {
 		return
 	}
@@ -98,7 +106,7 @@ func (e *encodeGen) tuple(s *Struct) {
 		if !e.p.ok() {
 			return
 		}
-		next(e, s.Fields[i].FieldElem)
+		next(e, s.Fields[i].FieldElem, nil)
 	}
 }
 
@@ -182,7 +190,7 @@ func (e *encodeGen) structmap(s *Struct) {
 		e.p.printf("\n// write %q", fld)
 		e.Fuse(data)
 		e.fuseHook()
-		next(e, s.Fields[i].FieldElem)
+		next(e, s.Fields[i].FieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})
 
 		if allOmitEmpty || (s.hasOmitEmptyTags && s.Fields[i].OmitEmpty) {
 			e.p.printf("\n }\n")
@@ -190,7 +198,7 @@ func (e *encodeGen) structmap(s *Struct) {
 	}
 }
 
-func (e *encodeGen) gMap(m *Map) {
+func (e *encodeGen) gMap(m *Map, x *extra) {
 	if !e.p.ok() {
 		return
 	}
@@ -200,21 +208,31 @@ func (e *encodeGen) gMap(m *Map) {
 
 	e.p.printf("\nfor %s, %s := range %s {", m.Keyidx, m.Validx, vname)
 	e.writeAndCheck(m.KeyTyp, literalFmt, m.Keyidx)
-	next(e, m.Value)
+	next(e, m.Value, nil)
 	e.p.closeblock()
 }
 
-func (e *encodeGen) gPtr(s *Ptr) {
+func (e *encodeGen) gPtr(s *Ptr, x *extra) {
 	if !e.p.ok() {
 		return
 	}
 	e.fuseHook()
+	e.p.print("\n // gPtr.encodeGen():\n")
 	e.p.printf("\nif %s == nil { err = en.WriteNil(); if err != nil { return; } } else {", s.Varname())
-	next(e, s.Value)
+	e.p.printf("\n // record the pointer for deduplication  \n")
+	e.p.printf(` var dup bool
+ dup, err = en.IsDup(%s)
+			if err != nil {
+				return
+			}
+			if !dup {
+			`, s.Varname())
+	next(e, s.Value, nil)
+	e.p.closeblock()
 	e.p.closeblock()
 }
 
-func (e *encodeGen) gSlice(s *Slice) {
+func (e *encodeGen) gSlice(s *Slice, x *extra) {
 	if !e.p.ok() {
 		return
 	}
@@ -223,7 +241,7 @@ func (e *encodeGen) gSlice(s *Slice) {
 	e.p.rangeBlock(s.Index, s.Varname(), e, s.Els)
 }
 
-func (e *encodeGen) gArray(a *Array) {
+func (e *encodeGen) gArray(a *Array, x *extra) {
 	if !e.p.ok() {
 		return
 	}
@@ -239,7 +257,7 @@ func (e *encodeGen) gArray(a *Array) {
 	e.p.rangeBlock(a.Index, a.Varname(), e, a.Els)
 }
 
-func (e *encodeGen) gBase(b *BaseElem) {
+func (e *encodeGen) gBase(b *BaseElem, x *extra) {
 	if !e.p.ok() {
 		return
 	}
@@ -250,8 +268,19 @@ func (e *encodeGen) gBase(b *BaseElem) {
 	}
 
 	if b.Value == IDENT { // unknown identity
+		e.p.printf("\n // encodeGen.gBase IDENT \n")
+		e.p.printf(`
+		// record the interface for deduplication
+		var dup bool
+		dup, err = en.IsDup(%s)
+		if err != nil {
+			return
+		}
+		if !dup {`, vname)
+
 		e.p.printf("\nerr = %s.%sEncodeMsg(en)", vname, e.cfg.MethodPrefix)
 		e.p.print(errcheck)
+		e.p.closeblock()
 	} else { // typical case
 		e.writeAndCheck(b.BaseName(), literalFmt, vname)
 	}

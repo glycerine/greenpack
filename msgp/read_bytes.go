@@ -50,6 +50,13 @@ func IsNil(b []byte) bool {
 	return false
 }
 
+func IsEmptyMap(b []byte) bool {
+	if len(b) != 0 && b[0] == mfixmap {
+		return true
+	}
+	return false
+}
+
 // DidConsumeNil returns true without changing
 // b if nbs.AlwaysNil is true.
 //

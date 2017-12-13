@@ -44,11 +44,11 @@ func (e *fieldsEmpty) Execute(p Elem) error {
 
 	e.recvr = fmt.Sprintf("%s %s", p.Varname(), imutMethodReceiver(p))
 
-	next(e, p)
+	next(e, p, nil)
 	return e.p.err
 }
 
-func (e *fieldsEmpty) gStruct(s *Struct) {
+func (e *fieldsEmpty) gStruct(s *Struct, x *extra) {
 	if e.cfg.AllTuple {
 		return
 	}
@@ -94,7 +94,7 @@ func (e *fieldsEmpty) gStruct(s *Struct) {
 		}
 		if allFieldsEmpty || s.Fields[i].OmitEmpty {
 			e.p.printf("isempty[%d] = ", i)
-			next(om, s.Fields[i].FieldElem)
+			next(om, s.Fields[i].FieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})
 
 			e.p.printf("if isempty[%d] { fieldsInUse-- ; }\n", i)
 			//or: e.p.printf("if isempty[%d] { fieldsInUse-- ; fmt.Printf(\"\\n %s is not in use!\\n \")}\n", i, s.Fields[i].FieldTagZidClue)
@@ -104,22 +104,22 @@ func (e *fieldsEmpty) gStruct(s *Struct) {
 	e.p.printf("\n return fieldsInUse \n}\n")
 }
 
-func (e *fieldsEmpty) gPtr(p *Ptr) {
+func (e *fieldsEmpty) gPtr(p *Ptr, x *extra) {
 	//next(e, p.Value)
 }
 
-func (e *fieldsEmpty) gSlice(sl *Slice) {
+func (e *fieldsEmpty) gSlice(sl *Slice, x *extra) {
 	//next(e, sl.Els)
 }
 
-func (e *fieldsEmpty) gArray(a *Array) {
+func (e *fieldsEmpty) gArray(a *Array, x *extra) {
 	//fmt.Printf("\n\n 66666 gArray starting for fieldsempty a='%#v'\n\n", a)
 	//next(e, a.Els)
 }
 
-func (e *fieldsEmpty) gMap(m *Map) {
+func (e *fieldsEmpty) gMap(m *Map, x *extra) {
 	//	fmt.Printf("\n\n 55555 gMap starting for fieldsempty m='%#v'\n\n", m)
 	//next(e, m.Value)
 }
 
-func (e *fieldsEmpty) gBase(b *BaseElem) {}
+func (e *fieldsEmpty) gBase(b *BaseElem, x *extra) {}

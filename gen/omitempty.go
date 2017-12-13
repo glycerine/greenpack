@@ -20,27 +20,27 @@ func (s *omitEmpty) MethodPrefix() string {
 	return ""
 }
 
-func (s *omitEmpty) gStruct(st *Struct) {
+func (s *omitEmpty) gStruct(st *Struct, x *extra) {
 	s.p.printf("false // struct values are never empty\n")
 }
 
-func (s *omitEmpty) gPtr(p *Ptr) {
+func (s *omitEmpty) gPtr(p *Ptr, x *extra) {
 	s.p.printf("(%s == nil) // pointer, omitempty\n", p.vname)
 }
 
-func (s *omitEmpty) gSlice(sl *Slice) {
+func (s *omitEmpty) gSlice(sl *Slice, x *extra) {
 	s.p.printf("%s", IsLenZero(sl.vname))
 }
 
-func (s *omitEmpty) gArray(a *Array) {
+func (s *omitEmpty) gArray(a *Array, x *extra) {
 	s.p.printf("%s", IsLenZero(a.vname))
 }
 
-func (s *omitEmpty) gMap(m *Map) {
+func (s *omitEmpty) gMap(m *Map, x *extra) {
 	s.p.printf("%s", IsLenZero(m.vname))
 }
 
-func (s *omitEmpty) gBase(b *BaseElem) {
+func (s *omitEmpty) gBase(b *BaseElem, x *extra) {
 
 	// To handle the shim that converts time to string,
 	// we have to special case time.Time. Otherwise we'll

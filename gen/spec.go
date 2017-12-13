@@ -209,34 +209,38 @@ func (p *passes) applyall(e Elem) Elem {
 }
 
 type traversal interface {
-	gMap(*Map)
-	gSlice(*Slice)
-	gArray(*Array)
-	gPtr(*Ptr)
-	gBase(*BaseElem)
-	gStruct(*Struct)
+	gMap(*Map, *extra)
+	gSlice(*Slice, *extra)
+	gArray(*Array, *extra)
+	gPtr(*Ptr, *extra)
+	gBase(*BaseElem, *extra)
+	gStruct(*Struct, *extra)
+}
+
+type extra struct {
+	pointerOrIface bool
 }
 
 // type-switch dispatch to the correct
 // method given the type of 'e'
-func next(t traversal, e Elem) {
+func next(t traversal, e Elem, x *extra) {
 	//	if DEBUG {
 	//		fmt.Printf("\n top of next(), e='%#v'.\n =========>>  traversal='%#v'\n", e, t)
 	//	}
 
 	switch e := e.(type) {
 	case *Map:
-		t.gMap(e)
+		t.gMap(e, x)
 	case *Struct:
-		t.gStruct(e)
+		t.gStruct(e, x)
 	case *Slice:
-		t.gSlice(e)
+		t.gSlice(e, x)
 	case *Array:
-		t.gArray(e)
+		t.gArray(e, x)
 	case *Ptr:
-		t.gPtr(e)
+		t.gPtr(e, x)
 	case *BaseElem:
-		t.gBase(e)
+		t.gBase(e, x)
 	default:
 		panic("bad element type")
 	}
@@ -361,7 +365,7 @@ func (p *printer) closeblock() { p.print("\n}") }
 //
 func (p *printer) rangeBlock(idx string, iter string, t traversal, inner Elem) {
 	p.printf("\n for %s := range %s {", idx, iter)
-	next(t, inner)
+	next(t, inner, nil)
 	p.closeblock()
 }
 
@@ -383,6 +387,53 @@ func (p *printer) preSaveHook() {
 	}
 }
 
+func (p *printer) dedupReadTop(isUnmarshal bool) {
+	if p.ok() {
+		if !isUnmarshal {
+			// p.print("\n var pseq []interface{}  // runtime pointer/iface encounter order, for dedup\n")
+		}
+		// each ptr added with: pseq = append(pseq, newPtr)
+		// when finding DedupExtension{Pos: k}, instead of making a new struct, point instead to pseq[k].
+
+		// TODO: do we need to figure out how to turn off inlining if a struct has pointer values, so that we
+		//  can simply return early if we need to once we've pointed to a dup instead of inflating anew.
+	}
+}
+
+func (p *printer) dedupReadCleanup(isUnmarshal bool) {
+	if p.ok() {
+		if !isUnmarshal {
+			//p.print("\n pseq = pseq[:0] // cleanup\n")
+		}
+		// each ptr added with: pseq = append(pseq, newPtr)
+		// when finding DedupExtension{Pos: k}, instead of making a new struct, point instead to pseq[k].
+	}
+}
+
+func (p *printer) dedupWriteCleanup(isMarshal bool) {
+	if p.ok() {
+		//p.print("\n ptrWrit = nil\n")
+	}
+}
+
+func (p *printer) dedupWriteTop(isMarshal bool) {
+	if p.ok() {
+		if !isMarshal {
+			p.print(`	dup, err := en.IsDup(z)
+	if dup || err != nil {
+		return err
+	}
+`)
+		}
+		//		p.print("\n ptrWrit := make(map[interface{}]int) // ptr/iface -> order written in, for dedup.\n")
+		//		p.print("   _ = ptrWrit\n")
+		// // for each ptr (and interface) we write:
+		// if priorLoc, isDup := ptrWrit[ptr]; isDup {
+		//       // write DedupExtension{Loc: priorLoc} instead of repeating the write of the same struct again.
+		//   }
+	}
+}
+
 func (p *printer) comment(s string) {
 	p.print("\n// " + s)
 }
@@ -399,10 +450,13 @@ func (p *printer) print(format string) {
 	}
 }
 
-func (p *printer) initPtr(pt *Ptr) {
+func (p *printer) initPtr(pt *Ptr, isDecode bool) {
 	if pt.Needsinit() {
 		vname := pt.Varname()
-		p.printf("\nif %s == nil { %s = new(%s); }", vname, vname, pt.Value.TypeName())
+		p.printf("\nif %s == nil { %s = new(%s); }\n", vname, vname, pt.Value.TypeName())
+		if isDecode {
+			p.printf("dc.IndexEachPtrForDedup(%s)\n", vname)
+		}
 	}
 }
 
@@ -426,6 +480,11 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 
 		p.printf("\n for %s := range %s {\n", idx, iter)
 
+		// deduplicate inteface values in the slice, place 1 of 3.
+		p.printf(`if kptr, dup := dc.NextIsDup(); dup { // addme
+					%s[%s] = kptr.(%s)
+					continue
+        }`, iter, idx, inner.TypeName())
 		p.printf(`
 		concreteName_%s := dc.NextStructName()
         `, concreteName)
@@ -442,16 +501,18 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 		`, concreteName, cfac, cfac, cfac, target, cfac, myzid, concreteName, inner.TypeName(), target)
 		p.printf(`
                 %s[%s] = target_%s
+                dc.IndexEachPtrForDedup(target_%s)
                 continue
               }
-        `, iter, idx, target)
+        `, iter, idx, target, target) // dedup, place 2 of 3
 
-		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:446. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
+		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:503. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
+		p.printf("\n dc.IndexEachPtrForDedup(%s[%s])\n", iter, idx) // dedup, 3 of 3.
 
-		next(t, inner)
+		next(t, inner, nil)
 	} else {
 		p.printf("\n for %s := range %s {", idx, iter)
-		next(t, inner)
+		next(t, inner, nil)
 	}
 	p.closeblock()
 }
@@ -494,10 +555,25 @@ func (p *printer) unmarshalRangeBlock(idx string, parent Elem, t traversal, inne
 
 		p.printf("\nbts, err = %s[%s].UnmarshalMsg(bts) // from unmarshalRangeBlock in spec.go:486. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
 
-		next(t, inner)
+		next(t, inner, nil)
 	} else {
 		p.printf("\n for %s := range %s {", idx, iter)
-		next(t, inner)
+		next(t, inner, nil)
 	}
 	p.closeblock()
+}
+
+func hasPointersOrInterfaces(e Elem) bool {
+	switch e := e.(type) {
+	case *Map:
+		// it might... Elem could be checked. TODO, detect for sure instead of guessing:
+		return true
+	case *Struct:
+		for _, f := range e.Fields {
+			if f.IsIface || f.IsPointer {
+				return true
+			}
+		}
+	}
+	return false
 }

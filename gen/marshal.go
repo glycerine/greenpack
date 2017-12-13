@@ -52,9 +52,17 @@ func (m *marshalGen) Execute(p Elem) error {
 	c := p.Varname()
 
 	m.p.printf("\nfunc (%s %s) %sMarshalMsg(b []byte) (o []byte, err error) {", p.Varname(), imutMethodReceiver(p), m.cfg.MethodPrefix)
+	hasPtr := false
+	if hasPointersOrInterfaces(p) {
+		hasPtr = true
+		m.p.dedupWriteTop(true)
+	}
 	m.p.preSaveHook()
 	m.p.printf("\no = msgp.Require(b, %s.%sMsgsize())", c, m.cfg.MethodPrefix)
-	next(m, p)
+	next(m, p, nil)
+	if hasPtr {
+		m.p.dedupWriteCleanup(true)
+	}
 	m.p.nakedReturn()
 	return m.p.err
 }
@@ -78,7 +86,7 @@ func (m *marshalGen) Fuse(b []byte) {
 	}
 }
 
-func (m *marshalGen) gStruct(s *Struct) {
+func (m *marshalGen) gStruct(s *Struct, x *extra) {
 	if !m.p.ok() {
 		return
 	}
@@ -103,7 +111,7 @@ func (m *marshalGen) tuple(s *Struct) {
 		if !m.p.ok() {
 			return
 		}
-		next(m, s.Fields[i].FieldElem)
+		next(m, s.Fields[i].FieldElem, nil)
 	}
 }
 
@@ -153,7 +161,7 @@ func (m *marshalGen) mapstruct(s *Struct) {
 		m.p.printf("\n// string %q", fld)
 		m.Fuse(data)
 		m.fuseHook()
-		next(m, s.Fields[i].FieldElem)
+		next(m, s.Fields[i].FieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})
 
 		if allOmitEmpty || (s.hasOmitEmptyTags && s.Fields[i].OmitEmpty) {
 			m.p.printf("\n }\n")
@@ -170,7 +178,7 @@ func (m *marshalGen) rawbytes(bts []byte) {
 	m.p.print(")")
 }
 
-func (m *marshalGen) gMap(s *Map) {
+func (m *marshalGen) gMap(s *Map, x *extra) {
 	if !m.p.ok() {
 		return
 	}
@@ -179,11 +187,11 @@ func (m *marshalGen) gMap(s *Map) {
 	m.rawAppend(mapHeader, lenAsUint32, vname)
 	m.p.printf("\nfor %s, %s := range %s {", s.Keyidx, s.Validx, vname)
 	m.rawAppend(s.KeyTyp, literalFmt, s.Keyidx)
-	next(m, s.Value)
+	next(m, s.Value, nil)
 	m.p.closeblock()
 }
 
-func (m *marshalGen) gSlice(s *Slice) {
+func (m *marshalGen) gSlice(s *Slice, x *extra) {
 	if !m.p.ok() {
 		return
 	}
@@ -193,7 +201,7 @@ func (m *marshalGen) gSlice(s *Slice) {
 	m.p.rangeBlock(s.Index, vname, m, s.Els)
 }
 
-func (m *marshalGen) gArray(a *Array) {
+func (m *marshalGen) gArray(a *Array, x *extra) {
 	if !m.p.ok() {
 		return
 	}
@@ -207,17 +215,19 @@ func (m *marshalGen) gArray(a *Array) {
 	m.p.rangeBlock(a.Index, a.Varname(), m, a.Els)
 }
 
-func (m *marshalGen) gPtr(p *Ptr) {
+func (m *marshalGen) gPtr(p *Ptr, x *extra) {
 	if !m.p.ok() {
 		return
 	}
 	m.fuseHook()
-	m.p.printf("\nif %s == nil {\no = msgp.AppendNil(o)\n} else {", p.Varname())
-	next(m, p.Value)
+	m.p.printf("\n // marshalGen.gPtr() \n")
+	m.p.printf("\nif %s == nil {\no = msgp.AppendNil(o)\n} else { ", p.Varname())
+	m.p.printf("\n // hmm.. no en, no place to check en.IsDup(z)\n")
+	next(m, p.Value, nil)
 	m.p.closeblock()
 }
 
-func (m *marshalGen) gBase(b *BaseElem) {
+func (m *marshalGen) gBase(b *BaseElem, x *extra) {
 	if !m.p.ok() {
 		return
 	}

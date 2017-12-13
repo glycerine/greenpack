@@ -502,6 +502,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 	var showzero bool
 	var zebraId int64 = -1
 	var isIface bool
+	var isPointer bool
 
 	// parse tag; otherwise field name is field tag
 	if f.Tag != nil {
@@ -597,6 +598,10 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		ex.SetZid(zebraId)
 	}
 
+	if _, isPtr := ex.(*gen.Ptr); isPtr {
+		isPointer = true
+	}
+
 	if !isIface && fs != nil && fs.PackageInfo != nil &&
 		len(fs.PackageInfo.Info.Types) > 0 {
 
@@ -611,6 +616,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 	sf[0].Skip = skip
 	sf[0].ShowZero = showzero
 	sf[0].IsIface = isIface
+	sf[0].IsPointer = isPointer
 
 	// parse field name
 	switch len(f.Names) {
@@ -633,6 +639,7 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 				Skip:            skip,
 				FieldTagZidClue: msgp.Clue2Field(nm.Name, ex.TypeClue(), zebraId),
 				IsIface:         isIface,
+				IsPointer:       isPointer,
 			})
 		}
 		return sf, nil
