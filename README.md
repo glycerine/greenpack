@@ -1,7 +1,7 @@
 greenpack news, December 2017
 ===============
 
-Version 5.0.1 includes two new features: a) interfaces are supported (since the parser can't distinguish interfaces from structs, manual annotation of interface types is required, using the `msgp:",iface"` tag, and your container must implement the `ConcreteFactory` interface; the method `NewValueAsInterface`); and b) de-duplication of pointers and interfaces allows serialization of shared pointers efficiently.
+Version 5.0.1 includes two new features: a) interfaces are supported (since the parser can't distinguish interfaces from structs, manual annotation of interface types is required, using the `msgp:",iface"` tag, and your container must implement the `ConcreteFactory` interface; the method `NewValueAsInterface`. See the example/test https://github.com/glycerine/greenpack/blob/master/_generated/def.go#L341 and https://github.com/glycerine/greenpack/blob/master/_generated/def.go#L345); and b) de-duplication of pointers and interfaces allows serialization of shared pointers efficiently.
 
 greenpack: a serialization convention for msgpack2; adds field versioning and type annotation.
 ==========
