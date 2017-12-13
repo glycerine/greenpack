@@ -1,3 +1,8 @@
+greenpack news, Winter 2018
+===============
+
+Version 5.0.1 includes two new features: a) interfaces are supported; and b) deduplication of pointers and interfaces allows serialization of shared pointers efficiently.
+
 greenpack: a serialization convention for msgpack2; adds field versioning and type annotation.
 ==========
 
