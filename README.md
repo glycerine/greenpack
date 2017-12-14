@@ -11,7 +11,7 @@ Required if using interfaces: your container must implement the `ConcreteFactory
 
 * b) de-duplication of pointers and interfaces allows serialization of repeated/shared pointers efficiently.
 
-NB: de-duplication is only available for `EncodeMsg` / `DecodeMsg` based on a Writer/Reader stream. The `MarshalMsg`/`UnmarshalMsg` API doesn't have a place to store the deduplication state, so at the moment de-dup from a []byte isn't supported. This isn't a huge limitation as it is trivial to turn a []byte into a stream if need be.
+NB: de-duplication is only available for `EncodeMsg` / `DecodeMsg` based on a Writer/Reader stream. The `MarshalMsg`/`UnmarshalMsg` API doesn't have a place to store the deduplication state, so at the moment de-dup from a []byte isn't supported. This isn't a huge limitation as it is trivial to turn a `[]byte` into a stream if need be. For example, use `w := msgp.NewWriter(bytes.NewBuffer(by))` to get a writer that wraps the `by []byte`.
 
 greenpack: a serialization convention for msgpack2; adds field versioning and type annotation.
 ==========
