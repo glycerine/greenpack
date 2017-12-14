@@ -41,9 +41,10 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 	pushstate(name)
 	defer popstate()
 	fs := &FileSet{
-		Specs:      make(map[string]ast.Expr),
-		Identities: make(map[string]gen.Elem),
-		Cfg:        c,
+		Specs:              make(map[string]ast.Expr),
+		Identities:         make(map[string]gen.Elem),
+		Cfg:                c,
+		InterfaceTypeNames: make(map[string]bool),
 	}
 
 	fset := token.NewFileSet()
@@ -64,6 +65,7 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 		for _, fl := range one.Files {
 			pushstate(fl.Name.Name)
 			fs.Directives = append(fs.Directives, yieldComments(fl.Comments)...)
+			fs.getInterfaceNames(fl)
 			fs.getZebraSchemaId(fl)
 			if !c.Unexported {
 				ast.FileExports(fl)
@@ -78,6 +80,7 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 		}
 		fs.Package = f.Name.Name
 		fs.Directives = yieldComments(f.Comments)
+		fs.getInterfaceNames(f)
 		fs.getZebraSchemaId(f)
 		if !c.Unexported {
 			ast.FileExports(f)

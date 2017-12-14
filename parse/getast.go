@@ -40,6 +40,8 @@ type FileSet struct {
 	LoadedProg    *loader.Program
 	QuickPack     map[string]*loader.PackageInfo
 	Fset          *token.FileSet
+
+	InterfaceTypeNames map[string]bool // so we can heuristically identify interfaces.
 }
 
 // File parses a file at the relative path
@@ -58,9 +60,10 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 	pushstate(name)
 	defer popstate()
 	fs := &FileSet{
-		Specs:      make(map[string]ast.Expr),
-		Identities: make(map[string]gen.Elem),
-		Cfg:        c,
+		Specs:              make(map[string]ast.Expr),
+		Identities:         make(map[string]gen.Elem),
+		Cfg:                c,
+		InterfaceTypeNames: make(map[string]bool),
 	}
 
 	var filenames []string
@@ -122,6 +125,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 			pushstate(fl.Name.Name)
 			fs.Directives = append(fs.Directives, yieldComments(fl.Comments)...)
 
+			fs.getInterfaceNames(fl)
 			if !gotZebraSchema {
 				// must get zebraSchemaId prior to FileExports(), as it dumps non-exports.
 				fs.getZebraSchemaId(fl)
@@ -584,6 +588,23 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 
 	}
 
+	// New: auto-detection of interfaces and slices of interfaces.
+	// This interface detection method should always be avail, even without full load + typecheck.
+	//
+	// But it might be susceptible to false positives on name collisions?? for out of package names in particular?
+	// We could always go back to forcing users to manually annotate interfaces,
+	//  but that is somewhat painful. We'd prefer greenpack not crash on the user
+	//  because they didn't mark a type manually as an interface.
+	//
+	if !isIface {
+		typnm := extractTypeName(f.Type)
+		//fmt.Printf("\n DEBUG: extracted type name '%s'\n", typnm)
+		if fs.InterfaceTypeNames[typnm] {
+			//fmt.Printf("\n DEBUG: detected that f.Names[0]='%s' is an interface\n", typnm)
+			isIface = true
+		}
+	}
+
 	ex, err := fs.parseExpr(f.Type, isIface)
 	if err != nil {
 		fatalf(err.Error())
@@ -602,6 +623,8 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		isPointer = true
 	}
 
+	// try hard to identify if isIface.
+	// this might only be avail on full load.
 	if !isIface && fs != nil && fs.PackageInfo != nil &&
 		len(fs.PackageInfo.Info.Types) > 0 {
 
@@ -990,6 +1013,28 @@ func (fs *FileSet) getZebraSchemaId(f *ast.File) {
 	}
 }
 
+func (fs *FileSet) getInterfaceNames(f *ast.File) {
+	//fmt.Printf("\n starting getInterfaceNames\n")
+
+	for i := range f.Decls {
+		switch g := f.Decls[i].(type) {
+		case *ast.GenDecl:
+
+			for _, s := range g.Specs {
+				switch ts := s.(type) {
+				case *ast.TypeSpec:
+					switch ift := ts.Type.(type) {
+					case *ast.InterfaceType:
+						_ = ift
+						//fmt.Printf("\n DEBUG: in getInterfaceNames, we see InterfaceType ts.Name='%#v', ts='%#v', ift='%#v'\n", ts.Name.Name, ts, ift)
+						fs.InterfaceTypeNames[ts.Name.Name] = true
+					}
+				}
+			}
+		}
+	}
+}
+
 func fileOrDir(name string) (ok, isDir bool) {
 	fi, err := os.Stat(name)
 	if err != nil {
@@ -1087,4 +1132,14 @@ func (fs *FileSet) walkAstHelper(selPkg *loader.PackageInfo) {
 			return true
 		})
 	}
+}
+
+func extractTypeName(ft ast.Expr) string {
+	switch x := ft.(type) {
+	case *ast.Ident:
+		return x.Name
+	case *ast.ArrayType:
+		return extractTypeName(x.Elt)
+	}
+	return ""
 }
