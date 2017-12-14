@@ -5,9 +5,26 @@ import (
 	"reflect"
 )
 
-// writer then reader
+// Methods for deduplicating repeated occurances of the same pointer.
+//
+// When writing, we track the sequence of pointers written.
+// When we see a duplicate pointer, we write the special
+// extension "duplicate" value along with the pointer's
+// occurance order in the serialization.
+//
+// As we read back, we keep a count that increments for every
+// pointer we read, and we save a map from the count to the pointer.
+// When we encounter a value that is the special value indicating reuse, then
+// we refer back to the pointer k (k being found within the special extension value)
+// and we plug in the k-th pointer instead.
 
-// Writer
+// writer then reader methods
+
+// ===============================
+// ===============================
+// Writer methods
+// ===============================
+// ===============================
 
 func (mw *Writer) ResetDedup() {
 	mw.ptrWrit = make(map[interface{}]int)
@@ -24,9 +41,6 @@ func (mw *Writer) PointerCount() int {
 func (mw *Writer) IsDup(v interface{}) (res bool, err error) {
 	defer func() {
 		if recover() != nil {
-			// just recover from panic. these are the defaults
-			//res = false
-			//err = nil
 			return
 		}
 	}()
@@ -55,7 +69,11 @@ func (mw *Writer) WriteDedupExt(k int) error {
 	return mw.WriteExtension(&ext)
 }
 
-/////////////// Reader side
+// =============================
+// =============================
+// Reader side
+// =============================
+// =============================
 
 func (m *Reader) ReadDedupExt() (int, error) {
 	ext := RawExtension{
@@ -93,8 +111,8 @@ func (m *Reader) IndexEachPtrForDedup(ptr interface{}) {
 	if va.IsNil() {
 		return
 	}
-	fmt.Printf("\n Reader.IndexEachPtrForDedup sees ptr '%#v'\n", ptr)
 	m.dedupPointers = append(m.dedupPointers, ptr)
+	fmt.Printf("\n Reader.IndexEachPtrForDedup sees ptr '%#v', as sequence k=%v\n", ptr, len(m.dedupPointers)-1)
 }
 
 func (m *Reader) NextIsDup() (interface{}, bool) {
