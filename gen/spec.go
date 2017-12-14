@@ -419,7 +419,7 @@ func (p *printer) dedupWriteCleanup(isMarshal bool) {
 func (p *printer) dedupWriteTop(isMarshal bool) {
 	if p.ok() {
 		if !isMarshal {
-			p.print(`	dup, err := en.IsDup(z)
+			p.print(`	dup, err := en.WriteIsDup(z)
 	if dup || err != nil {
 		return err
 	}
@@ -481,7 +481,7 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 		p.printf("\n for %s := range %s {\n", idx, iter)
 
 		// deduplicate inteface values in the slice, place 1 of 3.
-		p.printf(`if kptr, dup := dc.NextIsDup(); dup { // addme
+		p.printf(`if kptr, dup := dc.ReadIsDup(); dup { // addme
 					%s[%s] = kptr.(%s)
 					continue
         }`, iter, idx, inner.TypeName())

@@ -221,7 +221,7 @@ func (e *encodeGen) gPtr(s *Ptr, x *extra) {
 	e.p.printf("\nif %s == nil { err = en.WriteNil(); if err != nil { return; } } else {", s.Varname())
 	e.p.printf("\n // record the pointer for deduplication  \n")
 	e.p.printf(` var dup bool
- dup, err = en.IsDup(%s)
+ dup, err = en.WriteIsDup(%s)
 			if err != nil {
 				return
 			}
@@ -272,7 +272,7 @@ func (e *encodeGen) gBase(b *BaseElem, x *extra) {
 		e.p.printf(`
 		// record the interface for deduplication
 		var dup bool
-		dup, err = en.IsDup(%s)
+		dup, err = en.WriteIsDup(%s)
 		if err != nil {
 			return
 		}

@@ -298,7 +298,7 @@ func (z *Big) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 			if zgensym_58b5c2649cecee38_4 == nil {
 				o = msgp.AppendNil(o)
 			} else {
-				// hmm.. no en, no place to check en.IsDup(z)
+				// hmm.. no en, no place to check en.WriteIsDup(z)
 
 				o, err = zgensym_58b5c2649cecee38_4.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 				if err != nil {
@@ -316,7 +316,7 @@ func (z *Big) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		if z.Myptr == nil {
 			o = msgp.AppendNil(o)
 		} else {
-			// hmm.. no en, no place to check en.IsDup(z)
+			// hmm.. no en, no place to check en.WriteIsDup(z)
 
 			o, err = z.Myptr.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 			if err != nil {
@@ -733,7 +733,7 @@ func (z *S2) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		if z.MyTree == nil {
 			o = msgp.AppendNil(o)
 		} else {
-			// hmm.. no en, no place to check en.IsDup(z)
+			// hmm.. no en, no place to check en.WriteIsDup(z)
 
 			o, err = z.MyTree.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 			if err != nil {
@@ -1176,7 +1176,7 @@ func (z *Tree) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		if z.Par == nil {
 			o = msgp.AppendNil(o)
 		} else {
-			// hmm.. no en, no place to check en.IsDup(z)
+			// hmm.. no en, no place to check en.WriteIsDup(z)
 
 			o, err = z.Par.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
 			if err != nil {

@@ -281,7 +281,7 @@ func (d *decodeGen) gBase(b *BaseElem, x *extra) {
 			if b.IsInterface() {
 				targ, conc, fact := gensym(), gensym(), gensym()
 				d.p.printf(`
-if kptr, dup := dc.NextIsDup(); dup {
+if kptr, dup := dc.ReadIsDup(); dup {
 	%s = kptr.(%s)
 	continue
 }
@@ -440,7 +440,7 @@ func (d *decodeGen) gPtr(p *Ptr, x *extra) {
 		}
 	} else {
 		// !isBase
-		d.p.printf("\n%s = nil\n} else if kptr, dup := dc.NextIsDup(); dup { %s = kptr.(%s) } else {", vname, vname, p.TypeName())
+		d.p.printf("\n%s = nil\n} else if kptr, dup := dc.ReadIsDup(); dup { %s = kptr.(%s) } else {", vname, vname, p.TypeName())
 	}
 	d.p.initPtr(p, true)
 	next(d, p.Value, nil)

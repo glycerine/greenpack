@@ -38,7 +38,7 @@ func (mw *Writer) PointerCount() int {
 
 // upon writing each pointer, first check if it is a duplicate;
 // i.e. appears more than once, pointing to the same object.
-func (mw *Writer) IsDup(v interface{}) (res bool, err error) {
+func (mw *Writer) WriteIsDup(v interface{}) (res bool, err error) {
 	defer func() {
 		if recover() != nil {
 			return
@@ -50,8 +50,11 @@ func (mw *Writer) IsDup(v interface{}) (res bool, err error) {
 	k, dup := mw.ptrWrit[v]
 	if !dup {
 		mw.ptrWrit[v] = mw.ptrCountNext
+		fmt.Printf("\n\n $$$ write %p  -> k=%v / %#v\n\n", v, mw.ptrCountNext, v)
 		mw.ptrCountNext++
 		return false, nil
+	} else {
+		fmt.Printf("\n\n $$$ DUP write %p  -> k=%v / %#v\n\n", v, k, v)
 	}
 	return true, mw.WriteDedupExt(k)
 }
@@ -112,10 +115,10 @@ func (m *Reader) IndexEachPtrForDedup(ptr interface{}) {
 		return
 	}
 	m.dedupPointers = append(m.dedupPointers, ptr)
-	fmt.Printf("\n Reader.IndexEachPtrForDedup sees ptr '%#v', as sequence k=%v\n", ptr, len(m.dedupPointers)-1)
+	fmt.Printf("\n\n *** Reader.IndexEachPtrForDedup sees ptr '%#v', as sequence k=%v\n\n", ptr, len(m.dedupPointers)-1)
 }
 
-func (m *Reader) NextIsDup() (interface{}, bool) {
+func (m *Reader) ReadIsDup() (interface{}, bool) {
 
 	typ, err := m.peekExtensionType()
 	if err != nil {

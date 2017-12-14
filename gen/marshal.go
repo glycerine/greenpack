@@ -222,7 +222,7 @@ func (m *marshalGen) gPtr(p *Ptr, x *extra) {
 	m.fuseHook()
 	m.p.printf("\n // marshalGen.gPtr() \n")
 	m.p.printf("\nif %s == nil {\no = msgp.AppendNil(o)\n} else { ", p.Varname())
-	m.p.printf("\n // hmm.. no en, no place to check en.IsDup(z)\n")
+	m.p.printf("\n // hmm.. no en, no place to check en.WriteIsDup(z)\n")
 	next(m, p.Value, nil)
 	m.p.closeblock()
 }
