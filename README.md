@@ -1,7 +1,15 @@
 greenpack news, December 2017
 ===============
 
-Version 5.0.3 includes two new features: a) interfaces are supported (since the parser can't distinguish interfaces from structs, manual annotation of interface types is required, using the `msgp:",iface"` tag, and your container must implement the `ConcreteFactory` interface; the method `NewValueAsInterface`. See the example/test https://github.com/glycerine/greenpack/blob/master/_generated/def.go#L341 and https://github.com/glycerine/greenpack/blob/master/_generated/def.go#L345); and b) de-duplication of pointers and interfaces allows serialization of shared pointers efficiently.
+Version 5.0.4 includes two new features:
+
+* a) interfaces are supported, and automatically detected
+
+(Since the parser didn't used to distinguish interfaces from structs, manual annotation of interface types was required, using the `msgp:",iface"` tag. This has now been fixed.)
+
+Required if using interfaces: your container must implement the `ConcreteFactory` interface; the method `NewValueAsInterface`. See the example/test https://github.com/glycerine/greenpack/blob/master/_generated/def.go#L341 and https://github.com/glycerine/greenpack/blob/master/_generated/def.go#L345 .
+
+* b) de-duplication of pointers and interfaces allows serialization of repeated/shared pointers efficiently.
 
 NB: de-duplication is only available for `EncodeMsg` / `DecodeMsg` based on a Writer/Reader stream. The `MarshalMsg`/`UnmarshalMsg` API doesn't have a place to store the deduplication state, so at the moment de-dup from a []byte isn't supported. This isn't a huge limitation as it is trivial to turn a []byte into a stream if need be.
 
