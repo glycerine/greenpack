@@ -175,7 +175,7 @@ doneWithStruct5zgensym_72ba5d454ae3d9dd_6:
 					if z.Setm[zgensym_72ba5d454ae3d9dd_4] == nil {
 						z.Setm[zgensym_72ba5d454ae3d9dd_4] = new(inn)
 					}
-					dc.IndexEachPtrForDedup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
+					dc.DedupIndexEachPtr(z.Setm[zgensym_72ba5d454ae3d9dd_4])
 
 					err = z.Setm[zgensym_72ba5d454ae3d9dd_4].DecodeMsg(dc)
 					if err != nil {
@@ -355,7 +355,7 @@ func (z *Tr) EncodeMsg(en *msgp.Writer) (err error) {
 			} else {
 				// record the pointer for deduplication
 				var dup bool
-				dup, err = en.WriteIsDup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
+				dup, err = en.DedupWriteIsDup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
 				if err != nil {
 					return
 				}
@@ -365,7 +365,7 @@ func (z *Tr) EncodeMsg(en *msgp.Writer) (err error) {
 
 					// record the interface for deduplication
 					var dup bool
-					dup, err = en.WriteIsDup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
+					dup, err = en.DedupWriteIsDup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
 					if err != nil {
 						return
 					}
@@ -438,7 +438,7 @@ func (z *Tr) MarshalMsg(b []byte) (o []byte, err error) {
 			if z.Setm[zgensym_72ba5d454ae3d9dd_4] == nil {
 				o = msgp.AppendNil(o)
 			} else {
-				// hmm.. no en, no place to check en.WriteIsDup(z)
+				// hmm.. no en, no place to check en.DedupWriteIsDup(z)
 
 				o, err = z.Setm[zgensym_72ba5d454ae3d9dd_4].MarshalMsg(o) // not is.iface, gen/marshal.go:243
 				if err != nil {
@@ -1211,7 +1211,7 @@ doneWithStruct29zgensym_72ba5d454ae3d9dd_30:
 					if zgensym_72ba5d454ae3d9dd_28 == nil {
 						zgensym_72ba5d454ae3d9dd_28 = new(Tr)
 					}
-					dc.IndexEachPtrForDedup(zgensym_72ba5d454ae3d9dd_28)
+					dc.DedupIndexEachPtr(zgensym_72ba5d454ae3d9dd_28)
 
 					err = zgensym_72ba5d454ae3d9dd_28.DecodeMsg(dc)
 					if err != nil {
@@ -1332,7 +1332,7 @@ func (z *u) EncodeMsg(en *msgp.Writer) (err error) {
 			} else {
 				// record the pointer for deduplication
 				var dup bool
-				dup, err = en.WriteIsDup(zgensym_72ba5d454ae3d9dd_28)
+				dup, err = en.DedupWriteIsDup(zgensym_72ba5d454ae3d9dd_28)
 				if err != nil {
 					return
 				}
@@ -1342,7 +1342,7 @@ func (z *u) EncodeMsg(en *msgp.Writer) (err error) {
 
 					// record the interface for deduplication
 					var dup bool
-					dup, err = en.WriteIsDup(zgensym_72ba5d454ae3d9dd_28)
+					dup, err = en.DedupWriteIsDup(zgensym_72ba5d454ae3d9dd_28)
 					if err != nil {
 						return
 					}
@@ -1408,7 +1408,7 @@ func (z *u) MarshalMsg(b []byte) (o []byte, err error) {
 			if zgensym_72ba5d454ae3d9dd_28 == nil {
 				o = msgp.AppendNil(o)
 			} else {
-				// hmm.. no en, no place to check en.WriteIsDup(z)
+				// hmm.. no en, no place to check en.DedupWriteIsDup(z)
 
 				o, err = zgensym_72ba5d454ae3d9dd_28.MarshalMsg(o) // not is.iface, gen/marshal.go:243
 				if err != nil {

@@ -1,12 +1,14 @@
 package _generated
 
 import (
-	"github.com/glycerine/greenpack/msgp"
+	"fmt"
 	"os"
 	"time"
+
+	"github.com/glycerine/greenpack/msgp"
 )
 
-//go:generate greenpack -no-dedup -o generated.go
+//go:generate greenpack -o generated.go
 
 // All of the struct
 // definitions in this
@@ -346,6 +348,50 @@ func (nd *NeedsDedup) NewValueAsInterface(zid int64, typename string) interface{
 	//fmt.Printf("\n DEBUG, in NeedsDedup.NewValueAsInterface(): typename = '%s'\n", typename)
 	if typename == "Greeter" {
 		return &Greeter{}
+	}
+	panic("unknown typename")
+}
+
+// for test 500
+
+type Inner struct {
+	Bubbles int
+}
+
+func (in *Inner) Shout() {}
+
+type Shouter interface {
+	Shout()
+	msgp.Serz
+}
+type Middle struct {
+	Children []Shouter `msg:",iface"`
+}
+
+func (nd *Middle) NewValueAsInterface(zid int64, typename string) interface{} {
+	if typename == "Inner" {
+		return &Inner{}
+	}
+	panic(fmt.Sprintf("Middle.NewValueAsInterface doesn't know how to procude '%s'", typename))
+}
+
+func (s *Middle) Yowza() {}
+
+type Imid interface {
+	Yowza()
+	msgp.Serz
+}
+
+type Outer struct {
+	Slc []Imid `msg:"slc,iface" json:"slc" zid:"0"`
+}
+
+func (nd *Outer) NewValueAsInterface(zid int64, typename string) interface{} {
+	if typename == "Middle" {
+		return &Middle{}
+	}
+	if typename == "Inner" {
+		return &Inner{}
 	}
 	panic("unknown typename")
 }

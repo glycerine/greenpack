@@ -39,7 +39,7 @@ var (
 func popWriter(w io.Writer) *Writer {
 	wr := writerPool.Get().(*Writer)
 	wr.Reset(w)
-	wr.ResetDedup()
+	wr.DedupReset()
 	return wr
 }
 

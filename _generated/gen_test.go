@@ -64,7 +64,7 @@ func BenchmarkFastDecode(b *testing.B) {
 //  - map[string]string
 //  - anonymous structs
 //
-func Test1EncodeDecode(t *testing.T) {
+func Test911EncodeDecode(t *testing.T) {
 	f := 32.00
 	tt := &TestType{
 		F: &f,
@@ -180,13 +180,13 @@ func panicOn(err error) {
 func Test444DedupOfSamePointerWorks(t *testing.T) {
 
 	ptr := &Target{ID: 3}
-	iface := &Greeter{Style: 7}
+	greet := &Greeter{Style: 7}
 	nd := &NeedsDedup{
 		MyPtr0:   ptr,
 		MyPtr1:   ptr,
-		MyIface0: iface,
-		MyIface1: iface,
-		Slice:    []Hello{iface, iface},
+		MyIface0: greet,
+		MyIface1: greet,
+		Slice:    []Hello{greet, greet},
 	}
 
 	var buf bytes.Buffer
@@ -195,7 +195,7 @@ func Test444DedupOfSamePointerWorks(t *testing.T) {
 	panicOn(nd.EncodeMsg(wr))
 	wr.Flush()
 
-	//fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.PointerCount(), buf.Bytes(), string(buf.Bytes()))
+	fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.DedupPointerCount(), buf.Bytes(), string(buf.Bytes()))
 
 	rd := msgp.NewReader(&buf)
 	//rd.ResetDedup()
@@ -280,5 +280,35 @@ func Test446DedupOfSamePointerWorks(t *testing.T) {
 	// check across slices of interfaces and slices of pointers for dedup.
 	if nd2.Slice[0].(*Greeter) != nd2.SlicePtr[0] {
 		panic(fmt.Sprintf("expected pointers/interfaces to be the same"))
+	}
+}
+
+// Dedup Test4
+func Test500NestedDedup(*testing.T) {
+
+	// slices of interfaces within slices of interfaces
+	// should still dedup correctly.
+
+	inner := &Inner{}
+	mid := &Middle{
+		Children: []Shouter{inner, inner},
+	}
+	outer := &Outer{
+		Slc: []Imid{mid},
+	}
+
+	var buf bytes.Buffer
+	wr := msgp.NewWriter(&buf)
+	panicOn(outer.EncodeMsg(wr))
+	wr.Flush()
+
+	//fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.PointerCount(), buf.Bytes(), string(buf.Bytes()))
+
+	rd := msgp.NewReader(&buf)
+	var o2 Outer
+	panicOn(o2.DecodeMsg(rd))
+	// check dedup of the inner and inner
+	if o2.Slc[0].(*Middle).Children[0].(*Inner) != o2.Slc[0].(*Middle).Children[1].(*Inner) {
+		panic(fmt.Sprintf("expected pointers to be the same"))
 	}
 }

@@ -281,30 +281,30 @@ func (d *decodeGen) gBase(b *BaseElem, x *extra) {
 			if b.IsInterface() {
 				targ, conc, fact := gensym(), gensym(), gensym()
 				d.p.printf(`
-if kptr, dup := dc.ReadIsDup(); dup {
+if kptr, dup := dc.DedupReadIsDup("%s","%s"); dup {
 	%s = kptr.(%s)
 	continue
 }
-`, vname, b.BaseType())
+`, vname, b.BaseType(), vname, b.BaseType())
 				d.p.printf(`
 	conc_%s := dc.NextStructName()
 	if conc_%s != "" {
 		if cfac_%s, cfacOK_%s := interface{}(z).(msgp.ConcreteFactory); cfacOK_%s {
 			targ_%s := cfac_%s.NewValueAsInterface(%v, conc_%s).(%s)
+            dc.DedupIndexEachPtr(targ_%s) // must be before this next DecodeMsg.
 			err = targ_%s.DecodeMsg(dc)
 			if err != nil {
 				return
 			}
             %s = targ_%s
-            dc.IndexEachPtrForDedup(%s)
 			continue
 		}
 	}
     if %s != nil {
+      dc.DedupIndexEachPtr(%s)
 	  err = %s.%sDecodeMsg(dc)
     }
-    dc.IndexEachPtrForDedup(%s)
-`, conc, conc, fact, fact, fact, targ, fact, myzid, conc, b.BaseType(), targ, vname, targ, vname, vname, vname, d.cfg.MethodPrefix, vname)
+`, conc, conc, fact, fact, fact, targ, fact, myzid, conc, b.BaseType(), targ, targ, vname, targ, vname, vname, vname, d.cfg.MethodPrefix)
 
 			} else {
 				d.p.printf("\nerr = %s.%sDecodeMsg(dc)", vname, d.cfg.MethodPrefix)
@@ -440,7 +440,7 @@ func (d *decodeGen) gPtr(p *Ptr, x *extra) {
 		}
 	} else {
 		// !isBase
-		d.p.printf("\n%s = nil\n} else if kptr, dup := dc.ReadIsDup(); dup { %s = kptr.(%s) } else {", vname, vname, p.TypeName())
+		d.p.printf("\n%s = nil\n} else if kptr, dup := dc.DedupReadIsDup(\"%s\",\"%s\"); dup { %s = kptr.(%s) } else {", vname, vname, p.TypeName(), vname, p.TypeName())
 	}
 	d.p.initPtr(p, true)
 	next(d, p.Value, nil)

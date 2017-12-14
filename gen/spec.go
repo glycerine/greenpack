@@ -419,7 +419,7 @@ func (p *printer) dedupWriteCleanup(isMarshal bool) {
 func (p *printer) dedupWriteTop(isMarshal bool) {
 	if p.ok() {
 		if !isMarshal {
-			p.print(`	dup, err := en.WriteIsDup(z)
+			p.print(`	dup, err := en.DedupWriteIsDup(z)
 	if dup || err != nil {
 		return err
 	}
@@ -455,7 +455,7 @@ func (p *printer) initPtr(pt *Ptr, isDecode bool) {
 		vname := pt.Varname()
 		p.printf("\nif %s == nil { %s = new(%s); }\n", vname, vname, pt.Value.TypeName())
 		if isDecode {
-			p.printf("dc.IndexEachPtrForDedup(%s)\n", vname)
+			p.printf("dc.DedupIndexEachPtr(%s)\n", vname)
 		}
 	}
 }
@@ -481,10 +481,10 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 		p.printf("\n for %s := range %s {\n", idx, iter)
 
 		// deduplicate inteface values in the slice, place 1 of 3.
-		p.printf(`if kptr, dup := dc.ReadIsDup(); dup {
+		p.printf(`if kptr, dup := dc.DedupReadIsDup("%s[%s]","%s"); dup {
 					%s[%s] = kptr.(%s)
 					continue
-        }`, iter, idx, inner.TypeName())
+        }`, iter, idx, inner.TypeName(), iter, idx, inner.TypeName())
 		p.printf(`
 		concreteName_%s := dc.NextStructName()
         `, concreteName)
@@ -494,20 +494,20 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 				if cfac_%s, cfac_%s_OK := interface{}(z).(msgp.ConcreteFactory); cfac_%s_OK {
 					target_%s = cfac_%s.NewValueAsInterface(%v, concreteName_%s).(%s)
 				}
+                dc.DedupIndexEachPtr(target_%s)
   			    err = target_%s.DecodeMsg(dc)
 			    if err != nil {
 				    return
 			    }
-		`, concreteName, cfac, cfac, cfac, target, cfac, myzid, concreteName, inner.TypeName(), target)
+		`, concreteName, cfac, cfac, cfac, target, cfac, myzid, concreteName, inner.TypeName(), target, target)
 		p.printf(`
                 %s[%s] = target_%s
-                dc.IndexEachPtrForDedup(target_%s)
                 continue
               }
-        `, iter, idx, target, target) // dedup, place 2 of 3
+        `, iter, idx, target) // dedup, place 2 of 3
 
+		p.printf("\n dc.DedupIndexEachPtr(%s[%s])\n", iter, idx) // dedup, 3 of 3.
 		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:503. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
-		p.printf("\n dc.IndexEachPtrForDedup(%s[%s])\n", iter, idx) // dedup, 3 of 3.
 
 		next(t, inner, nil)
 	} else {

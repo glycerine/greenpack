@@ -156,7 +156,7 @@ func NewReader(r io.Reader) *Reader {
 		p.R = fwd.NewReader(r)
 	} else {
 		p.R.Reset(r)
-		p.ResetDedup()
+		p.DedupReset()
 	}
 	return p
 }

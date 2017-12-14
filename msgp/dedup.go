@@ -5,6 +5,8 @@ import (
 	"reflect"
 )
 
+var _ = fmt.Printf
+
 // Methods for deduplicating repeated occurances of the same pointer.
 //
 // When writing, we track the sequence of pointers written.
@@ -26,20 +28,23 @@ import (
 // ===============================
 // ===============================
 
-func (mw *Writer) ResetDedup() {
+func (mw *Writer) DedupReset() {
 	mw.ptrWrit = make(map[interface{}]int)
 	mw.ptrCountNext = 0
 }
 
 // diagnostic
-func (mw *Writer) PointerCount() int {
+func (mw *Writer) DedupPointerCount() int {
 	return len(mw.ptrWrit)
 }
 
 // upon writing each pointer, first check if it is a duplicate;
 // i.e. appears more than once, pointing to the same object.
-func (mw *Writer) WriteIsDup(v interface{}) (res bool, err error) {
+func (mw *Writer) DedupWriteIsDup(v interface{}) (res bool, err error) {
 	defer func() {
+		// This recover allows test 911 (_generated/gen_test.go:67) to run green.
+		// It turns indexing by []byte msgp.Raw into a no-op. Which it
+		// should be.
 		if recover() != nil {
 			return
 		}
@@ -50,19 +55,19 @@ func (mw *Writer) WriteIsDup(v interface{}) (res bool, err error) {
 	k, dup := mw.ptrWrit[v]
 	if !dup {
 		mw.ptrWrit[v] = mw.ptrCountNext
-		fmt.Printf("\n\n $$$ write %p  -> k=%v / %#v\n\n", v, mw.ptrCountNext, v)
+		//fmt.Printf("\n\n $$$ write %p  -> k=%v / %#v\n\n", v, mw.ptrCountNext, v)
 		mw.ptrCountNext++
 		return false, nil
 	} else {
-		fmt.Printf("\n\n $$$ DUP write %p  -> k=%v / %#v\n\n", v, k, v)
+		//fmt.Printf("\n\n $$$ DUP write %p  -> k=%v / %#v\n\n", v, k, v)
 	}
-	return true, mw.WriteDedupExt(k)
+	return true, mw.DedupWriteExt(k)
 }
 
 // write DedupExtension with k integer count
 // of the pointer that is duplicated here. k is
 // runtime appearance order.
-func (mw *Writer) WriteDedupExt(k int) error {
+func (mw *Writer) DedupWriteExt(k int) error {
 	var by [8]byte
 	kby := AppendInt(by[:0], k)
 	ext := RawExtension{
@@ -78,7 +83,7 @@ func (mw *Writer) WriteDedupExt(k int) error {
 // =============================
 // =============================
 
-func (m *Reader) ReadDedupExt() (int, error) {
+func (m *Reader) DedupReadExt() (int, error) {
 	ext := RawExtension{
 		Type: DedupExtension,
 	}
@@ -94,7 +99,7 @@ func (m *Reader) ReadDedupExt() (int, error) {
 	return k, nil
 }
 
-func (r *Reader) ResetDedup() {
+func (r *Reader) DedupReset() {
 	r.dedupPointers = r.dedupPointers[:0]
 }
 
@@ -106,7 +111,8 @@ func (r *Reader) DedupPtr(k int) interface{} {
 	return nil
 }
 
-func (m *Reader) IndexEachPtrForDedup(ptr interface{}) {
+func (m *Reader) DedupIndexEachPtr(ptr interface{}) {
+	//fmt.Printf("\n DedupIndexEachPtr called for ptr=%p/%T/val='%#v'\n", ptr, ptr, ptr)
 	if ptr == nil {
 		return
 	}
@@ -115,11 +121,14 @@ func (m *Reader) IndexEachPtrForDedup(ptr interface{}) {
 		return
 	}
 	m.dedupPointers = append(m.dedupPointers, ptr)
-	fmt.Printf("\n\n *** Reader.IndexEachPtrForDedup sees ptr '%#v', as sequence k=%v\n\n", ptr, len(m.dedupPointers)-1)
+	//fmt.Printf("\n\n *** Reader.DedupIndexEachPtr stored ptr '%#v', as sequence k=%v\n\n", ptr, len(m.dedupPointers)-1)
 }
 
-func (m *Reader) ReadIsDup() (interface{}, bool) {
-
+func (m *Reader) DedupReadIsDup(field, typeTarget string) (iface interface{}, res bool) {
+	//fmt.Printf("\n+++ Reader.DedupReadIsDup(field:'%s', type:'%s') starting.\n", field, typeTarget)
+	//defer func() {
+	//	fmt.Printf("\n^^^ Reader.DedupReadIsDup() returning res=%v\n", res)
+	//}()
 	typ, err := m.peekExtensionType()
 	if err != nil {
 		return nil, false
@@ -127,10 +136,11 @@ func (m *Reader) ReadIsDup() (interface{}, bool) {
 	if typ != DedupExtension {
 		return nil, false
 	}
-	k, err := m.ReadDedupExt()
+	k, err := m.DedupReadExt()
 	if err != nil {
 		return nil, false
 	}
 	ptr := m.DedupPtr(k)
+	//fmt.Printf("\n m.DedupReadIsDup() substituting, ptr= %p b/c read k=%v\n", ptr, k)
 	return ptr, true
 }
