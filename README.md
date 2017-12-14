@@ -5,7 +5,7 @@ Version 5.0.4 includes two new features:
 
 * a) interfaces are supported, and automatically detected
 
-(Since the parser didn't used to distinguish interfaces from structs, manual annotation of interface types was required, using the `msgp:",iface"` tag. This has now been fixed.)
+(Since the parser didn't used to distinguish interfaces from structs, manual annotation of interface types was required, using the `msgp:",iface"` tag. This has now been fixed. However the manual tagging of interfaces is still available for cases when you are using an inteface from another package whose source we haven't parsed.)
 
 Required if using interfaces: your container must implement the `ConcreteFactory` interface; the method `NewValueAsInterface`. See the example/test https://github.com/glycerine/greenpack/blob/master/_generated/def.go#L341 and https://github.com/glycerine/greenpack/blob/master/_generated/def.go#L345 .
 
