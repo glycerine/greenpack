@@ -219,16 +219,20 @@ func (e *encodeGen) gPtr(s *Ptr, x *extra) {
 	e.fuseHook()
 	e.p.print("\n // gPtr.encodeGen():\n")
 	e.p.printf("\nif %s == nil { err = en.WriteNil(); if err != nil { return; } } else {", s.Varname())
-	e.p.printf("\n // record the pointer for deduplication  \n")
-	e.p.printf(` var dup bool
+	if !e.cfg.NoDedup {
+		e.p.printf("\n // record the pointer for deduplication  \n")
+		e.p.printf(` var dup bool
  dup, err = en.DedupWriteIsDup(%s)
 			if err != nil {
 				return
 			}
 			if !dup {
 			`, s.Varname())
+	}
 	next(e, s.Value, nil)
-	e.p.closeblock()
+	if !e.cfg.NoDedup {
+		e.p.closeblock()
+	}
 	e.p.closeblock()
 }
 
@@ -268,8 +272,9 @@ func (e *encodeGen) gBase(b *BaseElem, x *extra) {
 	}
 
 	if b.Value == IDENT { // unknown identity
-		e.p.printf("\n // encodeGen.gBase IDENT \n")
-		e.p.printf(`
+		if !e.cfg.NoDedup {
+			e.p.printf("\n // encodeGen.gBase IDENT \n")
+			e.p.printf(`
 		// record the interface for deduplication
 		var dup bool
 		dup, err = en.DedupWriteIsDup(%s)
@@ -277,10 +282,12 @@ func (e *encodeGen) gBase(b *BaseElem, x *extra) {
 			return
 		}
 		if !dup {`, vname)
-
+		}
 		e.p.printf("\nerr = %s.%sEncodeMsg(en)", vname, e.cfg.MethodPrefix)
 		e.p.print(errcheck)
-		e.p.closeblock()
+		if !e.cfg.NoDedup {
+			e.p.closeblock()
+		}
 	} else { // typical case
 		e.writeAndCheck(b.BaseName(), literalFmt, vname)
 	}
