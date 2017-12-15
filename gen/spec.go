@@ -475,11 +475,15 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 
 		p.printf("\n for %s := range %s {\n", idx, iter)
 
-		// deduplicate inteface values in the slice, place 1 of 3.
-		p.printf(`if kptr, dup := dc.DedupReadIsDup("%s[%s]","%s"); dup {
+		var dedupIndexLine0 string
+		if !p.cfg.NoDedup {
+			dedupIndexLine0 = fmt.Sprintf(`dc.DedupIndexEachPtr(target_%s)`, target)
+			// deduplicate inteface values in the slice, place 1 of 3.
+			p.printf(`if kptr, dup := dc.DedupReadIsDup("%s[%s]","%s"); dup {
 					%s[%s] = kptr.(%s)
 					continue
-        }`, iter, idx, inner.TypeName(), iter, idx, inner.TypeName())
+             }`, iter, idx, inner.TypeName(), iter, idx, inner.TypeName())
+		}
 		p.printf(`
 		concreteName_%s := dc.NextStructName()
         `, concreteName)
@@ -489,20 +493,22 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 				if cfac_%s, cfac_%s_OK := interface{}(z).(msgp.ConcreteFactory); cfac_%s_OK {
 					target_%s = cfac_%s.NewValueAsInterface(%v, concreteName_%s).(%s)
 				}
-                dc.DedupIndexEachPtr(target_%s)
+                %s
   			    err = target_%s.DecodeMsg(dc)
 			    if err != nil {
 				    return
 			    }
-		`, concreteName, cfac, cfac, cfac, target, cfac, myzid, concreteName, inner.TypeName(), target, target)
+		`, concreteName, cfac, cfac, cfac, target, cfac, myzid, concreteName, inner.TypeName(), dedupIndexLine0, target)
 		p.printf(`
                 %s[%s] = target_%s
                 continue
               }
         `, iter, idx, target) // dedup, place 2 of 3
 
-		p.printf("\n dc.DedupIndexEachPtr(%s[%s])\n", iter, idx) // dedup, 3 of 3.
-		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:503. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
+		if !p.cfg.NoDedup {
+			p.printf("\n dc.DedupIndexEachPtr(%s[%s])\n", iter, idx) // dedup, 3 of 3.
+		}
+		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:511. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
 
 		next(t, inner, nil)
 	} else {
