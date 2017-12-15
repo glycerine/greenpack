@@ -195,7 +195,7 @@ func Test444DedupOfSamePointerWorks(t *testing.T) {
 	panicOn(nd.EncodeMsg(wr))
 	wr.Flush()
 
-	fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.DedupPointerCount(), buf.Bytes(), string(buf.Bytes()))
+	//fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.DedupPointerCount(), buf.Bytes(), string(buf.Bytes()))
 
 	rd := msgp.NewReader(&buf)
 	//rd.ResetDedup()

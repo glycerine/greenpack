@@ -25,27 +25,26 @@ func Test3444NoDedupOfSamePointer(t *testing.T) {
 	panicOn(nd.EncodeMsg(wr))
 	wr.Flush()
 
-	fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.DedupPointerCount(), buf.Bytes(), string(buf.Bytes()))
+	//fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.DedupPointerCount(), buf.Bytes(), string(buf.Bytes()))
 
 	rd := msgp.NewReader(&buf)
 	var nd2 NoDedup
 	panicOn(nd2.DecodeMsg(rd))
 	if nd2.MyPtr0 == nd2.MyPtr1 {
-		panic(fmt.Sprintf("expected pointers to be the different"))
+		panic(fmt.Sprintf("expected pointers to be different"))
 	}
 	if nd2.MyIface0.(*Greeter2) == nd2.MyIface1.(*Greeter2) {
-		panic(fmt.Sprintf("expected pointers behind interfaces to be the different"))
+		panic(fmt.Sprintf("expected pointers behind interfaces to be different"))
 	}
 	// check slices of interfaces for dedup too.
 	if nd2.Slice[0].(*Greeter2) == nd2.Slice[1].(*Greeter2) {
-		panic(fmt.Sprintf("expected pointers behind interfaces to be the different"))
+		panic(fmt.Sprintf("expected pointers behind interfaces to be different"))
 	}
 	if nd2.Slice[0].(*Greeter2) == nd2.MyIface0.(*Greeter2) {
-		panic(fmt.Sprintf("expected pointers behind interfaces to be the different"))
+		panic(fmt.Sprintf("expected pointers behind interfaces to be different"))
 	}
 }
 
-/*
 // -no-dedup Test2
 func Test3445NoDedupOfSamePointer(t *testing.T) {
 
@@ -74,13 +73,13 @@ func Test3445NoDedupOfSamePointer(t *testing.T) {
 	var nd2 NoDedup
 	panicOn(nd2.DecodeMsg(rd))
 	// check slices of interfaces for dedup too.
-	if nd2.Slice[0].(*Greeter2) != nd2.Slice[1].(*Greeter2) {
-		panic(fmt.Sprintf("expected pointers behind interfaces to be the same"))
+	if nd2.Slice[0].(*Greeter2) == nd2.Slice[1].(*Greeter2) {
+		panic(fmt.Sprintf("expected pointers behind interfaces to be different"))
 	}
 }
 
-// Dedup Test3
-func Test446DedupOfSamePointerWorks(t *testing.T) {
+// -no-dedup Test3
+func Test3446DedupOfSamePointerWorks(t *testing.T) {
 
 	// dedup within slices of pointers
 
@@ -108,23 +107,23 @@ func Test446DedupOfSamePointerWorks(t *testing.T) {
 	var nd2 NoDedup
 	panicOn(nd2.DecodeMsg(rd))
 	// check across slices of interfaces and slices of pointers for dedup.
-	if nd2.Slice[0].(*Greeter2) != nd2.SlicePtr[0] {
-		panic(fmt.Sprintf("expected pointers/interfaces to be the same"))
+	if nd2.Slice[0].(*Greeter2) == nd2.SlicePtr[0] {
+		panic(fmt.Sprintf("expected pointers/interfaces to be different"))
 	}
 }
 
-// Dedup Test4
-func Test500NestedDedup(*testing.T) {
+// -no-dedup Test4
+func Test3500NestedDedup(*testing.T) {
 
 	// slices of interfaces within slices of interfaces
 	// should still dedup correctly.
 
-	inner := &Inner{}
-	mid := &Middle{
-		Children: []Shouter{inner, inner},
+	inner := &Inner2{}
+	mid := &Middle2{
+		Children: []Shouter2{inner, inner},
 	}
-	outer := &Outer{
-		Slc: []Imid{mid},
+	outer := &Outer2{
+		Slc: []Imid2{mid},
 	}
 
 	var buf bytes.Buffer
@@ -132,14 +131,13 @@ func Test500NestedDedup(*testing.T) {
 	panicOn(outer.EncodeMsg(wr))
 	wr.Flush()
 
-	//fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.PointerCount(), buf.Bytes(), string(buf.Bytes()))
+	//fmt.Printf("\nAFTER EncodeMsg WRITE: PointerCount=%v. buf='%#v'\n buf as string='%s'\n", wr.DedupPointerCount(), buf.Bytes(), string(buf.Bytes()))
 
 	rd := msgp.NewReader(&buf)
-	var o2 Outer
+	var o2 Outer2
 	panicOn(o2.DecodeMsg(rd))
 	// check dedup of the inner and inner
-	if o2.Slc[0].(*Middle).Children[0].(*Inner) != o2.Slc[0].(*Middle).Children[1].(*Inner) {
-		panic(fmt.Sprintf("expected pointers to be the same"))
+	if o2.Slc[0].(*Middle2).Children[0].(*Inner2) == o2.Slc[0].(*Middle2).Children[1].(*Inner2) {
+		panic(fmt.Sprintf("expected pointers to be different"))
 	}
 }
-*/
