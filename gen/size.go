@@ -24,7 +24,7 @@ const (
 
 func sizes(w io.Writer, cfg *cfg.GreenConfig) *sizeGen {
 	return &sizeGen{
-		p:     printer{w: w},
+		p:     printer{w: w, cfg: cfg},
 		state: assign,
 		cfg:   cfg,
 	}

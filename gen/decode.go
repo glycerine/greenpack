@@ -11,7 +11,7 @@ import (
 
 func decode(w io.Writer, cfg *cfg.GreenConfig) *decodeGen {
 	return &decodeGen{
-		p:        printer{w: w},
+		p:        printer{w: w, cfg: cfg},
 		hasfield: false,
 		cfg:      cfg,
 	}
@@ -280,18 +280,24 @@ func (d *decodeGen) gBase(b *BaseElem, x *extra) {
 		if !b.IsInInterfaceSlice() {
 			if b.IsInterface() {
 				targ, conc, fact := gensym(), gensym(), gensym()
-				d.p.printf(`
+				var dedupIndexLine1, dedupIndexLine2 string
+				if !d.cfg.NoDedup {
+					d.p.printf(`
 if kptr, dup := dc.DedupReadIsDup("%s","%s"); dup {
 	%s = kptr.(%s)
 	continue
 }
 `, vname, b.BaseType(), vname, b.BaseType())
+					dedupIndexLine1 = fmt.Sprintf(`
+            dc.DedupIndexEachPtr(targ_%s) // must be before this next DecodeMsg.`, targ)
+					dedupIndexLine2 = fmt.Sprintf(`dc.DedupIndexEachPtr(%s)`, vname)
+				}
 				d.p.printf(`
 	conc_%s := dc.NextStructName()
 	if conc_%s != "" {
 		if cfac_%s, cfacOK_%s := interface{}(z).(msgp.ConcreteFactory); cfacOK_%s {
 			targ_%s := cfac_%s.NewValueAsInterface(%v, conc_%s).(%s)
-            dc.DedupIndexEachPtr(targ_%s) // must be before this next DecodeMsg.
+            %s
 			err = targ_%s.DecodeMsg(dc)
 			if err != nil {
 				return
@@ -301,10 +307,10 @@ if kptr, dup := dc.DedupReadIsDup("%s","%s"); dup {
 		}
 	}
     if %s != nil {
-      dc.DedupIndexEachPtr(%s)
+      %s
 	  err = %s.%sDecodeMsg(dc)
     }
-`, conc, conc, fact, fact, fact, targ, fact, myzid, conc, b.BaseType(), targ, targ, vname, targ, vname, vname, vname, d.cfg.MethodPrefix)
+`, conc, conc, fact, fact, fact, targ, fact, myzid, conc, b.BaseType(), dedupIndexLine1, targ, vname, targ, vname, dedupIndexLine2, vname, d.cfg.MethodPrefix)
 
 			} else {
 				d.p.printf("\nerr = %s.%sDecodeMsg(dc)", vname, d.cfg.MethodPrefix)
@@ -413,10 +419,10 @@ func (d *decodeGen) gPtr(p *Ptr, x *extra) {
 	vname := p.Varname()
 	base, isBase := p.Value.(*BaseElem)
 	if isBase {
-		d.p.printf("\n // we have a BaseElem: %#v  \n", base) // TODO, comment back out.
+		//d.p.printf("\n // we have a BaseElem: %#v  \n", base)
 		switch base.Value {
 		case IDENT:
-			d.p.printf("\n // we have an IDENT: \n") // TODO, comment back out.
+			//d.p.printf("\n // we have an IDENT: \n")
 			d.p.printf(
 				`
                 if %s != nil {
@@ -440,7 +446,11 @@ func (d *decodeGen) gPtr(p *Ptr, x *extra) {
 		}
 	} else {
 		// !isBase
-		d.p.printf("\n%s = nil\n} else if kptr, dup := dc.DedupReadIsDup(\"%s\",\"%s\"); dup { %s = kptr.(%s) } else {", vname, vname, p.TypeName(), vname, p.TypeName())
+		if d.cfg.NoDedup {
+			d.p.printf("\n%s = nil\n} else {", vname)
+		} else {
+			d.p.printf("\n%s = nil\n} else if kptr, dup := dc.DedupReadIsDup(\"%s\",\"%s\"); dup { %s = kptr.(%s) } else {", vname, vname, p.TypeName(), vname, p.TypeName())
+		}
 	}
 	d.p.initPtr(p, true)
 	next(d, p.Value, nil)

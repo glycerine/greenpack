@@ -9,7 +9,7 @@ import (
 
 func fieldsempty(w io.Writer, cfg *cfg.GreenConfig) *fieldsEmpty {
 	return &fieldsEmpty{
-		p:   printer{w: w},
+		p:   printer{w: w, cfg: cfg},
 		cfg: cfg,
 	}
 }

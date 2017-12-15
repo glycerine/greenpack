@@ -10,7 +10,7 @@ import (
 
 func marshal(w io.Writer, cfg *cfg.GreenConfig) *marshalGen {
 	return &marshalGen{
-		p:   printer{w: w},
+		p:   printer{w: w, cfg: cfg},
 		cfg: cfg,
 	}
 }

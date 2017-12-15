@@ -11,7 +11,7 @@ import (
 
 func unmarshal(w io.Writer, cfg *cfg.GreenConfig) *unmarshalGen {
 	return &unmarshalGen{
-		p:   printer{w: w},
+		p:   printer{w: w, cfg: cfg},
 		cfg: cfg,
 	}
 }

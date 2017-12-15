@@ -305,6 +305,7 @@ func unsetReceiver(p Elem) {
 
 // shared utility for generators
 type printer struct {
+	cfg *cfg.GreenConfig
 	w   io.Writer
 	err error
 }
@@ -388,35 +389,35 @@ func (p *printer) preSaveHook() {
 }
 
 func (p *printer) dedupReadTop(isUnmarshal bool) {
+	if p.cfg.NoDedup {
+		return
+	}
 	if p.ok() {
-		if !isUnmarshal {
-			// p.print("\n var pseq []interface{}  // runtime pointer/iface encounter order, for dedup\n")
-		}
-		// each ptr added with: pseq = append(pseq, newPtr)
-		// when finding DedupExtension{Pos: k}, instead of making a new struct, point instead to pseq[k].
-
 		// TODO: do we need to figure out how to turn off inlining if a struct has pointer values, so that we
 		//  can simply return early if we need to once we've pointed to a dup instead of inflating anew.
 	}
 }
 
 func (p *printer) dedupReadCleanup(isUnmarshal bool) {
+	if p.cfg.NoDedup {
+		return
+	}
 	if p.ok() {
-		if !isUnmarshal {
-			//p.print("\n pseq = pseq[:0] // cleanup\n")
-		}
-		// each ptr added with: pseq = append(pseq, newPtr)
-		// when finding DedupExtension{Pos: k}, instead of making a new struct, point instead to pseq[k].
 	}
 }
 
 func (p *printer) dedupWriteCleanup(isMarshal bool) {
+	if p.cfg.NoDedup {
+		return
+	}
 	if p.ok() {
-		//p.print("\n ptrWrit = nil\n")
 	}
 }
 
 func (p *printer) dedupWriteTop(isMarshal bool) {
+	if p.cfg.NoDedup {
+		return
+	}
 	if p.ok() {
 		if !isMarshal {
 			p.print(`	dup, err := en.DedupWriteIsDup(z)
@@ -425,12 +426,6 @@ func (p *printer) dedupWriteTop(isMarshal bool) {
 	}
 `)
 		}
-		//		p.print("\n ptrWrit := make(map[interface{}]int) // ptr/iface -> order written in, for dedup.\n")
-		//		p.print("   _ = ptrWrit\n")
-		// // for each ptr (and interface) we write:
-		// if priorLoc, isDup := ptrWrit[ptr]; isDup {
-		//       // write DedupExtension{Loc: priorLoc} instead of repeating the write of the same struct again.
-		//   }
 	}
 }
 

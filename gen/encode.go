@@ -10,7 +10,7 @@ import (
 
 func encode(w io.Writer, cfg *cfg.GreenConfig) *encodeGen {
 	return &encodeGen{
-		p:   printer{w: w},
+		p:   printer{w: w, cfg: cfg},
 		cfg: cfg,
 	}
 }

@@ -157,10 +157,6 @@ doneWithStruct5zgensym_72ba5d454ae3d9dd_6:
 						return
 					}
 
-					// we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Setm[zgensym_72ba5d454ae3d9dd_4]", alias:"inn", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
-
-					// we have an IDENT:
-
 					if z.Setm[zgensym_72ba5d454ae3d9dd_4] != nil {
 						dc.PushAlwaysNil()
 						err = z.Setm[zgensym_72ba5d454ae3d9dd_4].DecodeMsg(dc)
@@ -1192,10 +1188,6 @@ doneWithStruct29zgensym_72ba5d454ae3d9dd_30:
 					if err != nil {
 						return
 					}
-
-					// we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"zgensym_72ba5d454ae3d9dd_28", alias:"Tr", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
-
-					// we have an IDENT:
 
 					if zgensym_72ba5d454ae3d9dd_28 != nil {
 						dc.PushAlwaysNil()
