@@ -55,7 +55,7 @@ func (mw *Writer) DedupWriteIsDup(v interface{}) (res bool, err error) {
 	k, dup := mw.ptrWrit[v]
 	if !dup {
 		mw.ptrWrit[v] = mw.ptrCountNext
-		//fmt.Printf("\n\n $$$ write %p  -> k=%v / %#v\n\n", v, mw.ptrCountNext, v)
+		//fmt.Printf("\n\n $$$ NOT dup write %p  -> k=%v / %#v\n\n", v, mw.ptrCountNext, v)
 		mw.ptrCountNext++
 		return false, nil
 	} else {

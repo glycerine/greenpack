@@ -219,18 +219,28 @@ func (e *encodeGen) gPtr(s *Ptr, x *extra) {
 	e.fuseHook()
 	e.p.print("\n // gPtr.encodeGen():\n")
 	e.p.printf("\nif %s == nil { err = en.WriteNil(); if err != nil { return; } } else {", s.Varname())
-	if !e.cfg.NoDedup {
-		e.p.printf("\n // record the pointer for deduplication  \n")
-		e.p.printf(` var dup bool
+
+	doDedupHere := !e.cfg.NoDedup
+	if doDedupHere {
+		switch s.Value.(type) {
+		case *BaseElem:
+			// not inlined; don't dedup here as
+			// the interface/pointer/struct will handle
+			// dedup itself.
+			doDedupHere = false
+		default:
+			e.p.printf("\n // record the pointer for deduplication  \n")
+			e.p.printf(` var dup bool
  dup, err = en.DedupWriteIsDup(%s)
 			if err != nil {
 				return
 			}
 			if !dup {
 			`, s.Varname())
+		}
 	}
 	next(e, s.Value, nil)
-	if !e.cfg.NoDedup {
+	if doDedupHere {
 		e.p.closeblock()
 	}
 	e.p.closeblock()

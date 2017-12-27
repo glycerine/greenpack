@@ -349,27 +349,18 @@ func (z *Tr) EncodeMsg(en *msgp.Writer) (err error) {
 					return
 				}
 			} else {
-				// record the pointer for deduplication
+				// encodeGen.gBase IDENT
+
+				// record the interface for deduplication
 				var dup bool
 				dup, err = en.DedupWriteIsDup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
 				if err != nil {
 					return
 				}
 				if !dup {
-
-					// encodeGen.gBase IDENT
-
-					// record the interface for deduplication
-					var dup bool
-					dup, err = en.DedupWriteIsDup(z.Setm[zgensym_72ba5d454ae3d9dd_4])
+					err = z.Setm[zgensym_72ba5d454ae3d9dd_4].EncodeMsg(en)
 					if err != nil {
 						return
-					}
-					if !dup {
-						err = z.Setm[zgensym_72ba5d454ae3d9dd_4].EncodeMsg(en)
-						if err != nil {
-							return
-						}
 					}
 				}
 			}
@@ -1322,27 +1313,18 @@ func (z *u) EncodeMsg(en *msgp.Writer) (err error) {
 					return
 				}
 			} else {
-				// record the pointer for deduplication
+				// encodeGen.gBase IDENT
+
+				// record the interface for deduplication
 				var dup bool
 				dup, err = en.DedupWriteIsDup(zgensym_72ba5d454ae3d9dd_28)
 				if err != nil {
 					return
 				}
 				if !dup {
-
-					// encodeGen.gBase IDENT
-
-					// record the interface for deduplication
-					var dup bool
-					dup, err = en.DedupWriteIsDup(zgensym_72ba5d454ae3d9dd_28)
+					err = zgensym_72ba5d454ae3d9dd_28.EncodeMsg(en)
 					if err != nil {
 						return
-					}
-					if !dup {
-						err = zgensym_72ba5d454ae3d9dd_28.EncodeMsg(en)
-						if err != nil {
-							return
-						}
 					}
 				}
 			}
