@@ -24,7 +24,6 @@ type GreenConfig struct {
 	ShowVersion           bool
 	NoEmbeddedStructNames bool
 
-	// not implemented
 	NoDedup bool
 }
 
