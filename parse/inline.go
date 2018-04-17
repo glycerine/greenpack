@@ -2,6 +2,8 @@ package parse
 
 import (
 	"fmt"
+	"sort"
+
 	"github.com/glycerine/greenpack/gen"
 )
 
@@ -81,9 +83,49 @@ func (f *FileSet) nextShim(ref *gen.Elem, id string, be *gen.BaseElem) {
 	}
 }
 
+type ComplexityThenNameSorter struct {
+	Name    string
+	Plexity int
+}
+type PlexSorterSlice []*ComplexityThenNameSorter
+
+func (p PlexSorterSlice) Len() int { return len(p) }
+func (p PlexSorterSlice) Less(i, j int) bool {
+	switch {
+	case p[i].Plexity > p[j].Plexity:
+		return true
+	case p[i].Plexity < p[j].Plexity:
+		return false
+	}
+	return p[i].Name < p[j].Name
+}
+func (p PlexSorterSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
+
 // propInline identifies and inlines candidates
 func (f *FileSet) propInline() {
-	for name, el := range f.Identities {
+
+	// We sort struct names to get deterministic output.
+	// Otherwise the order of one struct being
+	// inlined into another can change, which increases
+	// the target's complexity and changes the subsequent inlining choice.
+	// We really like deterministic output to avoid
+	// arbitrary changes impacting that show up in
+	// version control history when not expected.
+	//
+	// But we also want to promote inlining for speed.
+	// So we also sort by un-inlined complexity, biggest first.
+	// Break ties by name.
+	//
+	var plexNameSort PlexSorterSlice
+	for k, node := range f.Identities {
+		plexNameSort = append(plexNameSort,
+			&ComplexityThenNameSorter{Name: k, Plexity: node.Complexity()})
+	}
+	sort.Sort(plexNameSort)
+
+	for _, pns := range plexNameSort {
+		name := pns.Name
+		el := f.Identities[name]
 		pushstate(name)
 		switch el := el.(type) {
 		case *gen.Struct:
@@ -117,17 +159,19 @@ func (f *FileSet) nextInline(ref *gen.Elem, root string) {
 		// a type into itself
 		typ := el.TypeName()
 		if el.Value == gen.IDENT && typ != root {
-			if node, ok := f.Identities[typ]; ok && node.Complexity() < maxComplex {
-				infof("inlining %s\n", typ)
+			if node, ok := f.Identities[typ]; ok {
+				plexity := node.Complexity()
+				if plexity < maxComplex {
+					infof("inlining %s\n", typ)
+					// This should never happen; it will cause
+					// infinite recursion.
+					if node == *ref {
+						panic(fatalloop)
+					}
 
-				// This should never happen; it will cause
-				// infinite recursion.
-				if node == *ref {
-					panic(fatalloop)
+					*ref = node.Copy()
+					f.nextInline(ref, node.TypeName())
 				}
-
-				*ref = node.Copy()
-				f.nextInline(ref, node.TypeName())
 			} else if !ok && !el.Resolved() {
 				// this is the point at which we're sure that
 				// we've got a type that isn't a primitive,
