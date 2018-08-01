@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	cv "github.com/glycerine/goconvey/convey"
+	cv "github.com/smartystreets/goconvey/convey"
 	"github.com/glycerine/greenpack/msgp"
 )
 

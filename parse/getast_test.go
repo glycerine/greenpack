@@ -6,7 +6,7 @@ import (
 	"os"
 	"sort"
 
-	cv "github.com/glycerine/goconvey/convey"
+	cv "github.com/smartystreets/goconvey/convey"
 	"github.com/glycerine/greenpack/cfg"
 	"github.com/glycerine/greenpack/gen"
 	"testing"
