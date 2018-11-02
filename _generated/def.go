@@ -395,3 +395,12 @@ func (nd *Outer) NewValueAsInterface(zid int64, typename string) interface{} {
 	}
 	panic("unknown typename")
 }
+
+// struct-valued fields having problems?
+type ZError struct {
+	What int `zid:"0"`
+}
+
+type ZResponse struct {
+	ProblemFieldIfStructValue ZError `zid:"0"`
+}
