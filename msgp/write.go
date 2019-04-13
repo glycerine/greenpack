@@ -611,6 +611,21 @@ func (mw *Writer) WriteTime(t time.Time) error {
 	return nil
 }
 
+// WriteDuration writes a time.Duration object to the wire.
+//
+// Duration is encoded as int64.
+func (mw *Writer) WriteDuration(t time.Duration) error {
+	o, err := mw.require(12)
+	if err != nil {
+		return err
+	}
+	mw.buf[o] = mext8
+	mw.buf[o+1] = 9
+	mw.buf[o+2] = DurationExtension
+	putMint64(mw.buf[o+3:], int64(t))
+	return nil
+}
+
 // WriteIntf writes the concrete type of 'v'.
 // WriteIntf will error if 'v' is not one of the following:
 //  - A bool, float, string, []byte, int, uint, or complex
@@ -674,6 +689,8 @@ func (mw *Writer) WriteIntf(v interface{}) error {
 		return mw.WriteMapStrIntf(v)
 	case time.Time:
 		return mw.WriteTime(v)
+	case time.Duration:
+		return mw.WriteDuration(v)
 	}
 
 	val := reflect.ValueOf(v)

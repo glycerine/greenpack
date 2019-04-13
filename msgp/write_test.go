@@ -403,3 +403,39 @@ func BenchmarkWriteTime(b *testing.B) {
 		wr.WriteTime(t)
 	}
 }
+
+func TestWriteDuration(t *testing.T) {
+	var buf bytes.Buffer
+	wr := NewWriter(&buf)
+	dur := time.Duration(123456789)
+	err := wr.WriteDuration(dur)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = wr.Flush()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if buf.Len() != 12 {
+		t.Errorf("expected time.Duration to be %d bytes; got %d", 12, buf.Len())
+	}
+
+	newd, err := NewReader(&buf).ReadDuration()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if newd != dur {
+		t.Errorf("in/out not equal; %s in and %s out", dur, newd)
+	}
+}
+
+func BenchmarkWriteDuration(b *testing.B) {
+	dur := time.Duration(123456789)
+	wr := NewWriter(Nowhere)
+	b.SetBytes(12)
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wr.WriteDuration(dur)
+	}
+}

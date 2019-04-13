@@ -33,6 +33,8 @@ func NextType(b []byte) Type {
 			return Complex128Type
 		case Complex64Extension:
 			return Complex64Type
+		case DurationExtension:
+			return DurationType
 		default:
 			return ExtensionType
 		}
