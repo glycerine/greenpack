@@ -5,33 +5,42 @@ import (
 	"encoding/json"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestCopyJSON(t *testing.T) {
 	var buf bytes.Buffer
 	enc := NewWriter(&buf)
-	enc.WriteMapHeader(5)
+	enc.WriteMapHeader(6)
 
 	enc.WriteString("thing_1")
 	enc.WriteString("a string object")
 
 	enc.WriteString("a_map")
+	// map has contents:
 	enc.WriteMapHeader(2)
+
 	enc.WriteString("float_a")
 	enc.WriteFloat32(1.0)
+
 	enc.WriteString("int_b")
 	enc.WriteInt64(-100)
 
 	enc.WriteString("some bytes")
 	enc.WriteBytes([]byte("here are some bytes"))
+
 	enc.WriteString("a bool")
 	enc.WriteBool(true)
 
-	enc.WriteString("a map")
+	enc.WriteString("another map2")
 	enc.WriteMapStrStr(map[string]string{
 		"internal_one": "blah",
 		"internal_two": "blahhh...",
 	})
+	enc.WriteString("a duration")
+	expectedDur := time.Duration(-123456789e9)
+	enc.WriteDuration(expectedDur)
+
 	enc.Flush()
 
 	var js bytes.Buffer
@@ -46,8 +55,8 @@ func TestCopyJSON(t *testing.T) {
 		t.Fatalf("Error unmarshaling: %s", err)
 	}
 
-	if len(mp) != 5 {
-		t.Errorf("map length should be %d, not %d", 4, len(mp))
+	if len(mp) != 6 {
+		t.Errorf("map length should be %d, not %d", 6, len(mp))
 	}
 
 	so, ok := mp["thing_1"]
@@ -55,9 +64,23 @@ func TestCopyJSON(t *testing.T) {
 		t.Errorf("expected %q; got %q", "a string object", so)
 	}
 
-	in, ok := mp["a map"]
+	durMapStringIface, ok := mp["a duration"]
 	if !ok {
-		t.Error("no key 'a map'")
+		t.Error("no key 'a duration'")
+	}
+	duro, ok := durMapStringIface.(map[string]interface{})
+	if !ok {
+		t.Error("could not convert 'a duration' value to map[string]interface{}")
+	}
+	// sadly, JSON uses float64 (instead of the more accurate int64) for everything.
+	dur := duro["time.Duration"].(float64)
+	if time.Duration(dur) != expectedDur {
+		t.Errorf("duration did not read back from JSON: %#v vs %v", duro, expectedDur)
+	}
+
+	in, ok := mp["another map2"]
+	if !ok {
+		t.Error("no key 'another map2'")
 	}
 	if inm, ok := in.(map[string]interface{}); !ok {
 		t.Error("inner map not type-assertable to map[string]interface{}")

@@ -655,6 +655,47 @@ func BenchmarkReadTime(b *testing.B) {
 	}
 }
 
+func TestDuration(t *testing.T) {
+	var buf bytes.Buffer
+	dur := time.Duration(-12345)
+	en := NewWriter(&buf)
+	dc := NewReader(&buf)
+
+	err := en.WriteDuration(dur)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = en.Flush()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	out, err := dc.ReadDuration()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// check for equivalence
+	if out != dur {
+		t.Fatalf("%s in; %s out", dur, out)
+	}
+}
+
+func BenchmarkReadDuration(b *testing.B) {
+	dur := time.Duration(123456e9)
+	data := AppendDuration(nil, dur)
+	rd := NewReader(NewEndlessReader(data, b))
+	b.SetBytes(int64(len(data)))
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := rd.ReadDuration()
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
 func TestSkip(t *testing.T) {
 	var buf bytes.Buffer
 	wr := NewWriter(&buf)

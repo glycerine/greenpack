@@ -2,6 +2,7 @@ package msgp
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -337,7 +338,7 @@ func rwExtensionBytes(w jsWriter, msg []byte, scratch []byte) ([]byte, []byte, e
 		if err != nil {
 			return msg, scratch, err
 		}
-		_, err = w.WriteString(`"}`)
+		_, err = w.WriteString(`}`)
 		return msg, scratch, err
 	}
 
@@ -366,6 +367,23 @@ func rwExtensionBytes(w jsWriter, msg []byte, scratch []byte) ([]byte, []byte, e
 	}
 	scratch, err = writeExt(w, r, scratch)
 	return msg, scratch, err
+}
+
+func durationMarshalJSON(dur time.Duration) ([]byte, error) {
+
+	var w bytes.Buffer
+	_, err := w.WriteString(`{"time.Duration":`)
+	if err != nil {
+		return nil, err
+	}
+	scratch := make([]byte, 32)
+	scratch = strconv.AppendInt(scratch[0:0], int64(dur), 10)
+	_, err = w.Write(scratch)
+	if err != nil {
+		return nil, err
+	}
+	_, err = w.WriteString(`}`)
+	return w.Bytes(), err
 }
 
 func writeExt(w jsWriter, r RawExtension, scratch []byte) ([]byte, error) {

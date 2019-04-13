@@ -614,7 +614,7 @@ func (mw *Writer) WriteTime(t time.Time) error {
 // WriteDuration writes a time.Duration object to the wire.
 //
 // Duration is encoded as int64.
-func (mw *Writer) WriteDuration(t time.Duration) error {
+func (mw *Writer) WriteDuration(dur time.Duration) error {
 	o, err := mw.require(12)
 	if err != nil {
 		return err
@@ -622,7 +622,7 @@ func (mw *Writer) WriteDuration(t time.Duration) error {
 	mw.buf[o] = mext8
 	mw.buf[o+1] = 9
 	mw.buf[o+2] = DurationExtension
-	putMint64(mw.buf[o+3:], int64(t))
+	putMint64(mw.buf[o+3:], int64(dur))
 	return nil
 }
 

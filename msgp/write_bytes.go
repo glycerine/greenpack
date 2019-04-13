@@ -285,6 +285,16 @@ func AppendTime(b []byte, t time.Time) []byte {
 	return o
 }
 
+// AppendDuration appends a time.Duration to the slice as a MessagePack extension
+func AppendDuration(b []byte, dur time.Duration) []byte {
+	o, n := ensure(b, DurationSize)
+	o[n] = mext8
+	o[n+1] = 9
+	o[n+2] = DurationExtension
+	putMint64(o[n+3:], int64(dur))
+	return o
+}
+
 // AppendMapStrStr appends a map[string]string to the slice
 // as a MessagePack map with 'str'-type keys and values
 func AppendMapStrStr(b []byte, m map[string]string) []byte {
@@ -402,6 +412,8 @@ func AppendIntf(b []byte, i interface{}) ([]byte, error) {
 		return AppendUint64(b, i), nil
 	case time.Time:
 		return AppendTime(b, i), nil
+	case time.Duration:
+		return AppendDuration(b, i), nil
 	case map[string]interface{}:
 		return AppendMapStrIntf(b, i)
 	case map[string]string:

@@ -37,6 +37,7 @@ func init() {
 		Complex64Type:  rwExtension,
 		Complex128Type: rwExtension,
 		TimeType:       rwTime,
+		DurationType:   rwDuration,
 	}
 }
 
@@ -254,6 +255,18 @@ func rwTime(dst jsWriter, src *Reader) (int, error) {
 		return 0, err
 	}
 	bts, err := t.MarshalJSON()
+	if err != nil {
+		return 0, err
+	}
+	return dst.Write(bts)
+}
+
+func rwDuration(dst jsWriter, src *Reader) (int, error) {
+	dur, err := src.ReadDuration()
+	if err != nil {
+		return 0, err
+	}
+	bts, err := durationMarshalJSON(dur)
 	if err != nil {
 		return 0, err
 	}
