@@ -612,7 +612,7 @@ doneWithStruct12zgensym_72ba5d454ae3d9dd_13:
 					z.Setm = make([]*inn, zgensym_72ba5d454ae3d9dd_16)
 				}
 				for zgensym_72ba5d454ae3d9dd_4 := range z.Setm {
-					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Setm[zgensym_72ba5d454ae3d9dd_4]", alias:"inn", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Setm[zgensym_72ba5d454ae3d9dd_4]", alias:"inn", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
 
 					// unmarshalGen.gPtr(): we have an IDENT:
 
@@ -1503,7 +1503,7 @@ doneWithStruct34zgensym_72ba5d454ae3d9dd_35:
 					if err != nil {
 						return
 					}
-					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"zgensym_72ba5d454ae3d9dd_28", alias:"Tr", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"zgensym_72ba5d454ae3d9dd_28", alias:"Tr", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
 
 					// unmarshalGen.gPtr(): we have an IDENT:
 

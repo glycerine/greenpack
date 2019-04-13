@@ -56,6 +56,7 @@ type TestType struct {
 	Slice1   []string
 	Slice2   []string
 	SlicePtr *[]string
+	Dur      time.Duration
 }
 
 type SimpleTestType struct {

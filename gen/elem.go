@@ -75,9 +75,10 @@ const (
 	Int32
 	Int64
 	Bool
-	Intf // interface{}
-	Time // time.Time
-	Ext  // extension
+	Intf     // interface{}
+	Time     // time.Time
+	Ext      // extension
+	Duration // time.Duration
 
 	IDENT // IDENT means an unrecognized identifier
 )
@@ -105,6 +106,7 @@ var primitives = map[string]Primitive{
 	"bool":           Bool,
 	"interface{}":    Intf,
 	"time.Time":      Time,
+	"time.Duration":  Duration,
 	"msgp.Extension": Ext,
 }
 
@@ -130,6 +132,7 @@ var prim2clue = map[Primitive]string{
 	Bool:       "boo",
 	Intf:       "ifc",
 	Time:       "tim",
+	Duration:   "dur",
 	Ext:        "ext",
 	IDENT:      "rct",
 }
@@ -763,7 +766,10 @@ func (s *BaseElem) BaseName() string {
 	// we strip the package prefix
 	if s.Value == Time {
 		return "Time"
+	} else if s.Value == Duration {
+		return "Duration"
 	}
+
 	return s.Value.String()
 }
 
@@ -780,6 +786,8 @@ func (s *BaseElem) BaseType() string {
 		return "[]byte"
 	case Time:
 		return "time.Time"
+	case Duration:
+		return "time.Duration"
 	case Ext:
 		return "msgp.Extension"
 
@@ -836,6 +844,8 @@ func (s *BaseElem) ZeroLiteral(v string) string {
 		return fmt.Sprintf(`%s = nil`, v)
 	case Time:
 		return fmt.Sprintf(`%s = time.Time{}`, v)
+	case Duration:
+		return fmt.Sprintf(`%s = time.Duration(0)`, v)
 	case IDENT:
 		return fmt.Sprintf(`%s = %s{}`, v, s.TypeName())
 	case Bytes:
@@ -899,6 +909,8 @@ func (k Primitive) String() string {
 		return "Intf"
 	case Time:
 		return "time.Time"
+	case Duration:
+		return "time.Duration"
 	case Ext:
 		return "Extension"
 	case IDENT:

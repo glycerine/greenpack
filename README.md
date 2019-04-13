@@ -394,6 +394,7 @@ base types:
 "boo" // bool
 "ifc" // interface
 "tim" // time.Time
+"dur" // time.Duration
 "ext" // msgpack extension
 
 compound types:
