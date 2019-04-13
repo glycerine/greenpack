@@ -317,3 +317,21 @@ func BenchmarkAppendTime(b *testing.B) {
 		AppendTime(buf[0:0], t)
 	}
 }
+
+func TestAppendDuration(t *testing.T) {
+	is := []int64{0, 1, -5, -50, int64(tint16), int64(tint32), int64(tint64)}
+	var buf bytes.Buffer
+	en := NewWriter(&buf)
+
+	var bts []byte
+	for _, i := range is {
+		d := time.Duration(i)
+		buf.Reset()
+		en.WriteDuration(d)
+		en.Flush()
+		bts = AppendDuration(bts[0:0], d)
+		if !bytes.Equal(buf.Bytes(), bts) {
+			t.Errorf("for time.Duration %v, encoder wrote %q; append wrote %q", d, buf.Bytes(), bts)
+		}
+	}
+}
