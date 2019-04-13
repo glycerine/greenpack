@@ -385,6 +385,8 @@ func (m *Reader) NextType() (Type, error) {
 			return Complex128Type, nil
 		case TimeExtension:
 			return TimeType, nil
+		case DurationExtension:
+			return DurationType, nil
 		}
 	}
 	return t, nil
@@ -1444,6 +1446,46 @@ func (m *Reader) ReadTime() (t time.Time, err error) {
 	return
 }
 
+// ReadDuration reads a time.Duration object from the reader.
+func (m *Reader) ReadDuration() (t time.Duration, err error) {
+	if m.checkAndConsumeNil() {
+		return 0, nil
+	}
+
+	var p []byte
+	p, err = m.R.Peek(4)
+	if err != nil {
+		return
+	}
+
+	if p[0] != mext8 {
+		err = badPrefix(DurationType, p[0])
+		return
+	}
+	if int8(p[2]) != DurationExtension {
+		err = errExt(int8(p[2]), DurationExtension)
+		return
+	}
+	n := int(p[1])
+	if n > 9 {
+		// type error of expected Duration and got Duration will
+		// have to mean this byte count was way out of line.
+		err = badPrefix(DurationType, p[0])
+		return
+	}
+	_, err = m.R.Skip(3)
+	if err != nil {
+		return
+	}
+	var n64 int64
+	n64, err = m.ReadInt64()
+	if err != nil {
+		return
+	}
+	t = time.Duration(n64)
+	return
+}
+
 // ReadIntf reads out the next object as a raw interface{}.
 // Arrays are decoded as []interface{}, and maps are decoded
 // as map[string]interface{}. Integers are decoded as int64
@@ -1488,6 +1530,10 @@ func (m *Reader) ReadIntf() (i interface{}, err error) {
 
 	case TimeType:
 		i, err = m.ReadTime()
+		return
+
+	case DurationType:
+		i, err = m.ReadDuration()
 		return
 
 	case ExtensionType:

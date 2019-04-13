@@ -1139,6 +1139,12 @@ func (nbs *NilBitsStack) ReadDurationBytes(b []byte) (t time.Duration, o []byte,
 		return
 	}
 	n := int(b[1])
+	if n > 9 {
+		// type error of expected Duration and got Duration will
+		// have to mean this byte count was way out of line.
+		err = badPrefix(DurationType, b[0])
+		return
+	}
 	if len(b) < n+3 {
 		err = ErrShortBytes
 		return
