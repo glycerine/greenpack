@@ -1,5 +1,9 @@
-greenpack news, December 2017
+greenpack news, April 2019
 ===============
+
+Version 5.0.9 includes native support for time.Duration serialization.
+
+December 2017:
 
 Version 5.0.4 includes two new features:
 
