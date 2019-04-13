@@ -83,6 +83,8 @@ const (
 	SliceCat    Zkind = 26
 	ArrayCat    Zkind = 27
 	PointerCat  Zkind = 28
+
+	Duration Zkind = 29 // time.Duration
 )
 
 // Ztype describes any type, be it a BaseElem,
