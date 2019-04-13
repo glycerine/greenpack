@@ -78,9 +78,8 @@ const (
 	Intf     // interface{}
 	Time     // time.Time
 	Ext      // extension
+	IDENT    // IDENT means an unrecognized identifier
 	Duration // time.Duration
-
-	IDENT // IDENT means an unrecognized identifier
 )
 
 // all of the recognized identities

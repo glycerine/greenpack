@@ -771,7 +771,7 @@ func (z *Middle2) MarshalMsg(b []byte) (o []byte, err error) {
 		o = append(o, 0xad, 0x43, 0x68, 0x69, 0x6c, 0x64, 0x72, 0x65, 0x6e, 0x5f, 0x5f, 0x73, 0x6c, 0x63)
 		o = msgp.AppendArrayHeader(o, uint32(len(z.Children)))
 		for zgensym_29db2bb3a798cb07_12 := range z.Children {
-			o, err = msgp.AppendIntf(o, z.Children[zgensym_29db2bb3a798cb07_12]) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.Children[zgensym_29db2bb3a798cb07_12]", alias:"Shouter2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:true}'
+			o, err = msgp.AppendIntf(o, z.Children[zgensym_29db2bb3a798cb07_12]) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.Children[zgensym_29db2bb3a798cb07_12]", alias:"Shouter2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:true}'
 			if err != nil {
 				return
 			}
@@ -1696,7 +1696,7 @@ func (z *NoDedup) MarshalMsg(b []byte) (o []byte, err error) {
 	if !empty[2] {
 		// string "MyIface0__rct"
 		o = append(o, 0xad, 0x4d, 0x79, 0x49, 0x66, 0x61, 0x63, 0x65, 0x30, 0x5f, 0x5f, 0x72, 0x63, 0x74)
-		o, err = msgp.AppendIntf(o, z.MyIface0) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.MyIface0", alias:"Hello2", hmp:gen.HasMethodPrefix(nil), zid:-1}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:false}'
+		o, err = msgp.AppendIntf(o, z.MyIface0) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.MyIface0", alias:"Hello2", hmp:gen.HasMethodPrefix(nil), zid:-1}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:false}'
 		if err != nil {
 			return
 		}
@@ -1705,7 +1705,7 @@ func (z *NoDedup) MarshalMsg(b []byte) (o []byte, err error) {
 	if !empty[3] {
 		// string "MyIface1__rct"
 		o = append(o, 0xad, 0x4d, 0x79, 0x49, 0x66, 0x61, 0x63, 0x65, 0x31, 0x5f, 0x5f, 0x72, 0x63, 0x74)
-		o, err = msgp.AppendIntf(o, z.MyIface1) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.MyIface1", alias:"Hello2", hmp:gen.HasMethodPrefix(nil), zid:-1}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:false}'
+		o, err = msgp.AppendIntf(o, z.MyIface1) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.MyIface1", alias:"Hello2", hmp:gen.HasMethodPrefix(nil), zid:-1}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:false}'
 		if err != nil {
 			return
 		}
@@ -1716,7 +1716,7 @@ func (z *NoDedup) MarshalMsg(b []byte) (o []byte, err error) {
 		o = append(o, 0xaa, 0x53, 0x6c, 0x69, 0x63, 0x65, 0x5f, 0x5f, 0x73, 0x6c, 0x63)
 		o = msgp.AppendArrayHeader(o, uint32(len(z.Slice)))
 		for zgensym_29db2bb3a798cb07_27 := range z.Slice {
-			o, err = msgp.AppendIntf(o, z.Slice[zgensym_29db2bb3a798cb07_27]) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.Slice[zgensym_29db2bb3a798cb07_27]", alias:"Hello2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:true}'
+			o, err = msgp.AppendIntf(o, z.Slice[zgensym_29db2bb3a798cb07_27]) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.Slice[zgensym_29db2bb3a798cb07_27]", alias:"Hello2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:true}'
 			if err != nil {
 				return
 			}
@@ -2464,7 +2464,7 @@ func (z *Outer2) MarshalMsg(b []byte) (o []byte, err error) {
 		o = append(o, 0xad, 0x73, 0x6c, 0x63, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x30, 0x5f, 0x73, 0x6c, 0x63)
 		o = msgp.AppendArrayHeader(o, uint32(len(z.Slc)))
 		for zgensym_29db2bb3a798cb07_75 := range z.Slc {
-			o, err = msgp.AppendIntf(o, z.Slc[zgensym_29db2bb3a798cb07_75]) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.Slc[zgensym_29db2bb3a798cb07_75]", alias:"Imid2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:true}'
+			o, err = msgp.AppendIntf(o, z.Slc[zgensym_29db2bb3a798cb07_75]) // is.iface, gen/marshal.go:237, b='&gen.BaseElem{Common:gen.Common{vname:"z.Slc[zgensym_29db2bb3a798cb07_75]", alias:"Imid2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:true, isInIfaceSlice:true}'
 			if err != nil {
 				return
 			}

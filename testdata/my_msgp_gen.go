@@ -465,7 +465,7 @@ doneWithStruct7zgensym_58b5c2649cecee38_8:
 					if err != nil {
 						return
 					}
-					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"zgensym_58b5c2649cecee38_4", alias:"S2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"zgensym_58b5c2649cecee38_4", alias:"S2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
 
 					// unmarshalGen.gPtr(): we have an IDENT:
 
@@ -498,7 +498,7 @@ doneWithStruct7zgensym_58b5c2649cecee38_8:
 			}
 		case "Myptr_zid02_ptr":
 			found7zgensym_58b5c2649cecee38_8[2] = true
-			// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Myptr", alias:"S2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+			// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Myptr", alias:"S2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
 
 			// unmarshalGen.gPtr(): we have an IDENT:
 
@@ -897,7 +897,7 @@ doneWithStruct16zgensym_58b5c2649cecee38_17:
 			}
 		case "MyTree_zid07_ptr":
 			found16zgensym_58b5c2649cecee38_17[7] = true
-			// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.MyTree", alias:"Tree", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+			// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.MyTree", alias:"Tree", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
 
 			// unmarshalGen.gPtr(): we have an IDENT:
 
@@ -1285,7 +1285,7 @@ doneWithStruct23zgensym_58b5c2649cecee38_24:
 			}
 		case "Par_zid02_ptr":
 			found23zgensym_58b5c2649cecee38_24[2] = true
-			// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Par", alias:"S2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x17, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+			// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Par", alias:"S2", hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
 
 			// unmarshalGen.gPtr(): we have an IDENT:
 
