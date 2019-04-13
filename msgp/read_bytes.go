@@ -1114,6 +1114,49 @@ func (nbs *NilBitsStack) ReadTimeBytes(b []byte) (t time.Time, o []byte, err err
 	return
 }
 
+// ReadDurationBytes reads a time.Duration
+// extension object from 'b' and returns the
+// remaining bytes.
+// Possible errors:
+// - ErrShortBytes (not enough bytes in 'b')
+// - TypeError{} (object not a complex64)
+// - ExtensionTypeError{} (object an extension of the correct size, but not a time.Duration)
+func (nbs *NilBitsStack) ReadDurationBytes(b []byte) (t time.Duration, o []byte, err error) {
+	if nbs != nil && nbs.AlwaysNil {
+		return 0, b, nil
+	}
+	if len(b) != 0 && b[0] == mnil {
+		return 0, b[1:], nil
+	}
+
+	if len(b) < 4 {
+		err = ErrShortBytes
+		return
+	}
+
+	if b[0] != mext8 {
+		err = badPrefix(DurationType, b[0])
+		return
+	}
+	n := int(b[1])
+	if len(b) < n+3 {
+		err = ErrShortBytes
+		return
+	}
+	if int8(b[2]) != DurationExtension {
+		err = errExt(int8(b[2]), DurationExtension)
+		return
+	}
+	var n64 int64
+	n64, o, err = nbs.ReadInt64Bytes(b[3:(3 + n)])
+	if err != nil {
+		return
+	}
+	t = time.Duration(n64)
+	o = b[3+n:]
+	return
+}
+
 // ReadMapStrIntfBytes reads a map[string]interface{}
 // out of 'b' and returns the map and remaining bytes.
 // If 'old' is non-nil, the values will be read into that map.
@@ -1233,6 +1276,10 @@ func (nbs *NilBitsStack) ReadIntfBytes(b []byte) (i interface{}, o []byte, err e
 
 	case TimeType:
 		i, o, err = nbs.ReadTimeBytes(b)
+		return
+
+	case DurationType:
+		i, o, err = nbs.ReadDurationBytes(b)
 		return
 
 	case Complex64Type:

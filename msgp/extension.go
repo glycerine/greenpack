@@ -18,6 +18,9 @@ const (
 	// DedupExtension allows us to avoid cycles and avoid excess
 	// space consumption for graphs that are not strictly trees.
 	DedupExtension = 6
+
+	// DurationExtension is used for time.Duration
+	DurationExtension = 7
 )
 
 // our extensions live here
@@ -38,10 +41,10 @@ var extensionReg = make(map[int8]func() Extension)
 //
 // RegisterExtension will panic if you call it multiple times
 // with the same 'typ' argument, or if you use a reserved
-// type (3, 4, 5, or 6).
+// type (3, 4, 5, 6, 7).
 func RegisterExtension(typ int8, f func() Extension) {
 	switch typ {
-	case Complex64Extension, Complex128Extension, TimeExtension, DedupExtension:
+	case Complex64Extension, Complex128Extension, TimeExtension, DedupExtension, DurationExtension:
 		panic(fmt.Sprint("msgp: forbidden extension type:", typ))
 	}
 	if _, ok := extensionReg[typ]; ok {

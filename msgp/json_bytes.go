@@ -75,7 +75,10 @@ func writeNext(w jsWriter, msg []byte, scratch []byte) ([]byte, []byte, error) {
 		}
 		if et == TimeExtension {
 			t = TimeType
+		} else if et == DurationExtension {
+			t = DurationType
 		}
+
 	}
 	return unfuns[t](w, msg, scratch)
 }
@@ -316,6 +319,25 @@ func rwExtensionBytes(w jsWriter, msg []byte, scratch []byte) ([]byte, []byte, e
 			return msg, scratch, err
 		}
 		_, err = w.Write(bts)
+		return msg, scratch, err
+
+	} else if et == DurationExtension {
+		var dur time.Duration
+		dur, msg, err = nbs.ReadDurationBytes(msg)
+		if err != nil {
+			return msg, scratch, err
+		}
+
+		_, err := w.WriteString(`{"time.Duration":`)
+		if err != nil {
+			return msg, scratch, err
+		}
+		scratch = strconv.AppendInt(scratch[0:0], int64(dur), 10)
+		_, err = w.Write(scratch)
+		if err != nil {
+			return msg, scratch, err
+		}
+		_, err = w.WriteString(`"}`)
 		return msg, scratch, err
 	}
 

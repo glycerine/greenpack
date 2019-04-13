@@ -84,6 +84,7 @@ const (
 	Complex64Type
 	Complex128Type
 	TimeType
+	DurationType
 
 	_maxtype
 )
