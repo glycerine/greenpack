@@ -203,10 +203,10 @@ func (f *FileSet) applyDirectives() {
 // into just one level of indirection.
 // In other words, if we have:
 //
-//  type A uint64
-//  type B A
-//  type C B
-//  type D C
+//	type A uint64
+//	type B A
+//	type C B
+//	type D C
 //
 // ... then we want to end up
 // figuring out that D is just a uint64.
@@ -364,6 +364,12 @@ func (fs *FileSet) getTypeSpecs(f *ast.File) {
 				// for ast.TypeSpecs....
 				switch ts := s.(type) {
 				case *ast.TypeSpec:
+					// is it generic?
+					if ts.TypeParams != nil {
+						// it is generic
+						warnln(fmt.Sprintf("ignoring generic type '%v'; greenpack does not support generics (at this point), so we ignore them.", ts.Name.Name))
+						continue // ignore these
+					}
 					switch ts.Type.(type) {
 
 					// this is the list of parse-able
@@ -699,9 +705,9 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 //
 // so, for a struct like
 //
-//	type A struct {
-//		io.Writer
-//  }
+//		type A struct {
+//			io.Writer
+//	 }
 //
 // we want "Writer"
 func embedded(f ast.Expr) string {

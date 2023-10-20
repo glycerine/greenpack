@@ -114,6 +114,10 @@ func testCode(code string, out []byte) error {
 		Unexported: false,
 	}
 	fileSet, err := File(&cfg)
+	//fmt.Printf("fileSet.Identities = '%#v'\n", fileSet.Identities)
+	//for k, v := range fileSet.Identities {
+	//	fmt.Printf("k = '%v'; v= '%#v'\n", k, v)
+	//}
 	if len(out) > 0 {
 		if len(fileSet.Identities) > 0 {
 			err := fileSet.SaveMsgpackFile(gofile.Name(), ofile)
@@ -209,5 +213,29 @@ func Test004OrderFieldsByZid(t *testing.T) {
 		cv.So(z[1].zid, cv.ShouldEqual, 1)
 		cv.So(z[2].zid, cv.ShouldEqual, -1)
 		cv.So(z[3].zid, cv.ShouldEqual, -1)
+	})
+}
+
+func Test005GenericsNotMarshalled(t *testing.T) {
+
+	cv.Convey("uninstantiated generic structs and fields (e.g. struct Gen[T any]{ my T }; ) shouldn't be marshalled", t, func() {
+
+		s := `
+package hasgenerics
+
+type Addable interface {
+	~complex128 | ~float64
+}
+type Matrix[T Addable] struct {
+	Nrow int
+  	Dat        []T
+}
+
+type HasMatrix struct {
+    M128 Matrix[complex128]
+    M64 Matrix[float64]
+}
+`
+		cv.So(testCode(s, nil), cv.ShouldBeNil)
 	})
 }
