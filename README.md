@@ -25,6 +25,8 @@ For reference purposes in case I need to go back to it,
 list.of.old.tags.txt list.of.rename.operations.txt document
 the old tags and how they were renamed (or many were deleted if not renamed).
 
+The true latest as of this README is `v0.515.0`.
+
 April 2019:
 
 Version 5.0.9 includes native support for time.Duration serialization.
