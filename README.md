@@ -7,13 +7,19 @@ the schemes were not compatible. Goq was a v5 but the import
 path is never going to have /v5 at the end, so... we'll try
 renaming the tags to v0.xxx.0 style tags, and see what happens.
 
-There is also github.com/glycerine/greenpack2 which I know works
+There is also https://github.com/glycerine/greenpack2 which I know works
 (it is simply a clone with renamed tags and a new module path)
 because it has never been published with a higher version before.
 
 But I'm going to try to make the orignial greenpack (no 2) also
 work, because I import it in a ton of places.
 
+Cool: it seems to work. The only thing is that the idea of the
+"@latest" go module isn't going to work, because Google's proxy
+remembers the old v5.1.2 version that never supported modules.
+Since the v5.1.2 will always look like the "latest" even though
+its been renamed to v0.512.0, you have to manually use the
+v0.xxx.0 versions. Ironically, they are actually the latest.
 
 April 2019:
 
