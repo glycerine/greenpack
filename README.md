@@ -1,5 +1,21 @@
-greenpack news, April 2019
+greenpack news, October 2024 
 ===============
+
+October 2024: Go-module compatibility. Since the versioning tags here
+were created long before Go modules were invented, it turns out
+the schemes were not compatible. Goq was a v5 but the import
+path is never going to have /v5 at the end, so... we'll try
+renaming the tags to v0.xxx.0 style tags, and see what happens.
+
+There is also github.com/glycerine/greenpack2 which I know works
+(it is simply a clone with renamed tags and a new module path)
+because it has never been published with a higher version before.
+
+But I'm going to try to make the orignial greenpack (no 2) also
+work, because I import it in a ton of places.
+
+
+April 2019:
 
 Version 5.0.9 includes native support for time.Duration serialization.
 
