@@ -3,7 +3,7 @@ greenpack news, October 2024
 
 October 2024: Go-module compatibility. Since the versioning tags here
 were created long before Go modules were invented, it turns out
-the schemes were not compatible. Goq was a v5 but the import
+the schemes were not compatible. Greenpack was at v5 but the import
 path is never going to have /v5 at the end, so... we'll try
 renaming the tags to v0.xxx.0 style tags, and see what happens.
 
