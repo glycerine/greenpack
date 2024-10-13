@@ -21,6 +21,14 @@ Since the v5.1.2 will always look like the "latest" even though
 its been renamed to v0.512.0, you have to manually use the
 v0.xxx.0 versions. Ironically, they are actually the latest.
 
+I'll try tagging this as v1.0.0 and update the tag to see this
+latest and see if the proxy rejects it. The goal is to have
+a "stable" version indicated, since we've been stable for years.
+
+For refernces purposes in case I need to go back to it, 
+list.of.old.tags.txt list.of.rename.operations.txt document
+the old tags and how they were renamed (or many were deleted if not renamed).
+
 April 2019:
 
 Version 5.0.9 includes native support for time.Duration serialization.
