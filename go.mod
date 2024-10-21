@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/glycerine/goconvey v0.0.0-20190410193231-58a59202ab31
-	github.com/philhofer/fwd v1.1.2
+	github.com/glycerine/fwd v1.1.4-beta.jea
 	github.com/shurcooL/go-goon v1.0.0
 	golang.org/x/tools v0.14.0
 )

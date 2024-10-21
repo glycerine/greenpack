@@ -2,7 +2,7 @@ package msgp
 
 import (
 	"fmt"
-	"github.com/philhofer/fwd"
+	"github.com/glycerine/fwd"
 	"io"
 	"math"
 	"sync"

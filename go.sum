@@ -1,3 +1,5 @@
+github.com/glycerine/fwd v1.1.4-beta.jea h1:penEwsXMBPCMCH+iUj/HKRIuRzfESzLIk99OcttgqTU=
+github.com/glycerine/fwd v1.1.4-beta.jea/go.mod h1:N5KPZnp8z9AaPcR/9r5u2BcdqnlfcTcEGbX1In/yyIE=
 github.com/glycerine/goconvey v0.0.0-20190410193231-58a59202ab31 h1:gclg6gY70GLy3PbkQ1AERPfmLMMagS60DKF78eWwLn8=
 github.com/glycerine/goconvey v0.0.0-20190410193231-58a59202ab31/go.mod h1:Ogl1Tioa0aV7gstGFO7KhffUsb9M4ydbEbbxpcEDc24=
 github.com/gopherjs/gopherjs v1.17.2 h1:fQnZVsXk8uxXIStYb0N4bGk7jeyTalG/wsZjQ25dO0g=
