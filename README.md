@@ -1,7 +1,7 @@
 greenpack news, November 2024 
 ===============
 
-November 2024: two new thins:
+November 2024: two new things:
 
 1) I compare greenpack to CBOR 
 here: https://github.com/glycerine/demo_cbor Long
