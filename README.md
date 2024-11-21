@@ -1,5 +1,19 @@
-greenpack news, October 2024 
+greenpack news, November 2024 
 ===============
+
+November 2024: two new thins:
+
+1) I compare greenpack to CBOR 
+here: https://github.com/glycerine/demo_cbor Long
+story short: it is 3-4x slower and comes in too
+many flavors.
+
+2) I wrote an RPC system with modern cryptography
+and greenpack for serializtion. Its pretty nice.
+https://github.com/glycerine/rpc25519 performs
+better than the other systems measured. It has better
+latency and throughput -- even when encrypted --
+than gRPC and rpcx.
 
 October 2024: Go-module compatibility. Since the versioning tags here
 were created long before Go modules were invented, it turns out
