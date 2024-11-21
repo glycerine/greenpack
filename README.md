@@ -5,8 +5,8 @@ November 2024: two new things:
 
 1) I compare greenpack to CBOR 
 here: https://github.com/glycerine/demo_cbor Long
-story short: it is 3-4x slower and comes in too
-many flavors.
+story short: CBOR is 3-4x slower than greenpack,
+and comes in too many flavors.
 
 2) I wrote an RPC system with modern cryptography
 and greenpack for serialization. Its pretty nice.
