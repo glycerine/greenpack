@@ -9,7 +9,7 @@ story short: it is 3-4x slower and comes in too
 many flavors.
 
 2) I wrote an RPC system with modern cryptography
-and greenpack for serializtion. Its pretty nice.
+and greenpack for serialization. Its pretty nice.
 https://github.com/glycerine/rpc25519 performs
 better than the other systems measured. It has better
 latency and throughput -- even when encrypted --
