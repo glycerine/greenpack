@@ -1,7 +1,7 @@
 .PHONY: all install
 
 all:
-	npm test
+	cd tests && npm test
 
 install:
 	npm install --save
