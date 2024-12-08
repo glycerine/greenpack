@@ -9,13 +9,15 @@ describe('serializeJSON5', () => {
         };
 
         const expected = `{
-      name: 'Alice',
-      age: 30,
-      city: 'New York',
-    }`;
+  name: 'Alice',
+  age: 30,
+  city: 'New York',
+}`;
 
         const actual = serializeJSON5(input);
 
+        console.log("actual = ", actual);
+        
         expect(actual).toEqual(expected);
     });
 
@@ -27,15 +29,14 @@ describe('serializeJSON5', () => {
         };
 
         const expected = `{
-      nan: NaN,
-      infinity: Infinity,
-      negativeInfinity: -Infinity,
-    }`;
+  nan: NaN,
+  infinity: Infinity,
+  negativeInfinity: -Infinity,
+}`;
 
         const actual = serializeJSON5(input);
 
         expect(actual).toEqual(expected);
     });
 
-    // ... more test cases ...
 });
