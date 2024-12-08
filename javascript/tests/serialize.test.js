@@ -54,7 +54,7 @@ describe('serializeJSON5', () => {
         expect(actual).toEqual(expected);
     });
 
-    /*
+/*  
     test('serializes Date objects', () => {
         const input = {
             timestamp: new Date(1623430881123),
@@ -82,5 +82,5 @@ describe('serializeJSON5', () => {
 
         expect(actual).toEqual(expected);
         });
-        */
+*/
 });
