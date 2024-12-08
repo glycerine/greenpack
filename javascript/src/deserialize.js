@@ -7,7 +7,7 @@ const { Duration } = require('./duration');
 const timestampExtUnpacker = {
     type: TIMESTAMP_EXT_TYPE,
     decode: (data) => {
-        const seconds = new DataView(data.buffer).getUint32(0, false);
+        const seconds = new DataView(data.buffer).getUint64(0, false);
         const nanoseconds = new DataView(data.buffer).getUint32(4, false);
         return new Date(seconds * 1000 + nanoseconds / 1e6);
     },
@@ -17,9 +17,9 @@ const timestampExtUnpacker = {
 const durationExtUnpacker = {
     type: DURATION_EXT_TYPE,
     decode: (data) => {
-        const seconds = new DataView(data.buffer).getUint32(0, false);
-        const nanoseconds = new DataView(data.buffer).getUint32(4, false);
-        return new Duration(seconds, nanoseconds);
+        //const seconds = new DataView(data.buffer).getUint32(0, false);
+        const nanoseconds = new DataView(data.buffer).getUint64(4, false);
+        return new Duration(0, nanoseconds);
     },
 };
 

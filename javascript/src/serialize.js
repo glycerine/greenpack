@@ -6,17 +6,21 @@ const { TIMESTAMP_EXT_TYPE, DURATION_EXT_TYPE } = require('./extensions');
 const timestampExtPacker = {
     type: TIMESTAMP_EXT_TYPE,
     encode: (timestamp) => {
-        const seconds = Math.floor(timestamp / 1000);
+        const seconds = BigInt(Math.floor(timestamp / 1000));
         const nanoseconds = (timestamp % 1000) * 1e6;
         const data = new Uint8Array(12);
-        new DataView(data.buffer).setUint32(0, seconds, false);
-        new DataView(data.buffer).setUint32(4, nanoseconds, false);
+        new DataView(data.buffer).setBigUint64(0, seconds, false); // false for big-endian, msgpack requires.
+        new DataView(data.buffer).setUint32(8, nanoseconds, false);
         return data;
     },
     decode: (data) => {
-        const seconds = new DataView(data.buffer).getUint32(0, false);
-        const nanoseconds = new DataView(data.buffer).getUint32(4, false);
-        return seconds * 1000 + nanoseconds / 1e6;
+        const seconds = new DataView(data.buffer).getBigUint64(0, false);
+        const nanoseconds = new DataView(data.buffer).getUint32(8, false);
+        const fullPrecision = seconds * BigInt(1e9) + BigInt(nanoseconds);
+        
+        // lossy: the least significant digit of the nanoseconds is lost.
+        // Does not matter if javascript is giving us msec precision anyway.
+        return Number(fullPrecision)/1e6; 
     },
 };
 
@@ -25,14 +29,15 @@ const durationExtPacker = {
     type: DURATION_EXT_TYPE,
     encode: (duration) => {
         const data = new Uint8Array(8);
-        new DataView(data.buffer).setUint32(0, duration.seconds, false);
-        new DataView(data.buffer).setUint32(4, duration.nanoseconds, false);
+        const nanoseconds = BigInt(duration.seconds) * BigInt(1e9) + BigInt(duration.nanoseconds);
+        new DataView(data.buffer).setBigUint64(0, nanoseconds, false);
         return data;
     },
     decode: (data) => {
-        const seconds = new DataView(data.buffer).getUint32(0, false);
-        const nanoseconds = new DataView(data.buffer).getUint32(4, false);
-        return new Duration(seconds, nanoseconds);
+        const nanoseconds = new DataView(data.buffer).getBigUint64(0, false);
+        const seconds = Number(nanoseconds / BigInt(1e9));
+        const ns      = Number(nanoseconds % BigInt(1e9));
+        return new Duration(seconds, ns);
     },
 };
 
