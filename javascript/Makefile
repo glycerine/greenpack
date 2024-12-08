@@ -4,6 +4,7 @@ all:
 	cd tests && npm test
 
 install:
+	npm install @msgpack/msgpack
 	npm install --save
 
 
