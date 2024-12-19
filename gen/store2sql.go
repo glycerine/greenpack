@@ -264,7 +264,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
             return stmt, fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, insSql)
         }
     }
-    err = stmt.Exec(%v)
+    _, err = stmt.Exec(%v)
     
 `, actuals)
 
