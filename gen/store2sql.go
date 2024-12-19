@@ -177,9 +177,9 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 		switch ztyp.Kind {
 
 		case green.Bytes: // []byte:
-			kind = "LONG BLOB" // variable len, up to 4GB
+			kind = "LONGBLOB" // variable len, up to 4GB
 		case green.String:
-			kind = "LONG TEXT" // variable len, up to 4GB
+			kind = "LONGTEXT" // variable len, up to 4GB
 		case green.Float64:
 			kind = "DOUBLE"
 		case green.Uint16:
