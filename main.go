@@ -128,7 +128,7 @@ func main() {
 	if c.Tests {
 		mode |= gen.Test
 	}
-	if c.StoreToSQL != "" {
+	if c.StoreToSQL == "mariadb" {
 		mode |= gen.StoreToSQL
 		mode |= gen.GetFromSQL
 	}
