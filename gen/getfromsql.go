@@ -74,6 +74,9 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 // added to the DSN string in order to pull DATETIME from sql into time.Time in Go.
 // For example:
 // db, err := sql.Open("mysql", "user:pw@tcp(localhost:3306)/databasename?parseTime=true")
+//
+// Also storing time.Time from Go into MariaDB will be lossy because Go keeps
+// nanoseconds but MariaDB only stores microseconds.
 `)
 
 	e.p.printf("\nfunc (%s %s) %sGetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []%s, sqlSel string, err error) {\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
