@@ -72,7 +72,7 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 
 	//e.p.comment(fmt.Sprintf("%sStoreToSQL implements msgp.ToSQL", e.cfg.MethodPrefix))
 
-	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 	//hasPtr := false
 	//if hasPointersOrInterfaces(p) {
 	//	hasPtr = true
@@ -267,7 +267,8 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 	e.p.printf(`
   _, err = db.Exec(sqlCreate)
   if err != nil {
-     return stmt, fmt.Errorf("error creating table: '%%v'; sql was: '%%v'", err, sqlCreate)
+     err = fmt.Errorf("error creating table: '%%v'; sql was: '%%v'", err, sqlCreate)
+     return
   }
 } // end if create
 
@@ -281,11 +282,16 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 	e.p.printf(`
 	    stmt, err = db.Prepare(insSql)
         if err != nil {
-            return stmt, fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, insSql)
+            err = fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, insSql)
+            return
         }
     }
-    _, err = stmt.Exec(%v)
-    
+    res, err = stmt.Exec(%v)
+    if err != nil {
+        return
+    }
+    injectedRowID, err = res.LastInsertId()
+
 `, actuals)
 
 }
