@@ -19,6 +19,8 @@ type getFromSqlGen struct {
 	p    printer
 	fuse []byte
 	cfg  *cfg.GreenConfig
+
+	warnAboutMysqlDriver bool
 }
 
 func (e *getFromSqlGen) MethodPrefix() string {
@@ -69,7 +71,9 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 		return nil
 	}
 
-	e.p.printf(`
+	if !e.warnAboutMysqlDriver {
+		e.warnAboutMysqlDriver = true
+		e.p.printf(`
 // Note that the github.com/go-sql-driver/mysql driver will need parseTime=true
 // added to the DSN string in order to pull DATETIME from sql into time.Time in Go.
 // For example:
@@ -88,6 +92,7 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 //  cancelled or timed out before the result is received by the driver"
 
 `)
+	}
 
 	e.p.printf("\nfunc (%s %s) %sGetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []%s, sqlSel string, err error) {\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
 	e.p.printf(`
