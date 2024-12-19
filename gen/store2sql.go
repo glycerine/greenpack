@@ -117,7 +117,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 `, recv)
 	e.p.printf("if create { sqlCreate := \"CREATE TABLE IF NOT EXISTS \" + dbName + \".\" + tableName + ` (\n")
 	e.p.printf(`  rowid bigint AUTO_INCREMENT not null primary key
-, updatetm TIMESTAMP(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP
+, updatetm TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 `)
 
 	ins := "sqlIns := \"insert into \" + dbName + \".\" + tableName + \"("
