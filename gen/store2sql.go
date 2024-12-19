@@ -286,6 +286,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
             return
         }
     }
+    var res sql.Result
     res, err = stmt.Exec(%v)
     if err != nil {
         return
