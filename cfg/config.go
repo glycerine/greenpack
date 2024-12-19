@@ -26,14 +26,14 @@ type GreenConfig struct {
 
 	NoDedup bool
 
-	StoreToSQL bool
+	StoreToSQL string
 }
 
 // call DefineFlags before myflags.Parse()
 func (c *GreenConfig) DefineFlags(fs *flag.FlagSet) {
 	fs.StringVar(&c.Out, "o", "", "output file (default is {input_file}_gen.go")
 	fs.StringVar(&c.GoFile, "file", "", "input file (or directory); default is $GOFILE, which is set by the `go generate` command.")
-	fs.BoolVar(&c.StoreToSQL, "sql", false, "create StoreToSQL methods")
+	fs.StringVar(&c.StoreToSQL, "sql", "", "create StoreToSQL methods for this database")
 	fs.BoolVar(&c.Encode, "io", true, "create Encode and Decode methods")
 	fs.BoolVar(&c.Marshal, "marshal", true, "create Marshal and Unmarshal methods")
 	fs.BoolVar(&c.Tests, "tests", true, "create tests and benchmarks")

@@ -8,43 +8,43 @@ import (
 	"github.com/glycerine/greenpack/green"
 )
 
-func storeToSQL(w io.Writer, cfg *cfg.GreenConfig) *storeToSqlGen {
+func getFromSQL(w io.Writer, cfg *cfg.GreenConfig) *storeToSqlGen {
 	return &storeToSqlGen{
 		p:   printer{w: w, cfg: cfg},
 		cfg: cfg,
 	}
 }
 
-type storeToSqlGen struct {
+type getFromSqlGen struct {
 	passes
 	p    printer
 	fuse []byte
 	cfg  *cfg.GreenConfig
 }
 
-func (e *storeToSqlGen) MethodPrefix() string {
+func (e *getFromSqlGen) MethodPrefix() string {
 	return e.cfg.MethodPrefix
 }
 
-func (e *storeToSqlGen) Method() Method { return StoreToSQL }
+func (e *getFromSqlGen) Method() Method { return StoreToSQL }
 
-func (e *storeToSqlGen) Apply(dirs []string) error {
+func (e *getFromSqlGen) Apply(dirs []string) error {
 	return nil
 }
 
-func (e *storeToSqlGen) writeAndCheck(typ string, argfmt string, arg interface{}) {
+func (e *getFromSqlGen) writeAndCheck(typ string, argfmt string, arg interface{}) {
 	//e.p.printf("\nerr = en.Write%s(%s)", typ, fmt.Sprintf(argfmt, arg))
 	//e.p.printf("%s %s", arg, typ)
 }
 
-func (e *storeToSqlGen) fuseHook() {
+func (e *getFromSqlGen) fuseHook() {
 	if len(e.fuse) > 0 {
 		e.appendraw(e.fuse)
 		e.fuse = e.fuse[:0]
 	}
 }
 
-func (e *storeToSqlGen) Fuse(b []byte) {
+func (e *getFromSqlGen) Fuse(b []byte) {
 	if len(e.fuse) > 0 {
 		e.fuse = append(e.fuse, b...)
 	} else {
@@ -52,7 +52,7 @@ func (e *storeToSqlGen) Fuse(b []byte) {
 	}
 }
 
-func (e *storeToSqlGen) Execute(p Elem) error {
+func (e *getFromSqlGen) Execute(p Elem) error {
 	if !e.p.ok() {
 		return e.p.err
 	}
@@ -70,23 +70,13 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 		return nil
 	}
 
-	//e.p.comment(fmt.Sprintf("%sStoreToSQL implements msgp.ToSQL", e.cfg.MethodPrefix))
-
-	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
-	//hasPtr := false
-	//if hasPointersOrInterfaces(p) {
-	//	hasPtr = true
-	//}
-	//e.p.preSaveHook()
+	e.p.printf("\nfunc (%s %s) %sGetFromSQL(db *sql.DB, dbName, tableName string, reuseStmt *sql.Stmt) (stmt *sql.Stmt, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 	next(e, p, nil)
-	//if hasPtr {
-	//	e.p.dedupWriteCleanup(false)
-	//}
 	e.p.nakedReturn()
 	return e.p.err
 }
 
-func (e *storeToSqlGen) gStruct(s *Struct, x *extra) {
+func (e *getFromSqlGen) gStruct(s *Struct, x *extra) {
 	if !e.p.ok() {
 		return
 	}
@@ -96,8 +86,7 @@ func (e *storeToSqlGen) gStruct(s *Struct, x *extra) {
 	return
 }
 
-func (e *storeToSqlGen) appendraw(bts []byte) {
-	return
+func (e *getFromSqlGen) appendraw(bts []byte) {
 	e.p.print("\nerr = en.Append(")
 	for i, b := range bts {
 		if i != 0 {
@@ -108,7 +97,7 @@ func (e *storeToSqlGen) appendraw(bts []byte) {
 	e.p.print(")\nif err != nil { return err }")
 }
 
-func (e *storeToSqlGen) structmap(s *Struct) {
+func (e *getFromSqlGen) structmap(s *Struct) {
 	//nfields := len(s.Fields) - s.SkipCount
 
 	recv := s.TypeName() // imutMethodReceiver(s)
@@ -208,32 +197,6 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 			kind = "BOOL"
 		case green.Time: // time.Time:
 			kind = "DATETIME(6)"
-			/*
-				comments here https://mariadb.com/kb/en/timestamp/
-
-				from 2018 by Dean Trower
-				tell us how messed up TIMESTAMP handling is, and why we want to avoid it:
-				"When using the TIMESTAMP type in timezone settings with daylight savings,
-				you must be aware that: Storing data in the column will be ambiguous
-				at the end of daylight savings, because the local-time hour gets repeated twice.
-
-				At the start of daylight savings, when clocks are turned forwards,
-				there's a "missing hour". Technically times in this hour aren't valid,
-				but if you do try to store a time from this missing hour in a TIMESTAMP
-				column and then read it back, you WON'T get out what you put in!
-				(Contrary to what the MySQL docs state)."
-
-				from 2016, Andy Walker says:
-				"It's important to note that MariaDB (and MySQL) both have the notion
-				of a server timezone - when writing an explicit value to a timestamp column,
-				time data is converted from the server timezone into UTC for storage, then
-				converted back to server time when reading.
-
-				If you're planning on using the timestamp data type to hold timestamps
-				which already in UTC, it's probably worth setting your server timezone
-				to UTC. Alternatively, pay the size penalty and use the DATETIME type,
-				which isn't affected by timezones."
-			*/
 		case green.Duration: // time.Duration
 			kind = "BIGINT"
 		case green.Float32:
@@ -302,7 +265,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 
 }
 
-func (e *storeToSqlGen) gMap(m *Map, x *extra) {
+func (e *getFromSqlGen) gMap(m *Map, x *extra) {
 	return
 	if !e.p.ok() {
 		return
@@ -317,20 +280,20 @@ func (e *storeToSqlGen) gMap(m *Map, x *extra) {
 	e.p.closeblock()
 }
 
-func (e *storeToSqlGen) gPtr(s *Ptr, x *extra) {
+func (e *getFromSqlGen) gPtr(s *Ptr, x *extra) {
 	return
 	if !e.p.ok() {
 		return
 	}
 	e.fuseHook()
-	e.p.print("\n // gPtr.storeToSqlGen():\n")
+	e.p.print("\n // gPtr.getFromSqlGen():\n")
 	e.p.printf("\nif %s == nil { err = en.WriteNil(); if err != nil { return; } } else {", s.Varname())
 
 	next(e, s.Value, nil)
 	e.p.closeblock()
 }
 
-func (e *storeToSqlGen) gSlice(s *Slice, x *extra) {
+func (e *getFromSqlGen) gSlice(s *Slice, x *extra) {
 	return
 	if !e.p.ok() {
 		return
@@ -340,7 +303,7 @@ func (e *storeToSqlGen) gSlice(s *Slice, x *extra) {
 	e.p.rangeBlock(s.Index, s.Varname(), e, s.Els)
 }
 
-func (e *storeToSqlGen) gArray(a *Array, x *extra) {
+func (e *getFromSqlGen) gArray(a *Array, x *extra) {
 	return
 	if !e.p.ok() {
 		return
@@ -357,7 +320,7 @@ func (e *storeToSqlGen) gArray(a *Array, x *extra) {
 	e.p.rangeBlock(a.Index, a.Varname(), e, a.Els)
 }
 
-func (e *storeToSqlGen) gBase(b *BaseElem, x *extra) {
+func (e *getFromSqlGen) gBase(b *BaseElem, x *extra) {
 	return
 	if !e.p.ok() {
 		return
@@ -369,7 +332,7 @@ func (e *storeToSqlGen) gBase(b *BaseElem, x *extra) {
 	//}
 
 	if b.Value == IDENT { // unknown identity
-		e.p.printf("\n // storeToSqlGen.gBase unknown IDENT '%v': ignore for now.\n", vname)
+		e.p.printf("\n // getFromSqlGen.gBase unknown IDENT '%v': ignore for now.\n", vname)
 		e.p.printf("\n // err = %s.%sStoreToSQL(db, tableName)", vname, e.cfg.MethodPrefix)
 	} else { // typical case
 		e.writeAndCheck(b.BaseName(), literalFmt, vname)

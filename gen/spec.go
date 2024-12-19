@@ -50,6 +50,8 @@ func (m Method) String() string {
 		return "fieldsempty"
 	case StoreToSQL:
 		return "storeToSQL"
+	case GetFromSQL:
+		return "getFromSQL"
 	default:
 		// return e.g. "decode+encode+test"
 		modes := [...]Method{Decode, Encode, Marshal, Unmarshal, Size, Test, StoreToSQL}
@@ -88,6 +90,8 @@ func strtoMeth(s string) Method {
 		return FieldsEmpty
 	case "storeToSQL":
 		return StoreToSQL
+	case "getFromSQL":
+		return GetFromSQL
 	default:
 		return 0
 	}
@@ -102,6 +106,7 @@ const (
 	Test                           // generate tests
 	FieldsEmpty                    // support omitempty tag
 	StoreToSQL                     // from struct to SQL database.
+	GetFromSQL                     // from SQL database to struct
 	invalidmeth                    // this isn't a method
 
 	encodetest  = Encode | Decode | Test | FieldsEmpty     // tests for Encodable and Decodable
@@ -140,6 +145,9 @@ func NewPrinter(m Method, out io.Writer, tests io.Writer, cfg *cfg.GreenConfig) 
 	}
 	if m.isset(StoreToSQL) {
 		gens = append(gens, storeToSQL(out, cfg))
+	}
+	if m.isset(GetFromSQL) {
+		gens = append(gens, getFromSQL(out, cfg))
 	}
 	if m.isset(marshaltest) {
 		gens = append(gens, mtest(tests, cfg))

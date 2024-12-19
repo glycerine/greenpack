@@ -128,8 +128,9 @@ func main() {
 	if c.Tests {
 		mode |= gen.Test
 	}
-	if c.StoreToSQL {
+	if c.StoreToSQL != "" {
 		mode |= gen.StoreToSQL
+		mode |= gen.GetFromSQL
 	}
 
 	if mode&^gen.Test == 0 {
