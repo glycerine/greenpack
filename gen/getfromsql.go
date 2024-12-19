@@ -69,6 +69,13 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 		return nil
 	}
 
+	e.p.printf(`
+// Note that the github.com/go-sql-driver/mysql driver will need parseTime=true
+// added to the DSN string in order to pull DATETIME from sql into time.Time in Go.
+// For example:
+// db, err := sql.Open("mysql", "user:pw@tcp(localhost:3306)/databasename?parseTime=true")
+`)
+
 	e.p.printf("\nfunc (%s %s) %sGetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []%s, sqlSel string, err error) {\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
 	e.p.printf(`
 		if strings.HasPrefix(where, "select") {
