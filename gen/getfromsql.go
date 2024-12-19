@@ -26,7 +26,7 @@ func (e *getFromSqlGen) MethodPrefix() string {
 	return e.cfg.MethodPrefix
 }
 
-func (e *getFromSqlGen) Method() Method { return StoreToSQL }
+func (e *getFromSqlGen) Method() Method { return GetFromSQL }
 
 func (e *getFromSqlGen) Apply(dirs []string) error {
 	return nil
@@ -70,7 +70,7 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 		return nil
 	}
 
-	e.p.printf("\nfunc (%s %s) %sGetFromSQL(db *sql.DB, dbName, tableName string, reuseStmt *sql.Stmt) (stmt *sql.Stmt, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	e.p.printf("\nfunc (%s %s) %sGetFromSQL(db *sql.DB, dbName, tableName string, rowid int64, reuseStmt *sql.Stmt) (stmt *sql.Stmt, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 	next(e, p, nil)
 	e.p.nakedReturn()
 	return e.p.err
@@ -100,15 +100,14 @@ func (e *getFromSqlGen) appendraw(bts []byte) {
 func (e *getFromSqlGen) structmap(s *Struct) {
 	//nfields := len(s.Fields) - s.SkipCount
 
+	return
+
 	recv := s.TypeName() // imutMethodReceiver(s)
 	e.p.printf(`
 
 // create table to store type '%s'
 `, recv)
-	e.p.printf("if create { sqlCreate := \"CREATE TABLE IF NOT EXISTS \" + dbName + \".\" + tableName + ` (\n")
-	e.p.printf(`  rowid bigint AUTO_INCREMENT not null primary key
-, updatetm TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-`)
+	e.p.printf("if stmt == nil { sqlSelect := \"SELECT FROM \" + dbName + \".\" + tableName + ` (\n")
 
 	ins := "sqlIns := \"insert into \" + dbName + \".\" + tableName + \"("
 	values := "" // the right number of ?,?,?,... question mark place-holders.
@@ -333,7 +332,7 @@ func (e *getFromSqlGen) gBase(b *BaseElem, x *extra) {
 
 	if b.Value == IDENT { // unknown identity
 		e.p.printf("\n // getFromSqlGen.gBase unknown IDENT '%v': ignore for now.\n", vname)
-		e.p.printf("\n // err = %s.%sStoreToSQL(db, tableName)", vname, e.cfg.MethodPrefix)
+		e.p.printf("\n // err = %s.%sGetFromSQL(db, tableName)", vname, e.cfg.MethodPrefix)
 	} else { // typical case
 		e.writeAndCheck(b.BaseName(), literalFmt, vname)
 	}
