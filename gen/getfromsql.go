@@ -5,7 +5,6 @@ import (
 	"io"
 
 	"github.com/glycerine/greenpack/cfg"
-	"github.com/glycerine/greenpack/green"
 )
 
 func getFromSQL(w io.Writer, cfg *cfg.GreenConfig) *getFromSqlGen {
@@ -70,7 +69,7 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 		return nil
 	}
 
-	e.p.printf("\nfunc (%s %s) %sGetFromSQL(db *sql.DB, dbName, tableName string, rowid int64, reuseStmt *sql.Stmt) (stmt *sql.Stmt, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	e.p.printf("\nfunc (%s %s) %sGetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []%s, sqlSel string, err error) {\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
 	next(e, p, nil)
 	e.p.nakedReturn()
 	return e.p.err
@@ -87,6 +86,7 @@ func (e *getFromSqlGen) gStruct(s *Struct, x *extra) {
 }
 
 func (e *getFromSqlGen) appendraw(bts []byte) {
+	return
 	e.p.print("\nerr = en.Append(")
 	for i, b := range bts {
 		if i != 0 {
@@ -100,17 +100,13 @@ func (e *getFromSqlGen) appendraw(bts []byte) {
 func (e *getFromSqlGen) structmap(s *Struct) {
 	//nfields := len(s.Fields) - s.SkipCount
 
-	return
-
 	recv := s.TypeName() // imutMethodReceiver(s)
 	e.p.printf(`
 
-// create table to store type '%s'
+// get from sql and write into '%s'
 `, recv)
-	e.p.printf("if stmt == nil { sqlSelect := \"SELECT FROM \" + dbName + \".\" + tableName + ` (\n")
 
-	ins := "sqlIns := \"insert into \" + dbName + \".\" + tableName + \"("
-	values := "" // the right number of ?,?,?,... question mark place-holders.
+	sel := "sqlSel = \"select "
 	var actuals string
 
 	first := true
@@ -151,116 +147,46 @@ func (e *getFromSqlGen) structmap(s *Struct) {
 		if first {
 			first = false
 		} else {
-			ins += ", "
-			values += ","
+			sel += ", "
 			actuals += ","
 		}
 		fld = "”" + fld + "”"
-		ins += fld
-		values += "?"
-		actuals += "z." + s.Fields[i].FieldName
-
-		typ := s.Fields[i].FieldElem // field type, Elem
-		ztyp := typ.GetZtype()       // GetZtype provides type info in a uniform way.
-
-		kind := ""
-		switch ztyp.Kind {
-
-		case green.Bytes: // []byte:
-			kind = "LONGBLOB" // variable len, up to 4GB
-		case green.String:
-			kind = "LONGTEXT" // variable len, up to 4GB
-		case green.Float64:
-			kind = "DOUBLE"
-		case green.Uint16:
-			kind = "UNSIGNED SMALLINT"
-		case green.Uint32:
-			kind = "UNSIGNED INT"
-		case green.Uint64:
-			kind = "UNSIGNED BIGINT"
-		case green.Uint:
-			kind = "UNSIGNED BIGINT"
-		case green.Byte, green.Uint8:
-			kind = "UNSIGNED TINYINT"
-		case green.Int: // as in Go, matches native word size.
-			kind = "BIGINT"
-		case green.Int8:
-			kind = "TINYINT"
-		case green.Int16:
-			kind = "SMALLINT"
-		case green.Int32:
-			kind = "int"
-		case green.Int64:
-			kind = "BIGINT"
-		case green.Bool:
-			kind = "BOOL"
-		case green.Time: // time.Time:
-			kind = "DATETIME(6)"
-		case green.Duration: // time.Duration
-			kind = "BIGINT"
-		case green.Float32:
-			kind = "FLOAT"
-		case green.Complex64:
-		case green.Complex128:
-		case green.Intf: // interface{}:
-		case green.Ext: // extension
-
-			// IDENT means an unrecognized identifier;
-			// it typically means a named struct type.
-			// The Str field in the Ztype will hold the
-			// name of the struct.:
-		case green.IDENT:
-			// compound types
-			// implementation note: should correspond to gen/Elem.:
-		case green.BaseElemCat:
-		case green.MapCat:
-		case green.StructCat:
-		case green.SliceCat:
-		case green.ArrayCat:
-		case green.PointerCat:
-
-		}
-
-		e.p.printf(", %v %v\n", fld, kind)
+		sel += fld
+		actuals += "&v." + s.Fields[i].FieldName
 
 		// type-switch dispatch to the correct method
 		//next(e, s.Fields[i].FieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})
 
 	}
-	e.p.printf("\n)`\n")
-	e.p.printf("// mariaDB needs backtick quoted strings\n")
-	e.p.printf("sqlCreate = strings.ReplaceAll(sqlCreate, \"”\", \"`\")")
-	e.p.printf(`
-  _, err = db.Exec(sqlCreate)
-  if err != nil {
-     err = fmt.Errorf("error creating table: '%%v'; sql was: '%%v'", err, sqlCreate)
-     return
-  }
-} // end if create
 
-`)
-
-	ins += ") values (" + values + ")\""
+	sel += " from \" + dbName + \".\" + tableName "
+	e.p.printf(sel)
+	e.p.printf("\nsqlSel = strings.ReplaceAll(sqlSel, \"”\", \"`\") + where")
 	e.p.printf(`
-    if stmt == nil {
-`)
-	e.p.printf(ins)
-	e.p.printf("\nsqlIns = strings.ReplaceAll(sqlIns, \"”\", \"`\")")
-	e.p.printf(`
-	    stmt, err = db.Prepare(sqlIns)
-        if err != nil {
-            err = fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, sqlIns)
-            return
-        }
-    }
-    var res sql.Result
-    res, err = stmt.Exec(%v)
-    if err != nil {
-        return
-    }
-    injectedRowID, err = res.LastInsertId()
 
-`, actuals)
+var rows *sql.Rows
+rows, err = db.QueryContext(ctx, sqlSel)
+if err != nil {
+   err = fmt.Errorf("error on select: '%%v'; sql was '%%v'", err, sqlSel)
+   return
+}
+defer rows.Close()
+
+    var v *%v
+	for i := 0; rows.Next(); i++ {
+		if i == 0 {
+			v = z
+		} else {
+			v = &%v{}
+		}
+   err = rows.Scan(%v)
+   if err != nil {
+       return
+   }
+   res = append(res, v)
+}
+
+`, recv, recv, actuals)
 
 }
 
