@@ -72,7 +72,7 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 
 	//e.p.comment(fmt.Sprintf("%sStoreToSQL implements msgp.ToSQL", e.cfg.MethodPrefix))
 
-	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool) (err error) {", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *db.Stmt) (stmt *db.Stmt, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 	//hasPtr := false
 	//if hasPointersOrInterfaces(p) {
 	//	hasPtr = true
@@ -120,6 +120,11 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 , updatetm TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP
 `)
 
+	ins := "insSql := \"insert into \" + dbName + \".\" + tableName + \"("
+	values := "" // the right number of ?,?,?,... question mark place-holders.
+	var actuals string
+
+	first := true
 	for i := range s.Fields {
 		if s.Fields[i].Skip {
 			continue
@@ -133,6 +138,17 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 		if fld == "type" {
 			fld = "typ"
 		}
+
+		if first {
+			first = false
+		} else {
+			ins += ", "
+			values += ","
+			actuals += ","
+		}
+		ins += fld
+		values += "?"
+		actuals += "z." + s.Fields[i].FieldName
 
 		typ := s.Fields[i].FieldElem // field type, Elem
 		ztyp := typ.GetZtype()       // GetZtype provides type info in a uniform way.
@@ -231,11 +247,27 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 	e.p.printf(`
   _, err = db.Exec(sqlCreate)
   if err != nil {
-     return fmt.Errorf("error creating table: '%%v'; sql was: '%%v'", err, sqlCreate)
+     return stmt, fmt.Errorf("error creating table: '%%v'; sql was: '%%v'", err, sqlCreate)
   }
 } // end if create
 
 `)
+
+	ins += ") values (" + values + ")\""
+	e.p.printf(`
+    if stmt == nil {
+`)
+	e.p.printf(ins)
+	e.p.printf(`
+	    stmt, err = db.Prepare(insSql)
+        if err != nil {
+            return stmt, fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, insSql)
+        }
+    }
+    err = stmt.Exec(%v)
+    
+`, actuals)
+
 }
 
 func (e *storeToSqlGen) gMap(m *Map, x *extra) {
