@@ -72,6 +72,19 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 
 	//e.p.comment(fmt.Sprintf("%sStoreToSQL implements msgp.ToSQL", e.cfg.MethodPrefix))
 
+	e.p.printf(`
+
+// %vStoreTogSQL stores %v into the table specified by tableName,
+// that resides inside the database dbName. If create is true,
+// then we will attempt to create the table if it does not
+// already exist. The resuseStmt can be nil. If it is nil,
+// then a new insert statement will be prepared and
+// returned in stmt. On subsequent calls, this stmt
+// should be passed in as the reuseStmt parameter, in
+// order to allow efficient re-use of the prepared statement.
+// the new rowid will be returned in injectedRowID.
+`, e.cfg.MethodPrefix, p.Varname())
+
 	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 	//hasPtr := false
 	//if hasPointersOrInterfaces(p) {

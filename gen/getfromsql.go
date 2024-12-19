@@ -94,7 +94,34 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 `)
 	}
 
-	e.p.printf("\nfunc (%s %s) %sGetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []%s, sqlSel string, err error) {\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
+	e.p.printf(`
+
+// %vGetFromSQL fetches from the database and fills in z (this method's receiver)
+// and returns a variable sized slice in res. res[0] will always be z.
+//
+// The where clause can be the empty string. It can also be
+// used to get a subset of the contents of tableName back.
+//
+// With an empty where, all records in tableName
+// are selected and returned. Otherwise, the where string
+// is appended to a select for all records.
+//
+// Advanced use:
+// If the db is nil, the sqlSel will be returned but the
+// database will not be contacted. This allows you get the
+// query that has all the fields, and then
+// modify the select query and re-submit it with complex
+// joins, etc.
+//
+// Hence if the where clause starts with "select",
+// then it will be used directly; it will not be appended
+// to a select of all the columns. Be careful with this,
+// however, since the rows.Scan() call generated below
+// expects to get all the fields, so you must keep
+// the select statement in sync with those expectations.
+`, e.cfg.MethodPrefix)
+
+	e.p.printf("func (%s %s) %sGetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []%s, sqlSel string, err error) {\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
 	e.p.printf(`
 		if strings.HasPrefix(where, "select") {
 			sqlSel = where
