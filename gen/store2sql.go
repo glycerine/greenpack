@@ -34,7 +34,7 @@ func (e *storeToSqlGen) Apply(dirs []string) error {
 
 func (e *storeToSqlGen) writeAndCheck(typ string, argfmt string, arg interface{}) {
 	//e.p.printf("\nerr = en.Write%s(%s)", typ, fmt.Sprintf(argfmt, arg))
-	e.p.printf("%s %s", arg, typ)
+	//e.p.printf("%s %s", arg, typ)
 }
 
 func (e *storeToSqlGen) fuseHook() {
@@ -61,6 +61,12 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 		return nil
 	}
 	if !IsPrintable(p) {
+		return nil
+	}
+
+	// only gen SQL for structs
+	_, isStruct := p.(*Struct)
+	if !isStruct {
 		return nil
 	}
 
@@ -108,10 +114,11 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 	e.p.printf(`
 
 // create table to store type '%s'
-sqlCreate := "CREATE TABLE " + dbName + "." + tableName + "("
- rowid bigint AUTO_INCREMENT not null primary key
-,updatetm TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP
 `, recv)
+	e.p.printf("sqlCreate := \"CREATE TABLE \" + dbName + \".\" + tableName + `(\n")
+	e.p.printf(` rowid bigint AUTO_INCREMENT not null primary key
+, updatetm TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP
+`)
 
 	for i := range s.Fields {
 		if s.Fields[i].Skip {
@@ -123,6 +130,9 @@ sqlCreate := "CREATE TABLE " + dbName + "." + tableName + "("
 
 		// or .FieldName ?
 		fld := s.Fields[i].FieldTag // the string inside the `msg:""` tag
+		if fld == "type" {
+			fld = "typ"
+		}
 
 		typ := s.Fields[i].FieldElem // field type, Elem
 		ztyp := typ.GetZtype()       // GetZtype provides type info in a uniform way.
@@ -211,13 +221,13 @@ sqlCreate := "CREATE TABLE " + dbName + "." + tableName + "("
 
 		}
 
-		e.p.printf("\n, %v %v\n", fld, kind)
+		e.p.printf(", %v %v\n", fld, kind)
 
 		// type-switch dispatch to the correct method
 		//next(e, s.Fields[i].FieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})
 
 	}
-	e.p.printf("\n)\n")
+	e.p.printf("\n)`\n")
 }
 
 func (e *storeToSqlGen) gMap(m *Map, x *extra) {
