@@ -72,7 +72,7 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 
 	//e.p.comment(fmt.Sprintf("%sStoreToSQL implements msgp.ToSQL", e.cfg.MethodPrefix))
 
-	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string) (err error) {", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool) (err error) {", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 	//hasPtr := false
 	//if hasPointersOrInterfaces(p) {
 	//	hasPtr = true
@@ -115,8 +115,8 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 
 // create table to store type '%s'
 `, recv)
-	e.p.printf("sqlCreate := \"CREATE TABLE \" + dbName + \".\" + tableName + `(\n")
-	e.p.printf(` rowid bigint AUTO_INCREMENT not null primary key
+	e.p.printf("if create { sqlCreate := \"CREATE TABLE IF NOT EXISTS \" + dbName + \".\" + tableName + `(\n")
+	e.p.printf(`  rowid bigint AUTO_INCREMENT not null primary key
 , updatetm TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP
 `)
 
@@ -228,6 +228,14 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 
 	}
 	e.p.printf("\n)`\n")
+	e.p.printf(`
+  _, err = db.Exec(sqlCreate)
+  if err != nil {
+     return fmt.Errorf("error creating table: '%%v'; sql was: '%%v'", err, sqlCreate)
+  }
+} // end if create
+
+`)
 }
 
 func (e *storeToSqlGen) gMap(m *Map, x *extra) {
