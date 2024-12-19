@@ -70,6 +70,12 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 	}
 
 	e.p.printf("\nfunc (%s %s) %sGetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []%s, sqlSel string, err error) {\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
+	e.p.printf(`
+		if strings.HasPrefix(where, "select") {
+			sqlSel = where
+		} else {
+	`)
+
 	next(e, p, nil)
 	e.p.nakedReturn()
 	return e.p.err
@@ -161,8 +167,13 @@ func (e *getFromSqlGen) structmap(s *Struct) {
 
 	sel += " from \" + dbName + \".\" + tableName "
 	e.p.printf(sel)
-	e.p.printf("\nsqlSel = strings.ReplaceAll(sqlSel, \"”\", \"`\") + where")
+	e.p.printf("\nsqlSel = strings.ReplaceAll(sqlSel, \"”\", \"`\") + \" \" + where")
 	e.p.printf(`
+}
+
+if db == nil {
+    return // just providing the sqlSel statement.
+}
 
 var rows *sql.Rows
 rows, err = db.QueryContext(ctx, sqlSel)
