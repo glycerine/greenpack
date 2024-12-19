@@ -77,6 +77,16 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 //
 // Also storing time.Time from Go into MariaDB will be lossy because Go keeps
 // nanoseconds but MariaDB only stores microseconds.
+//
+// Beware the ctx cancellation will close the db connection(!) This is
+// very unexpected. Likely this is the only way it can be implemented.
+//
+// From the github.com/go-sql-driver/mysql README docs:
+//
+// "The QueryContext, ExecContext, etc. variants provided by database/sql will
+//  cause the connection to be closed if the provided context is
+//  cancelled or timed out before the result is received by the driver"
+
 `)
 
 	e.p.printf("\nfunc (%s %s) %sGetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []%s, sqlSel string, err error) {\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
