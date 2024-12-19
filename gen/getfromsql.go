@@ -238,7 +238,7 @@ defer rows.Close()
     var v *%v
 	for i := 0; rows.Next(); i++ {
 		if i == 0 {
-			v = z
+			v = %v
 		} else {
 			v = &%v{}
 		}
@@ -249,7 +249,7 @@ defer rows.Close()
    res = append(res, v)
 }
 
-`, recv, recv, actuals)
+`, recv, s.Varname(), recv, actuals)
 
 }
 

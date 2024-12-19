@@ -82,10 +82,15 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 // returned in stmt. On subsequent calls, this stmt
 // should be passed in as the reuseStmt parameter, in
 // order to allow efficient re-use of the prepared statement.
-// the new rowid will be returned in injectedRowID.
+// After the insert, the newly added rowid will be
+// returned in injectedRowID. The insert SQL is returned in
+// in sqlIns. If db is nil, only the insert SQL string
+// will be returned, and the database will not be contacted.
+// Similarly, sqlCreate will return the table creation SQL;
+// if it was used.
 `, e.cfg.MethodPrefix, p.Varname())
 
-	e.p.printf("func (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	e.p.printf("func (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 	//hasPtr := false
 	//if hasPointersOrInterfaces(p) {
 	//	hasPtr = true
@@ -129,12 +134,12 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 
 // create table to store type '%s'
 `, recv)
-	e.p.printf("if create { sqlCreate := \"CREATE TABLE IF NOT EXISTS \" + dbName + \".\" + tableName + ` (\n")
+	e.p.printf("if create { sqlCreate = \"CREATE TABLE IF NOT EXISTS \" + dbName + \".\" + tableName + ` (\n")
 	e.p.printf(`  rowid bigint AUTO_INCREMENT not null primary key
 , updatetm TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 `)
 
-	ins := "sqlIns := \"insert into \" + dbName + \".\" + tableName + \"("
+	ins := "sqlIns = \"insert into \" + dbName + \".\" + tableName + \"("
 	values := "" // the right number of ?,?,?,... question mark place-holders.
 	var actuals string
 
@@ -183,7 +188,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 		fld = "”" + fld + "”"
 		ins += fld
 		values += "?"
-		actuals += "z." + s.Fields[i].FieldName
+		actuals += s.Varname() + "." + s.Fields[i].FieldName
 
 		typ := s.Fields[i].FieldElem // field type, Elem
 		ztyp := typ.GetZtype()       // GetZtype provides type info in a uniform way.
@@ -282,10 +287,12 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 	e.p.printf("// mariaDB needs backtick quoted strings\n")
 	e.p.printf("sqlCreate = strings.ReplaceAll(sqlCreate, \"”\", \"`\")")
 	e.p.printf(`
-  _, err = db.Exec(sqlCreate)
-  if err != nil {
-     err = fmt.Errorf("error creating table: '%%v'; sql was: '%%v'", err, sqlCreate)
-     return
+  if db != nil {
+    _, err = db.Exec(sqlCreate)
+    if err != nil {
+      err = fmt.Errorf("error creating table: '%%v'; sql was: '%%v'", err, sqlCreate)
+      return
+    }
   }
 } // end if create
 
@@ -298,6 +305,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 	e.p.printf(ins)
 	e.p.printf("\nsqlIns = strings.ReplaceAll(sqlIns, \"”\", \"`\")")
 	e.p.printf(`
+  if db != nil {
 	    stmt, err = db.Prepare(sqlIns)
         if err != nil {
             err = fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, sqlIns)
@@ -310,7 +318,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
         return
     }
     injectedRowID, err = res.LastInsertId()
-
+  }
 `, actuals)
 
 }
