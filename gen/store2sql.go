@@ -85,7 +85,7 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 // the new rowid will be returned in injectedRowID.
 `, e.cfg.MethodPrefix, p.Varname())
 
-	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	e.p.printf("func (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 	//hasPtr := false
 	//if hasPointersOrInterfaces(p) {
 	//	hasPtr = true
