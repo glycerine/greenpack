@@ -72,7 +72,7 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 
 	//e.p.comment(fmt.Sprintf("%sStoreToSQL implements msgp.ToSQL", e.cfg.MethodPrefix))
 
-	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *db.Stmt) (stmt *db.Stmt, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	e.p.printf("\nfunc (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 	//hasPtr := false
 	//if hasPointersOrInterfaces(p) {
 	//	hasPtr = true
