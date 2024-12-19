@@ -1,6 +1,13 @@
 greenpack news, November 2024 
 ===============
 
+December 2024:
+
+As of v0.520.0, adding `-sql mariadb` to the usual go generate annoation, e.g.
+`//go:generate greenpack -sql mariadb`
+will cause greenpack to generate SQL stubs
+for writing to, and reading from, MariaDB.
+
 November 2024: two new things:
 
 1) I compare greenpack to CBOR 
