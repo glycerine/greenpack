@@ -82,7 +82,7 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 // Also storing time.Time from Go into MariaDB will be lossy because Go keeps
 // nanoseconds but MariaDB only stores microseconds.
 //
-// Beware the ctx cancellation will close the db connection(!) This is
+// Beware that ctx cancellation will close the db connection(!) This is
 // very unexpected. Likely this is the only way it can be implemented.
 //
 // From the github.com/go-sql-driver/mysql README docs:
