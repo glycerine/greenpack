@@ -8,8 +8,8 @@ import (
 	"github.com/glycerine/greenpack/green"
 )
 
-func getFromSQL(w io.Writer, cfg *cfg.GreenConfig) *storeToSqlGen {
-	return &storeToSqlGen{
+func getFromSQL(w io.Writer, cfg *cfg.GreenConfig) *getFromSqlGen {
+	return &getFromSqlGen{
 		p:   printer{w: w, cfg: cfg},
 		cfg: cfg,
 	}
