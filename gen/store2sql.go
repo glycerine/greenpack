@@ -125,6 +125,10 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 	var actuals string
 
 	first := true
+	columns := make(map[string]bool) // insure uniqueness of column names
+	columns["rowid"] = true
+	columns["updatetm"] = true
+
 	for i := range s.Fields {
 		if s.Fields[i].Skip {
 			continue
@@ -135,8 +139,24 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 
 		// or .FieldName ?
 		fld := s.Fields[i].FieldTag // the string inside the `msg:""` tag
-		if fld == "type" {
-			fld = "typ"
+
+		// handle collisions with rowid and updatetm, which are always
+		// the first two columns.
+		if fld == "rowid" {
+			fld = "rowid_"
+		} else if fld == "updatetm" {
+			fld = "updatetm_"
+		}
+
+		// make sure all columns are uniquely named
+		for {
+			_, isDup := columns[fld]
+			if isDup {
+				fld += "x"
+			} else {
+				columns[fld] = true
+				break
+			}
 		}
 
 		if first {
