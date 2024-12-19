@@ -120,7 +120,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 , updatetm TIMESTAMP(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP
 `)
 
-	ins := "insSql := \"insert into \" + dbName + \".\" + tableName + \"("
+	ins := "sqlIns := \"insert into \" + dbName + \".\" + tableName + \"("
 	values := "" // the right number of ?,?,?,... question mark place-holders.
 	var actuals string
 
@@ -166,6 +166,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 			values += ","
 			actuals += ","
 		}
+		fld = "”" + fld + "”"
 		ins += fld
 		values += "?"
 		actuals += "z." + s.Fields[i].FieldName
@@ -264,6 +265,8 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 
 	}
 	e.p.printf("\n)`\n")
+	e.p.printf("// mariaDB needs backtick quoted strings\n")
+	e.p.printf("sqlCreate = strings.ReplaceAll(sqlCreate, \"”\", \"`\")")
 	e.p.printf(`
   _, err = db.Exec(sqlCreate)
   if err != nil {
@@ -279,10 +282,11 @@ func (e *storeToSqlGen) structmap(s *Struct) {
     if stmt == nil {
 `)
 	e.p.printf(ins)
+	e.p.printf("\nsqlIns = strings.ReplaceAll(sqlIns, \"”\", \"`\")")
 	e.p.printf(`
-	    stmt, err = db.Prepare(insSql)
+	    stmt, err = db.Prepare(sqlIns)
         if err != nil {
-            err = fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, insSql)
+            err = fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, sqlIns)
             return
         }
     }
