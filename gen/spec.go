@@ -48,9 +48,11 @@ func (m Method) String() string {
 		return "test"
 	case FieldsEmpty:
 		return "fieldsempty"
+	case StoreToSQL:
+		return "storeToSQL"
 	default:
 		// return e.g. "decode+encode+test"
-		modes := [...]Method{Decode, Encode, Marshal, Unmarshal, Size, Test}
+		modes := [...]Method{Decode, Encode, Marshal, Unmarshal, Size, Test, StoreToSQL}
 		any := false
 		nm := ""
 		for _, mm := range modes {
@@ -84,6 +86,8 @@ func strtoMeth(s string) Method {
 		return Test
 	case "fieldsempty":
 		return FieldsEmpty
+	case "storeToSQL":
+		return StoreToSQL
 	default:
 		return 0
 	}
@@ -97,6 +101,7 @@ const (
 	Size                           // msgp.Sizer
 	Test                           // generate tests
 	FieldsEmpty                    // support omitempty tag
+	StoreToSQL                     // from struct to SQL database.
 	invalidmeth                    // this isn't a method
 
 	encodetest  = Encode | Decode | Test | FieldsEmpty     // tests for Encodable and Decodable
@@ -132,6 +137,9 @@ func NewPrinter(m Method, out io.Writer, tests io.Writer, cfg *cfg.GreenConfig) 
 	}
 	if m.isset(Size) {
 		gens = append(gens, sizes(out, cfg))
+	}
+	if m.isset(StoreToSQL) {
+		gens = append(gens, storeToSQL(out, cfg))
 	}
 	if m.isset(marshaltest) {
 		gens = append(gens, mtest(tests, cfg))
@@ -317,12 +325,12 @@ func (p *printer) declare(name string, typ string) {
 
 // does:
 //
-// if m == nil && size > 0 {
-//     m = make(type, size)
-// } else if len(m) > 0 {
-//     for key, _ := range m { delete(m, key) }
-// }
+//	if m == nil && size > 0 {
+//	    m = make(type, size)
+//	} else if len(m) > 0 {
 //
+//	    for key, _ := range m { delete(m, key) }
+//	}
 func (p *printer) resizeMap(size string, m *Map) {
 	vn := m.Varname()
 	if !p.ok() {
@@ -360,10 +368,9 @@ func (p *printer) closeblock() { p.print("\n}") }
 
 // does:
 //
-// for idx := range iter {
-//     {{generate inner}}
-// }
-//
+//	for idx := range iter {
+//	    {{generate inner}}
+//	}
 func (p *printer) rangeBlock(idx string, iter string, t traversal, inner Elem) {
 	p.printf("\n for %s := range %s {", idx, iter)
 	next(t, inner, nil)

@@ -8,76 +8,74 @@
 // To use it, include the following directive in a
 // go source file with types requiring source generation:
 //
-//     //go:generate greenpack
+//	//go:generate greenpack
 //
 // The go generate tool should set the proper environment variables for
 // the generator to execute without any command-line flags. However, the
 // following options are supported, if you need them (See greenpack -h):
 //
-//   $ greenpack -h
+//	  $ greenpack -h
 //
-//   Usage of greenpack:
+//	  Usage of greenpack:
 //
-//   -fast-strings
-//     	for speed when reading a string in a message that won't be
-//      reused, this flag means we'll use unsafe to cast the string
-//      header and avoid allocation.
+//	  -fast-strings
+//	    	for speed when reading a string in a message that won't be
+//	     reused, this flag means we'll use unsafe to cast the string
+//	     header and avoid allocation.
 //
-//   -file go generate
-//     	input file (or directory); default is $GOFILE, which
-//      is set by the go generate command.
+//	  -file go generate
+//	    	input file (or directory); default is $GOFILE, which
+//	     is set by the go generate command.
 //
-//   -genid
-//     	generate a fresh random greenSchemaId64 value to
-//      include in your Go source schema
+//	  -genid
+//	    	generate a fresh random greenSchemaId64 value to
+//	     include in your Go source schema
 //
-//   -io
-//     	create Encode and Decode methods (default true)
+//	  -io
+//	    	create Encode and Decode methods (default true)
 //
-//   -marshal
-//     	create Marshal and Unmarshal methods (default true)
+//	  -marshal
+//	    	create Marshal and Unmarshal methods (default true)
 //
-//  -method-prefix string
-//    	(optional) prefix that will be pre-prended to
-//      the front of generated method names; useful when
-//      you need to avoid namespace collisions, but the
-//      generated tests will break/the msgp package
-//      interfaces won't be satisfied.
+//	 -method-prefix string
+//	   	(optional) prefix that will be pre-prended to
+//	     the front of generated method names; useful when
+//	     you need to avoid namespace collisions, but the
+//	     generated tests will break/the msgp package
+//	     interfaces won't be satisfied.
 //
-//  -no-embedded-schema
-//      don't embed the schema in the generated files
+//	 -no-embedded-schema
+//	     don't embed the schema in the generated files
 //
-//  -no-structnames-onwire
-//    	don't embed the name of the struct in the
-//      serialized greenpack. Skipping the embedded
-//      struct names saves time and space and matches
-//      what protocol buffers/thrift/capnproto/msgpack do.
-//      You must know the type on the wire you expect;
-//      or embed a type tag in one universal wrapper
-//      struct. Embedded struct names are a feature
-//      of Greenpack to help with dynamic language
-//      bindings.
+//	 -no-structnames-onwire
+//	   	don't embed the name of the struct in the
+//	     serialized greenpack. Skipping the embedded
+//	     struct names saves time and space and matches
+//	     what protocol buffers/thrift/capnproto/msgpack do.
+//	     You must know the type on the wire you expect;
+//	     or embed a type tag in one universal wrapper
+//	     struct. Embedded struct names are a feature
+//	     of Greenpack to help with dynamic language
+//	     bindings.
 //
-//   -o string
-//     	output file (default is {input_file}_gen.go
+//	  -o string
+//	    	output file (default is {input_file}_gen.go
 //
-//   -schema-to-go string
-//     	(standalone functionality) path to schema in msgpack2
-//      format; we will convert it to Go, write the Go on stdout,
-//      and exit immediately
+//	  -schema-to-go string
+//	    	(standalone functionality) path to schema in msgpack2
+//	     format; we will convert it to Go, write the Go on stdout,
+//	     and exit immediately
 //
-//   -tests
-//     	create tests and benchmarks (default true)
+//	  -tests
+//	    	create tests and benchmarks (default true)
 //
-//   -unexported
-//     	also process unexported types
+//	  -unexported
+//	    	also process unexported types
 //
-//   -write-schema string
-// 		write schema header to this file; - for stdout
-//
+//	  -write-schema string
+//			write schema header to this file; - for stdout
 //
 // For more information, please read README.md, and the wiki at github.com/glycerine/greenpack
-//
 package main
 
 import (
@@ -130,6 +128,9 @@ func main() {
 	if c.Tests {
 		mode |= gen.Test
 	}
+	if c.StoreToSQL {
+		mode |= gen.StoreToSQL
+	}
 
 	if mode&^gen.Test == 0 {
 		fmt.Println("No methods to generate; -io=false && -marshal=false")
@@ -145,7 +146,6 @@ func main() {
 // Run writes all methods using the associated file or path, e.g.
 //
 //	err := msgp.Run("path/to/myfile.go", gen.Size|gen.Marshal|gen.Unmarshal|gen.Test, false)
-//
 func Run(mode gen.Method, c *cfg.GreenConfig) error {
 	if mode&^gen.Test == 0 {
 		return nil
