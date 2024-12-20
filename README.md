@@ -1,4 +1,4 @@
-greenpack news, November 2024 
+greenpack news, December 2024 
 ===============
 
 December 2024:
@@ -7,6 +7,8 @@ As of v0.520.0, adding `-sql mariadb` to the usual go generate annoation, e.g.
 `//go:generate greenpack -sql mariadb`
 will cause greenpack to generate SQL stubs
 for writing to, and reading from, MariaDB.
+See https://github.com/glycerine/greenpack/blob/master/testdata/_sqldemo_gen.go
+for an example of the generated code.
 
 November 2024: two new things:
 
