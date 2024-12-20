@@ -10,7 +10,7 @@ import (
 	//"github.com/glycerine/greenpack/msgp"
 )
 
-// NB: In this file, we have delete all the
+// NB: In this file, we have deleted all the
 // non-sql code from sqldemo_gen.go
 // to make it easy to reference the SQL interaction code.
 
