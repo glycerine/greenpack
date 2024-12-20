@@ -39,9 +39,27 @@ type StarShipFireAnt struct {
 // in sqlIns. If db is nil, only the insert SQL string
 // will be returned, and the database will not be contacted.
 // Similarly, sqlCreate will return the table creation SQL;
-// if create was true.
-func (z *StarShipFireAnt) StoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {
+// if create was true. The rest will be inserted too, in
+// one big batch, or rest can be nil if there is
+// nothing more to insert.
+func (z *StarShipFireAnt) StoreToSQL(
+	db *sql.DB,
+	dbName, tableName string,
+	create bool,
+	reuseStmt *sql.Stmt,
+	rest []*StarShipFireAnt,
+) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {
+
 	stmt = reuseStmt
+
+	var tx *sql.Tx
+	if db != nil {
+		tx, err = db.BeginTx(context.Background(), nil)
+		if err != nil {
+			return
+		}
+		defer tx.Rollback()
+	}
 
 	// create table to store type 'StarShipFireAnt'
 	if create {
@@ -66,25 +84,63 @@ func (z *StarShipFireAnt) StoreToSQL(db *sql.DB, dbName, tableName string, creat
 		}
 	} // end if create
 
-	if stmt == nil {
-		sqlIns = "insert into " + dbName + "." + tableName + "(”captain”, ”cargo”, ”shuttles”, ”rawBytesData”, ”lastMessageTime”) values (?,?,?,?,?)"
-		sqlIns = strings.ReplaceAll(sqlIns, "”", "`")
-		if db != nil {
+	sqlIns = "insert into " + dbName + "." + tableName + "(”captain”, ”cargo”, ”shuttles”, ”rawBytesData”, ”lastMessageTime”) values (?,?,?,?,?)"
+	sqlIns = strings.ReplaceAll(sqlIns, "”", "`")
+	if db == nil {
+		return
+	}
+
+	var vals []any
+	znil := 1 // allow z to be nil
+	if z != nil {
+		znil = 0
+		vals = []any{z.Captain, z.CargoAreaMetersSquared, z.Shuttles, z.RawBytesData, z.LastMessageTime}
+	}
+
+	var res sql.Result
+
+	if len(rest) > 0 {
+		// do multi-statement instead of prepared stmt
+		sqlIns += strings.Repeat(",(?,?,?,?,?)", len(rest)-znil)
+		for _, r := range rest {
+			vals = append(vals, r.Captain, r.CargoAreaMetersSquared, r.Shuttles, r.RawBytesData, r.LastMessageTime)
+		}
+		// use a tmpStmt because the length of the batch will
+		// rarely be repeated; this Stmt is not re-usable.
+		var tmpStmt *sql.Stmt
+		tmpStmt, err = tx.Prepare(sqlIns)
+		if err != nil {
+			err = fmt.Errorf("error preparing multi-insert: '%v'; sql was: '%v'", err, sqlIns)
+			return
+		}
+		defer tmpStmt.Close()
+		res, err = tmpStmt.Exec(vals...)
+		if err != nil {
+			err = fmt.Errorf("error on tmpStmt.Exec insert: '%v'; sql was: '%v'", err, sqlIns)
+			return
+		}
+
+	} else {
+		if stmt == nil {
 			stmt, err = db.Prepare(sqlIns)
 			if err != nil {
 				err = fmt.Errorf("error preparing insert: '%v'; sql was: '%v'", err, sqlIns)
 				return
 			}
 		}
-	}
-	if db != nil {
-		var res sql.Result
-		res, err = stmt.Exec(z.Captain, z.CargoAreaMetersSquared, z.Shuttles, z.RawBytesData, z.LastMessageTime)
+		res, err = stmt.Exec(vals...)
 		if err != nil {
+			err = fmt.Errorf("error on stmt.Exec(): '%v'; sql was: '%v'", err, sqlIns)
 			return
 		}
-		injectedRowID, err = res.LastInsertId()
 	}
+
+	injectedRowID, err = res.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("error getting res.LastInsertId(): '%v'", err)
+		return
+	}
+	err = tx.Commit()
 
 	return
 }
@@ -114,7 +170,7 @@ func (z *StarShipFireAnt) StoreToSQL(db *sql.DB, dbName, tableName string, creat
 //
 // With an empty where, all records in tableName
 // are selected and returned. Otherwise, the where string
-// is appended to a select for all records.
+// is appended to a select for all fields.
 //
 // Advanced use:
 // If the db is nil, the sqlSel will be returned but the
@@ -129,7 +185,11 @@ func (z *StarShipFireAnt) StoreToSQL(db *sql.DB, dbName, tableName string, creat
 // however, since the rows.Scan() call generated below
 // expects to get all the fields, so you must keep
 // the select statement in sync with those expectations.
-func (z *StarShipFireAnt) GetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []*StarShipFireAnt, sqlSel string, err error) {
+func (z *StarShipFireAnt) GetFromSQL(
+	ctx context.Context,
+	db *sql.DB,
+	dbName, tableName, where string,
+) (res []*StarShipFireAnt, sqlSel string, err error) {
 
 	if strings.HasPrefix(where, "select") {
 		sqlSel = where

@@ -92,7 +92,16 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 // nothing more to insert.
 `, e.cfg.MethodPrefix, p.Varname())
 
-	e.p.printf("func (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt, rest []%v) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
+	e.p.printf(`func (%s %s) %sStoreToSQL(
+db *sql.DB,
+dbName, tableName string,
+create bool,
+reuseStmt *sql.Stmt,
+rest []%v,
+) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {
+
+stmt = reuseStmt
+`, p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
 
 	e.p.printf(`
       var tx *sql.Tx

@@ -456,7 +456,14 @@ func (z *StarShipFireAnt) Msgsize() (s int) {
 // if create was true. The rest will be inserted too, in
 // one big batch, or rest can be nil if there is
 // nothing more to insert.
-func (z *StarShipFireAnt) StoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt, rest []*StarShipFireAnt) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {
+func (z *StarShipFireAnt) StoreToSQL(
+	db *sql.DB,
+	dbName, tableName string,
+	create bool,
+	reuseStmt *sql.Stmt,
+	rest []*StarShipFireAnt,
+) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {
+
 	stmt = reuseStmt
 
 	var tx *sql.Tx
@@ -592,7 +599,11 @@ func (z *StarShipFireAnt) StoreToSQL(db *sql.DB, dbName, tableName string, creat
 // however, since the rows.Scan() call generated below
 // expects to get all the fields, so you must keep
 // the select statement in sync with those expectations.
-func (z *StarShipFireAnt) GetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []*StarShipFireAnt, sqlSel string, err error) {
+func (z *StarShipFireAnt) GetFromSQL(
+	ctx context.Context,
+	db *sql.DB,
+	dbName, tableName, where string,
+) (res []*StarShipFireAnt, sqlSel string, err error) {
 
 	if strings.HasPrefix(where, "select") {
 		sqlSel = where

@@ -121,7 +121,12 @@ func (e *getFromSqlGen) Execute(p Elem) error {
 // the select statement in sync with those expectations.
 `, e.cfg.MethodPrefix)
 
-	e.p.printf("func (%s %s) %sGetFromSQL(ctx context.Context, db *sql.DB, dbName, tableName, where string) (res []%s, sqlSel string, err error) {\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
+	e.p.printf(`func (%s %s) %sGetFromSQL(
+ctx context.Context,
+db *sql.DB,
+dbName, tableName, where string,
+) (res []%s, sqlSel string, err error) {
+`, p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
 	e.p.printf(`
 		if strings.HasPrefix(where, "select") {
 			sqlSel = where
