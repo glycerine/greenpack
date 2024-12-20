@@ -10,7 +10,7 @@ for writing to, and reading from, MariaDB.
 See https://github.com/glycerine/greenpack/blob/master/testdata/_sqldemo_gen.go
 for an example of the generated code.
 
-November 2024: two new things:
+### November 2024: two new things:
 
 1) I compare greenpack to CBOR 
 here: https://github.com/glycerine/demo_cbor Long
@@ -24,7 +24,9 @@ better than the other systems measured. It has better
 latency and throughput -- even when encrypted --
 than gRPC and rpcx.
 
-October 2024: Go-module compatibility. Since the versioning tags here
+### October 2024: Go-module compatibility. 
+
+Since the versioning tags here
 were created long before Go modules were invented, it turns out
 the schemes were not compatible. Greenpack was at v5 but the import
 path is never going to have /v5 at the end, so... we'll try
@@ -50,11 +52,11 @@ the old tags and how they were renamed (or many were deleted if not renamed).
 
 The true latest as of this README is `v0.515.0`.
 
-April 2019:
+### April 2019: time.Duration
 
 Version 5.0.9 includes native support for time.Duration serialization.
 
-December 2017:
+### December 2017: interfaces
 
 Version 5.0.4 includes two new features:
 
