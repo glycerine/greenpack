@@ -87,19 +87,25 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 // in sqlIns. If db is nil, only the insert SQL string
 // will be returned, and the database will not be contacted.
 // Similarly, sqlCreate will return the table creation SQL;
-// if create was true.
+// if create was true. The rest will be inserted too, in
+// one big batch, or rest can be nil if there is
+// nothing more to insert.
 `, e.cfg.MethodPrefix, p.Varname())
 
-	e.p.printf("func (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
-	//hasPtr := false
-	//if hasPointersOrInterfaces(p) {
-	//	hasPtr = true
-	//}
-	//e.p.preSaveHook()
+	e.p.printf("func (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt, rest []%v) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix, imutMethodReceiver(p))
+
+	e.p.printf(`
+      var tx *sql.Tx
+      if db != nil {
+          tx, err = db.BeginTx(context.Background(), nil)
+          if err != nil {
+              return
+          }
+          defer tx.Rollback()
+      }
+`)
+
 	next(e, p, nil)
-	//if hasPtr {
-	//	e.p.dedupWriteCleanup(false)
-	//}
 	e.p.nakedReturn()
 	return e.p.err
 }
@@ -141,7 +147,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 
 	ins := "sqlIns = \"insert into \" + dbName + \".\" + tableName + \"("
 	values := "" // the right number of ?,?,?,... question mark place-holders.
-	var actuals string
+	var actuals, actuals2 string
 
 	first := true
 	columns := make(map[string]bool) // insure uniqueness of column names
@@ -184,11 +190,13 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 			ins += ", "
 			values += ","
 			actuals += ","
+			actuals2 += ","
 		}
 		fld = "”" + fld + "”"
 		ins += fld
 		values += "?"
 		actuals += s.Varname() + "." + s.Fields[i].FieldName
+		actuals2 += "r." + s.Fields[i].FieldName
 
 		typ := s.Fields[i].FieldElem // field type, Elem
 		ztyp := typ.GetZtype()       // GetZtype provides type info in a uniform way.
@@ -298,30 +306,72 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 
 `)
 
-	ins += ") values (" + values + ")\""
-	e.p.printf(`
-    if stmt == nil {
-`)
+	values = "(" + values + ")"
+	ins += ") values " + values + "\"\n"
 	e.p.printf(ins)
-	e.p.printf("\nsqlIns = strings.ReplaceAll(sqlIns, \"”\", \"`\")")
+	e.p.printf("sqlIns = strings.ReplaceAll(sqlIns, \"”\", \"`\")")
+
 	e.p.printf(`
-    if db != nil {
-	    stmt, err = db.Prepare(sqlIns)
-        if err != nil {
-            err = fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, sqlIns)
-            return
-        }
-    }
-}
-if db != nil {
-    var res sql.Result
-    res, err = stmt.Exec(%v)
-    if err != nil {
+    if db == nil {
         return
     }
-    injectedRowID, err = res.LastInsertId()
-  }
-`, actuals)
+`)
+
+	e.p.printf(`
+
+	var vals []any
+	znil := 1 // allow z to be nil
+	if z != nil {
+		znil = 0
+		vals = []any{%v}
+	}
+
+	var res sql.Result
+
+	if len(rest) > 0 {
+		// do multi-statement instead of prepared stmt
+		sqlIns += strings.Repeat(",%v", len(rest)-znil)
+		for _, r := range rest {
+			vals = append(vals, %v)
+		}
+		// use a tmpStmt because the length of the batch will
+		// rarely be repeated; this Stmt is not re-usable.
+		var tmpStmt *sql.Stmt
+		tmpStmt, err = tx.Prepare(sqlIns)
+		if err != nil {
+			err = fmt.Errorf("error preparing multi-insert: '%%v'; sql was: '%%v'", err, sqlIns)
+			return
+		}
+		defer tmpStmt.Close()
+		res, err = tmpStmt.Exec(vals...)
+		if err != nil {
+			err = fmt.Errorf("error on tmpStmt.Exec insert: '%%v'; sql was: '%%v'", err, sqlIns)
+			return
+		}
+
+	} else {
+		if stmt == nil {
+			stmt, err = db.Prepare(sqlIns)
+			if err != nil {
+				err = fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, sqlIns)
+				return
+			}
+		}
+		res, err = stmt.Exec(vals...)
+		if err != nil {
+			err = fmt.Errorf("error on stmt.Exec(): '%%v'; sql was: '%%v'", err, sqlIns)
+			return
+		}
+	}
+
+	injectedRowID, err = res.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("error getting res.LastInsertId(): '%%v'", err)
+		return
+	}
+	err = tx.Commit()
+
+`, actuals, values, actuals2)
 
 }
 
