@@ -87,7 +87,7 @@ func (e *storeToSqlGen) Execute(p Elem) error {
 // in sqlIns. If db is nil, only the insert SQL string
 // will be returned, and the database will not be contacted.
 // Similarly, sqlCreate will return the table creation SQL;
-// if it was used.
+// if create was true.
 `, e.cfg.MethodPrefix, p.Varname())
 
 	e.p.printf("func (%s %s) %sStoreToSQL(db *sql.DB, dbName, tableName string, create bool, reuseStmt *sql.Stmt) (stmt *sql.Stmt, injectedRowID int64, sqlIns, sqlCreate string, err error) {\n stmt = reuseStmt\n", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
@@ -305,13 +305,15 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 	e.p.printf(ins)
 	e.p.printf("\nsqlIns = strings.ReplaceAll(sqlIns, \"”\", \"`\")")
 	e.p.printf(`
-  if db != nil {
+    if db != nil {
 	    stmt, err = db.Prepare(sqlIns)
         if err != nil {
             err = fmt.Errorf("error preparing insert: '%%v'; sql was: '%%v'", err, sqlIns)
             return
         }
     }
+}
+if db != nil {
     var res sql.Result
     res, err = stmt.Exec(%v)
     if err != nil {
