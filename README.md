@@ -1,7 +1,7 @@
 greenpack news, December 2024 
 ===============
 
-December 2024:
+### December 2024: SQL support.
 
 As of v0.520.0, adding `-sql mariadb` to the usual go generate annoation, e.g.
 `//go:generate greenpack -sql mariadb`
