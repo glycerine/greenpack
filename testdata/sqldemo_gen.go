@@ -528,7 +528,7 @@ func (z *StarShipFireAnt) StoreToSQL(db *sql.DB, dbName, tableName string, creat
 //
 // With an empty where, all records in tableName
 // are selected and returned. Otherwise, the where string
-// is appended to a select for all records.
+// is appended to a select for all fields.
 //
 // Advanced use:
 // If the db is nil, the sqlSel will be returned but the
