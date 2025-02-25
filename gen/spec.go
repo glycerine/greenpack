@@ -276,19 +276,21 @@ func imutMethodReceiver(p Elem) string {
 					goto nope
 				}
 			}
-			return p.TypeName()
+			//vv("imutMethodReciver omitting *, place 1")
+			return p.TypeName() + p.GenericBracket()
 		}
 	nope:
-		return "*" + p.TypeName()
+		return "*" + p.TypeName() + p.GenericBracket()
 
 	// gets dereferenced automatically
 	case *Array:
-		return "*" + p.TypeName()
+		return "*" + p.TypeName() + p.GenericBracket()
 
 	// everything else can be
 	// by-value.
 	default:
-		return p.TypeName()
+		//vv("imutMethodReciver omitting *, place 2")
+		return p.TypeName() + p.GenericBracket()
 	}
 }
 
@@ -296,6 +298,7 @@ func imutMethodReceiver(p Elem) string {
 // so that its method receiver
 // is of the write type.
 func methodReceiver(p Elem) string {
+	//vv("methodReceiver: p type = %T; p.TypeName() = '%v'", p, p.TypeName())
 	switch p.(type) {
 
 	// structs and arrays are
@@ -306,7 +309,8 @@ func methodReceiver(p Elem) string {
 	// set variable name to
 	// *varname
 	default:
-		p.SetVarname("(*" + p.Varname() + ")")
+		p.SetVarname("(*" + p.Varname() + ")") // has not changed for CustomBytes
+		//vv("using default for p='%#v': returning '*%v'", p, p.TypeName())
 		return "*" + p.TypeName()
 	}
 }
