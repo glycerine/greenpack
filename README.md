@@ -7,6 +7,9 @@ greenpack news, December 2024
 it Encode/Decode was producing some errors that I have not had time to track down.
 For now you'll want to manually dedup pointers. Marshal/Unmarshal has
 never supported pointer dedup so it was never affected.
+The env var GREENPACK_DEDUP can be set (to true) to 
+reverse the default (have dedup on again) under go generate.
+It also accepts false but that is the default now.
 
 ### December 2024: SQL support.
 

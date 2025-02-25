@@ -103,8 +103,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	if os.Getenv("GREENPACK_DEDUP") != "" {
-		c.NoDedup = false
+	if ded := os.Getenv("GREENPACK_DEDUP"); ded != "" {
+		ded2 := strings.ToLower(strings.TrimSpace(ded))
+		switch ded2 {
+		case "false", "f":
+			c.NoDedup = true
+		case "true", "t":
+			c.NoDedup = false
+		default:
+			fmt.Fprintf(os.Stderr, "greenpack error: env "+
+				"var GREENPACK_DEDUP has "+
+				"unkown value: '%v' (expected true/false)\n", ded)
+			os.Exit(1)
+		}
 	}
 
 	if c.ShowVersion {
