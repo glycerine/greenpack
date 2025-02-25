@@ -11,7 +11,9 @@ const greenSchemaId64 = 0x6eb25cc0f9a3e
 
 //func main() {}
 
-type S struct{}
+type S struct {
+	Placeholder int
+}
 
 type S2 struct {
 	A struct{}         `zid:"0" msg:"alpha"`
