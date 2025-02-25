@@ -59,12 +59,12 @@ func applyShim(text []string, f *FileSet) error {
 	}
 
 	name := text[1]
-	be := gen.Ident(strings.TrimPrefix(strings.TrimSpace(text[2]), "as:"), false) // parse as::{base}
+	be := gen.Ident(strings.TrimPrefix(strings.TrimSpace(text[2]), "as:"), false, nil) // parse as::{base}
 	if name[0] == '*' {
 		name = name[1:]
 		be.Needsref(true)
 	}
-	be.Alias(name)
+	be.Alias(name, nil)
 
 	usestr := strings.TrimPrefix(strings.TrimSpace(text[3]), "using:") // parse using::{method/method}
 

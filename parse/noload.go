@@ -30,7 +30,6 @@ import (
 // in a situation where it is
 // inconvient to have to meet
 // the compiler's demands just yet.
-//
 func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 	ok, isDir := fileOrDir(c.GoFile)
 	if !ok {
@@ -41,10 +40,11 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 	pushstate(name)
 	defer popstate()
 	fs := &FileSet{
-		Specs:              make(map[string]ast.Expr),
+		Specs:              make(map[string]*ast.TypeSpec),
 		Identities:         make(map[string]gen.Elem),
 		Cfg:                c,
 		InterfaceTypeNames: make(map[string]bool),
+		GenericTypeParams:  make(map[string]*gen.Genric),
 	}
 
 	fset := token.NewFileSet()

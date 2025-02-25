@@ -12,6 +12,7 @@ import (
 	"go/types"
 	"os"
 	"reflect"
+	//"runtime/debug"
 	"sort"
 	"strconv"
 	"strings"
@@ -28,11 +29,11 @@ var StopOnError bool
 // A FileSet is the in-memory representation of a
 // parsed file.
 type FileSet struct {
-	Package    string              // package name
-	Specs      map[string]ast.Expr // type specs in file
-	Identities map[string]gen.Elem // processed from specs
-	Directives []string            // raw preprocessor directives
-	Imports    []*ast.ImportSpec   // imports
+	Package    string                   // package name
+	Specs      map[string]*ast.TypeSpec // type specs in file
+	Identities map[string]gen.Elem      // processed from specs
+	Directives []string                 // raw preprocessor directives
+	Imports    []*ast.ImportSpec        // imports
 	Cfg        *cfg.GreenConfig
 
 	ZebraSchemaId int64
@@ -42,6 +43,8 @@ type FileSet struct {
 	Fset          *token.FileSet
 
 	InterfaceTypeNames map[string]bool // so we can heuristically identify interfaces.
+
+	GenericTypeParams map[string]*gen.Genric // type params, or nil
 }
 
 // File parses a file at the relative path
@@ -60,10 +63,11 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 	pushstate(name)
 	defer popstate()
 	fs := &FileSet{
-		Specs:              make(map[string]ast.Expr),
+		Specs:              make(map[string]*ast.TypeSpec),
 		Identities:         make(map[string]gen.Elem),
 		Cfg:                c,
 		InterfaceTypeNames: make(map[string]bool),
+		GenericTypeParams:  make(map[string]*gen.Genric),
 	}
 
 	var filenames []string
@@ -225,7 +229,9 @@ func (f *FileSet) resolve(ls linkset) {
 				// identities list
 				progress = true
 				nt := real.Copy()
-				nt.Alias(name)
+				ric := f.GenericTypeParams[elem.TypeName()]
+				vv("resolve(): Alias(name='%v', typeParm='%#v'", name, ric)
+				nt.Alias(name, ric)
 				f.Identities[name] = nt
 				delete(ls, name)
 			}
@@ -246,7 +252,11 @@ func (f *FileSet) process() error {
 parse:
 	for name, def := range f.Specs {
 		pushstate(name)
-		el, err := f.parseExpr(def, false)
+
+		ric := gen.Generics(name, def.TypeParams)
+		f.GenericTypeParams[name] = ric
+
+		el, err := f.parseExpr(name, def.Type, false, ric)
 		if err != nil {
 			return err
 		}
@@ -259,11 +269,13 @@ parse:
 		// the graph of links and resolve after
 		// we've handled every possible named type.
 		if be, ok := el.(*gen.BaseElem); ok && be.Value == gen.IDENT {
+			//vv("unresolved identity '%v'", name)
 			deferred[name] = be
 			popstate()
 			continue parse
 		}
-		el.Alias(name)
+		//vv("Alias(name='%v',ric='%#v') for el = '%#v'", name, ric, el)
+		el.Alias(name, ric)
 		f.Identities[name] = el
 		popstate()
 	}
@@ -362,13 +374,16 @@ func (fs *FileSet) getTypeSpecs(f *ast.File) {
 			for _, s := range g.Specs {
 
 				// for ast.TypeSpecs....
+
 				switch ts := s.(type) {
 				case *ast.TypeSpec:
 					// is it generic?
 					if ts.TypeParams != nil {
 						// it is generic
-						warnln(fmt.Sprintf("ignoring generic type '%v'; greenpack does not support generics (at this point), so we ignore them.", ts.Name.Name))
-						continue // ignore these
+						warnln(fmt.Sprintf("generic type '%v'; TypeParams: '%#v'; .List[0].Names[0].Name='%#v'; Obj.Decl.Type.Name='%#v'; TypeSpec.Type='%#v'", ts.Name.Name, ts.TypeParams, ts.TypeParams.List[0].Names[0].Name, ts.TypeParams.List[0].Names[0].Obj.Decl.(*ast.Field).Type.(*ast.Ident).Name, ts.Type))
+						//genericXtra = "[" + ts.TypeParams.List[0].Names[0].Name + "]"
+						//warnln(fmt.Sprintf("ignoring generic type '%v'; greenpack does not support generics (at this point), so we ignore them.", ts.Name.Name))
+						//continue // ignore these
 					}
 					switch ts.Type.(type) {
 
@@ -379,7 +394,9 @@ func (fs *FileSet) getTypeSpecs(f *ast.File) {
 						*ast.StarExpr,
 						*ast.MapType,
 						*ast.Ident:
-						fs.Specs[ts.Name.Name] = ts.Type
+						//fs.Specs[ts.Name.Name] = ts.Type
+						// can we save the generic type param too?
+						fs.Specs[ts.Name.Name] = ts
 
 					}
 
@@ -432,17 +449,37 @@ func (p zidSetSlice) Less(i, j int) bool {
 }
 func (p zidSetSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
-func (fs *FileSet) parseFieldList(fl *ast.FieldList) ([]gen.StructField, error) {
+func (fs *FileSet) parseFieldList(name string, fl *ast.FieldList, ric *gen.Genric) ([]gen.StructField, error) {
 	if fl == nil || fl.NumFields() == 0 {
 		return nil, nil
 	}
+
+	sz := fl.NumFields()
+	skip := make(map[int]bool)
+	if ric != nil {
+		vv("debug parseFieldList for '%v' sees generics = '%v'\n", name, ric.Bracket)
+
+		// subtrack off (cannot serialize) generic fields
+		for i, fld := range fl.List {
+			nm := fld.Names[0].Name
+			_, isTypeParm := ric.Parm[nm]
+			if isTypeParm {
+				skip[i] = true
+				sz--
+				fmt.Printf("skip generic field %v '%v'\n", i, nm)
+			}
+		}
+	}
+
 	out := make([]gen.StructField, 0, fl.NumFields())
+	//out := make([]gen.StructField, 0, sz)
 	var zidSet []zid
 	var origPos int
 	hasZid := false
 	for _, field := range fl.List {
-		pushstate(fieldName(field))
-		fds, err := fs.getField(field)
+		nm := fieldName(field)
+		pushstate(nm)
+		fds, err := fs.getField(nm, field, ric)
 		if err != nil {
 			fatalf(err.Error())
 			return nil, err
@@ -482,10 +519,17 @@ func (fs *FileSet) parseFieldList(fl *ast.FieldList) ([]gen.StructField, error) 
 		if len(out) != len(zidSet) {
 			panic("size mismatch, out and zidSet must be the same len")
 		}
+		next := 0
 		for i := range zidSet {
-			sortedOut[i] = out[zidSet[i].origPos]
+			if skip[zidSet[i].origPos] {
+				// leave out the fields containing type parameters.
+				fmt.Printf("skipping generic field: '%v'\n", zidSet[i].origPos)
+			} else {
+				sortedOut[next] = out[zidSet[i].origPos]
+				next++
+			}
 		}
-		out = sortedOut
+		out = sortedOut[:next]
 	}
 	return out, nil
 }
@@ -502,7 +546,7 @@ func anyMatches(haystack []string, needle string) bool {
 }
 
 // translate *ast.Field into []gen.StructField
-func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
+func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.StructField, error) {
 	sf := make([]gen.StructField, 1)
 	var extension bool
 	var omitempty bool
@@ -611,9 +655,16 @@ func (fs *FileSet) getField(f *ast.Field) ([]gen.StructField, error) {
 		}
 	}
 
-	ex, err := fs.parseExpr(f.Type, isIface)
+	// we are in getField() here.
+	ex, err := fs.parseExpr(name, f.Type, isIface, ric)
+	if err == ErrSkipGenerics {
+		typnm := extractTypeName(f.Type)
+		fmt.Printf("skipping generic field: name='%v' typnm='%v'\n", name, typnm)
+		skip = true
+		err = nil
+	}
 	if err != nil {
-		fatalf(err.Error())
+		//fatalf(err.Error())
 		return nil, err
 	}
 	if ex == nil {
@@ -746,6 +797,8 @@ func stringify(e ast.Expr) string {
 	return "<BAD>"
 }
 
+var ErrSkipGenerics = fmt.Errorf("skipping type-paramerized generic field.")
+
 // recursively translate ast.Expr to gen.Elem; nil means type not supported
 // expected input types:
 // - *ast.MapType (map[T]J)
@@ -755,13 +808,16 @@ func stringify(e ast.Expr) string {
 // - *ast.StructType (struct {})
 // - *ast.SelectorExpr (a.B)
 // - *ast.InterfaceType (interface {})
-func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
+func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Genric) (gen.Elem, error) {
 	switch e := e.(type) {
 
 	case *ast.MapType:
 		if k, ok := e.Key.(*ast.Ident); ok && k.Name == "string" {
-			in, err := fs.parseExpr(e.Value, false)
-			panicOn(err)
+			in, err := fs.parseExpr(k.Name, e.Value, false, ric)
+			//panicOn(err)
+			if err != nil {
+				return nil, err
+			}
 			if in != nil {
 				return &gen.Map{Value: in, KeyTyp: "String", KeyDeclTyp: "string"}, nil
 			}
@@ -769,9 +825,10 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 
 		// support int64/int32/int keys
 		if k, ok := e.Key.(*ast.Ident); ok {
-			in, err := fs.parseExpr(e.Value, isIface)
+			in, err := fs.parseExpr(k.Name, e.Value, isIface, ric)
 			if err != nil {
-				fatalf(err.Error())
+				//fatalf(err.Error())
+				return nil, err
 			}
 			if in != nil {
 				switch k.Name {
@@ -795,7 +852,8 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 				isIface = types.IsInterface(tv.Type)
 			}
 		}
-		b := gen.Ident(e.Name, isIface)
+
+		b := gen.Ident(e.Name, isIface, nil) // ric was being applied to int.
 
 		// work to resove this expression
 		// can be done later, once we've resolved
@@ -803,6 +861,15 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 		if b.Value == gen.IDENT {
 			if _, ok := fs.Specs[e.Name]; !ok {
 				warnf("non-local identifier: %s\n", e.Name)
+				if ric != nil {
+					_, isTypeParm := ric.Parm[e.Name]
+					if isTypeParm {
+						warnf("recognized ric '%v'\n", e.Name)
+
+						//fmt.Printf("\n returning ErrSkipGenerics; stack=\n%v\n", string(debug.Stack()))
+						return nil, ErrSkipGenerics
+					}
+				}
 			}
 		}
 		return b, nil
@@ -818,7 +885,14 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 
 		// return early if we don't know
 		// what the slice element type is
-		els, err := fs.parseExpr(e.Elt, isIface)
+		nm := "(some kind of array!)"
+		if i, ok := e.Elt.(*ast.Ident); ok {
+			nm = i.Name
+		}
+		els, err := fs.parseExpr(nm, e.Elt, isIface, ric)
+		if err == ErrSkipGenerics {
+			fmt.Printf("See ErrSkipGenerics here! in ArrayType! Elt = '%#v'\n", e.Elt)
+		}
 		if err != nil {
 			return nil, err
 		}
@@ -891,7 +965,7 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 		return &gen.Slice{Els: els}, nil
 
 	case *ast.StarExpr:
-		v, err := fs.parseExpr(e.X, isIface)
+		v, err := fs.parseExpr(name, e.X, isIface, ric)
 		if err != nil {
 			return nil, err
 		}
@@ -901,7 +975,7 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 		return nil, nil
 
 	case *ast.StructType:
-		fields, err := fs.parseFieldList(e.Fields)
+		fields, err := fs.parseFieldList(name, e.Fields, ric)
 		if err != nil {
 			return nil, err
 		}
@@ -912,7 +986,12 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 			}
 		}
 		if len(fields) > 0 {
-			return &gen.Struct{Fields: fields, SkipCount: skipN}, nil
+			//ric := gen.Generics(typeParm)
+			return &gen.Struct{
+				Fields:    fields,
+				SkipCount: skipN,
+				Genric:    ric,
+			}, nil
 		}
 		return nil, nil
 
@@ -924,7 +1003,7 @@ func (fs *FileSet) parseExpr(e ast.Expr, isIface bool) (gen.Elem, error) {
 				isIface = types.IsInterface(tv.Type)
 			}
 		}
-		return gen.Ident(stringify(e), isIface), nil
+		return gen.Ident(stringify(e), isIface, ric), nil
 
 	case *ast.InterfaceType:
 		// support `interface{}`
