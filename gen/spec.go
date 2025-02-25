@@ -280,6 +280,7 @@ func imutMethodReceiver(p Elem) string {
 			return p.TypeName() + p.GenericBracket()
 		}
 	nope:
+		vv("imutMethodReciver doing nope, adding *")
 		return "*" + p.TypeName() + p.GenericBracket()
 
 	// gets dereferenced automatically
