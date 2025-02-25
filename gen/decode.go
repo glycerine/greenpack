@@ -85,9 +85,14 @@ func (d *decodeGen) Execute(p Elem) error {
 		return nil
 	}
 
+	// ARG! Varname() must be called BEFORE methodReceiver() !!!
+	varname := p.Varname()
+	methodRcvr := methodReceiver(p)
+	//methRcvr := imutMethodReceiver(p) // generic, but no pointer?!?
+
 	d.p.comment(fmt.Sprintf("%sDecodeMsg implements msgp.Decodable", d.cfg.MethodPrefix))
 	d.p.comment("We treat empty fields as if we read a Nil from the wire.")
-	d.p.printf("\nfunc (%s %s) %sDecodeMsg(dc *msgp.Reader) (err error) {\n", p.Varname(), methodReceiver(p), d.cfg.MethodPrefix)
+	d.p.printf("\nfunc (%s %s) %sDecodeMsg(dc *msgp.Reader) (err error) {\n", varname, methodRcvr, d.cfg.MethodPrefix)
 
 	if !d.cfg.AllTuple {
 		d.p.printf(`var sawTopNil bool
@@ -167,7 +172,9 @@ func (d *decodeGen) structAsTuple(s *Struct) {
 	}
 }
 
-/* func (d *decodeGen) structAsMap(s *Struct):
+/*
+	func (d *decodeGen) structAsMap(s *Struct):
+
 //
 // Missing (empty) field handling logic:
 //
