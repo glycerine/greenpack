@@ -266,21 +266,27 @@ func next(t traversal, e Elem, x *extra) {
 func imutMethodReceiver(p Elem) string {
 	switch e := p.(type) {
 	case *Struct:
-		// TODO(HACK): actually do real math here.
-		if len(e.Fields)-e.SkipCount <= 3 {
-			for i := range e.Fields {
-				if e.Fields[i].Skip {
-					continue
+		_ = e
+		// 2025 feb 25: this makes small field structs
+		// passed by value to encode and marshall. seems
+		// wasteful, so elide it.
+		/*
+				// TODO(HACK): actually do real math here.
+				if len(e.Fields)-e.SkipCount <= 3 {
+					for i := range e.Fields {
+						if e.Fields[i].Skip {
+							continue
+						}
+						if be, ok := e.Fields[i].FieldElem.(*BaseElem); !ok || (be.Value == IDENT || be.Value == Bytes) {
+							goto nope
+						}
+					}
+					//vv("imutMethodReciver omitting *, place 1")
+					return p.TypeName() + p.GenericBracket()
 				}
-				if be, ok := e.Fields[i].FieldElem.(*BaseElem); !ok || (be.Value == IDENT || be.Value == Bytes) {
-					goto nope
-				}
-			}
-			//vv("imutMethodReciver omitting *, place 1")
-			return p.TypeName() + p.GenericBracket()
-		}
-	nope:
-		vv("imutMethodReciver doing nope, adding *")
+			nope:
+		*/
+		//vv("imutMethodReciver doing nope, adding *")
 		return "*" + p.TypeName() + p.GenericBracket()
 
 	// gets dereferenced automatically

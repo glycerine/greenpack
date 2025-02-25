@@ -49,7 +49,7 @@ func Test011OmitClueWorks(t *testing.T) {
 
 		// verify encode works the same as Marshal
 		var b4 bytes.Buffer
-		err = msgp.Encode(&b4, v)
+		err = msgp.Encode(&b4, &v)
 		if err != nil {
 			t.Fatal(err)
 		}

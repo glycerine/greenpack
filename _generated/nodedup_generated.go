@@ -104,7 +104,7 @@ var decodeMsgFieldOrder0zgensym_29db2bb3a798cb07_1 = []string{"Style__int"}
 var decodeMsgFieldSkip0zgensym_29db2bb3a798cb07_1 = []bool{false}
 
 // fieldsNotEmpty supports omitempty tags
-func (z Greeter2) fieldsNotEmpty(isempty []bool) uint32 {
+func (z *Greeter2) fieldsNotEmpty(isempty []bool) uint32 {
 	if len(isempty) == 0 {
 		return 1
 	}
@@ -118,7 +118,7 @@ func (z Greeter2) fieldsNotEmpty(isempty []bool) uint32 {
 }
 
 // EncodeMsg implements msgp.Encodable
-func (z Greeter2) EncodeMsg(en *msgp.Writer) (err error) {
+func (z *Greeter2) EncodeMsg(en *msgp.Writer) (err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -159,7 +159,7 @@ func (z Greeter2) EncodeMsg(en *msgp.Writer) (err error) {
 }
 
 // MarshalMsg implements msgp.Marshaler
-func (z Greeter2) MarshalMsg(b []byte) (o []byte, err error) {
+func (z *Greeter2) MarshalMsg(b []byte) (o []byte, err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -280,7 +280,7 @@ var unmarshalMsgFieldOrder4zgensym_29db2bb3a798cb07_5 = []string{"Style__int"}
 var unmarshalMsgFieldSkip4zgensym_29db2bb3a798cb07_5 = []bool{false}
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z Greeter2) Msgsize() (s int) {
+func (z *Greeter2) Msgsize() (s int) {
 	s = 1 + 11 + msgp.IntSize
 	return
 }
@@ -383,7 +383,7 @@ var decodeMsgFieldOrder6zgensym_29db2bb3a798cb07_7 = []string{"Bubbles__int"}
 var decodeMsgFieldSkip6zgensym_29db2bb3a798cb07_7 = []bool{false}
 
 // fieldsNotEmpty supports omitempty tags
-func (z Inner2) fieldsNotEmpty(isempty []bool) uint32 {
+func (z *Inner2) fieldsNotEmpty(isempty []bool) uint32 {
 	if len(isempty) == 0 {
 		return 1
 	}
@@ -397,7 +397,7 @@ func (z Inner2) fieldsNotEmpty(isempty []bool) uint32 {
 }
 
 // EncodeMsg implements msgp.Encodable
-func (z Inner2) EncodeMsg(en *msgp.Writer) (err error) {
+func (z *Inner2) EncodeMsg(en *msgp.Writer) (err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -438,7 +438,7 @@ func (z Inner2) EncodeMsg(en *msgp.Writer) (err error) {
 }
 
 // MarshalMsg implements msgp.Marshaler
-func (z Inner2) MarshalMsg(b []byte) (o []byte, err error) {
+func (z *Inner2) MarshalMsg(b []byte) (o []byte, err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -559,7 +559,7 @@ var unmarshalMsgFieldOrder10zgensym_29db2bb3a798cb07_11 = []string{"Bubbles__int
 var unmarshalMsgFieldSkip10zgensym_29db2bb3a798cb07_11 = []bool{false}
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z Inner2) Msgsize() (s int) {
+func (z *Inner2) Msgsize() (s int) {
 	s = 1 + 13 + msgp.IntSize
 	return
 }
@@ -2715,7 +2715,7 @@ var decodeMsgFieldOrder90zgensym_29db2bb3a798cb07_91 = []string{"ID__int"}
 var decodeMsgFieldSkip90zgensym_29db2bb3a798cb07_91 = []bool{false}
 
 // fieldsNotEmpty supports omitempty tags
-func (z Target2) fieldsNotEmpty(isempty []bool) uint32 {
+func (z *Target2) fieldsNotEmpty(isempty []bool) uint32 {
 	if len(isempty) == 0 {
 		return 1
 	}
@@ -2729,7 +2729,7 @@ func (z Target2) fieldsNotEmpty(isempty []bool) uint32 {
 }
 
 // EncodeMsg implements msgp.Encodable
-func (z Target2) EncodeMsg(en *msgp.Writer) (err error) {
+func (z *Target2) EncodeMsg(en *msgp.Writer) (err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -2770,7 +2770,7 @@ func (z Target2) EncodeMsg(en *msgp.Writer) (err error) {
 }
 
 // MarshalMsg implements msgp.Marshaler
-func (z Target2) MarshalMsg(b []byte) (o []byte, err error) {
+func (z *Target2) MarshalMsg(b []byte) (o []byte, err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -2891,7 +2891,7 @@ var unmarshalMsgFieldOrder94zgensym_29db2bb3a798cb07_95 = []string{"ID__int"}
 var unmarshalMsgFieldSkip94zgensym_29db2bb3a798cb07_95 = []bool{false}
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z Target2) Msgsize() (s int) {
+func (z *Target2) Msgsize() (s int) {
 	s = 1 + 8 + msgp.IntSize
 	return
 }

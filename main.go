@@ -103,6 +103,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	if os.Getenv("GREENPACK_DEDUP") != "" {
+		c.NoDedup = false
+	}
+
 	if c.ShowVersion {
 		fmt.Println(GetCodeVersion(os.Args[0]))
 		os.Exit(0)

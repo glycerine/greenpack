@@ -110,7 +110,7 @@ var decodeMsgFieldOrder0zgensym_cc028b3bcf246c08_1 = []string{"S", "N"}
 var decodeMsgFieldSkip0zgensym_cc028b3bcf246c08_1 = []bool{false, false}
 
 // fieldsNotEmpty supports omitempty tags
-func (z OmitClueTestStruct) fieldsNotEmpty(isempty []bool) uint32 {
+func (z *OmitClueTestStruct) fieldsNotEmpty(isempty []bool) uint32 {
 	if len(isempty) == 0 {
 		return 2
 	}
@@ -128,7 +128,7 @@ func (z OmitClueTestStruct) fieldsNotEmpty(isempty []bool) uint32 {
 }
 
 // EncodeMsg implements msgp.Encodable
-func (z OmitClueTestStruct) EncodeMsg(en *msgp.Writer) (err error) {
+func (z *OmitClueTestStruct) EncodeMsg(en *msgp.Writer) (err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -181,7 +181,7 @@ func (z OmitClueTestStruct) EncodeMsg(en *msgp.Writer) (err error) {
 }
 
 // MarshalMsg implements msgp.Marshaler
-func (z OmitClueTestStruct) MarshalMsg(b []byte) (o []byte, err error) {
+func (z *OmitClueTestStruct) MarshalMsg(b []byte) (o []byte, err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -315,7 +315,7 @@ var unmarshalMsgFieldOrder4zgensym_cc028b3bcf246c08_5 = []string{"S", "N"}
 var unmarshalMsgFieldSkip4zgensym_cc028b3bcf246c08_5 = []bool{false, false}
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z OmitClueTestStruct) Msgsize() (s int) {
+func (z *OmitClueTestStruct) Msgsize() (s int) {
 	s = 1 + 2 + msgp.StringPrefixSize + len(z.S) + 2 + msgp.Int64Size
 	return
 }

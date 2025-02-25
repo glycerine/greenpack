@@ -35,7 +35,7 @@ func (z *TupleByDefaultTestStruct) DecodeMsg(dc *msgp.Reader) (err error) {
 }
 
 // EncodeMsg implements msgp.Encodable
-func (z TupleByDefaultTestStruct) EncodeMsg(en *msgp.Writer) (err error) {
+func (z *TupleByDefaultTestStruct) EncodeMsg(en *msgp.Writer) (err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -57,7 +57,7 @@ func (z TupleByDefaultTestStruct) EncodeMsg(en *msgp.Writer) (err error) {
 }
 
 // MarshalMsg implements msgp.Marshaler
-func (z TupleByDefaultTestStruct) MarshalMsg(b []byte) (o []byte, err error) {
+func (z *TupleByDefaultTestStruct) MarshalMsg(b []byte) (o []byte, err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -114,7 +114,7 @@ func (z *TupleByDefaultTestStruct) UnmarshalMsgWithCfg(bts []byte, cfg *msgp.Run
 }
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z TupleByDefaultTestStruct) Msgsize() (s int) {
+func (z *TupleByDefaultTestStruct) Msgsize() (s int) {
 	s = 1 + msgp.StringPrefixSize + len(z.S) + msgp.Int64Size
 	return
 }

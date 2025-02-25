@@ -632,7 +632,7 @@ func (z *Big) MSGPMsgsize() (s int) {
 }
 
 // MSGPfieldsNotEmpty supports omitempty tags
-func (z S) MSGPfieldsNotEmpty(isempty []bool) uint32 {
+func (z *S) MSGPfieldsNotEmpty(isempty []bool) uint32 {
 	if len(isempty) == 0 {
 		return 1
 	}
@@ -646,7 +646,7 @@ func (z S) MSGPfieldsNotEmpty(isempty []bool) uint32 {
 }
 
 // MSGPMarshalMsg implements msgp.Marshaler
-func (z S) MSGPMarshalMsg(b []byte) (o []byte, err error) {
+func (z *S) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -767,7 +767,7 @@ var unmarshalMsgFieldOrder13zgensym_58b5c2649cecee38_14 = []string{"Placeholder_
 var unmarshalMsgFieldSkip13zgensym_58b5c2649cecee38_14 = []bool{false}
 
 // MSGPMsgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z S) MSGPMsgsize() (s int) {
+func (z *S) MSGPMsgsize() (s int) {
 	s = 1 + 17 + msgp.IntSize
 	return
 }
@@ -1113,7 +1113,7 @@ func (z *S2) MSGPMsgsize() (s int) {
 }
 
 // MSGPfieldsNotEmpty supports omitempty tags
-func (z Sys) MSGPfieldsNotEmpty(isempty []bool) uint32 {
+func (z *Sys) MSGPfieldsNotEmpty(isempty []bool) uint32 {
 	if len(isempty) == 0 {
 		return 1
 	}
@@ -1127,7 +1127,7 @@ func (z Sys) MSGPfieldsNotEmpty(isempty []bool) uint32 {
 }
 
 // MSGPMarshalMsg implements msgp.Marshaler
-func (z Sys) MSGPMarshalMsg(b []byte) (o []byte, err error) {
+func (z *Sys) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 	if p, ok := interface{}(z).(msgp.PreSave); ok {
 		p.PreSaveHook()
 	}
@@ -1251,7 +1251,7 @@ var unmarshalMsgFieldOrder22zgensym_58b5c2649cecee38_23 = []string{"F_zid00_ifc"
 var unmarshalMsgFieldSkip22zgensym_58b5c2649cecee38_23 = []bool{false}
 
 // MSGPMsgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z Sys) MSGPMsgsize() (s int) {
+func (z *Sys) MSGPMsgsize() (s int) {
 	s = 1 + 12 + msgp.GuessSize(z.F)
 	return
 }
