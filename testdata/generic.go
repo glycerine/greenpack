@@ -16,6 +16,8 @@ type Addable interface {
 // should be ignored (because has generic type parameter)
 type Matrix[T Addable] struct {
 	Dat []T
+	Row int
+	Col int
 }
 
 func useGenericMatrix() {
