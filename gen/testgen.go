@@ -76,7 +76,7 @@ func (e *etestGen) Method() Method { return encodetest }
 
 func init() {
 	template.Must(marshalTestTempl.Parse(`func TestMarshalUnmarshal{{.TypeName}}{{.MethodPrefix}}(t *testing.T) {
-	v := {{.TypeName}}{}
+	v := {{.TypeName}}{{.GenericInstantiation}}{}
 	bts, err := v.{{.MethodPrefix}}MarshalMsg(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -99,7 +99,7 @@ func init() {
 }
 
 func BenchmarkMarshalMsg{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
-	v := {{.TypeName}}{}
+	v := {{.TypeName}}{{.GenericInstantiation}}{}
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i:=0; i<b.N; i++ {
@@ -108,7 +108,7 @@ func BenchmarkMarshalMsg{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
 }
 
 func BenchmarkAppendMsg{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
-	v := {{.TypeName}}{}
+	v := {{.TypeName}}{{.GenericInstantiation}}{}
 	bts := make([]byte, 0, v.{{.MethodPrefix}}Msgsize())
 	bts, _ = v.{{.MethodPrefix}}MarshalMsg(bts[0:0])
 	b.SetBytes(int64(len(bts)))
@@ -120,7 +120,7 @@ func BenchmarkAppendMsg{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
 }
 
 func BenchmarkUnmarshal{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
-	v := {{.TypeName}}{}
+	v := {{.TypeName}}{{.GenericInstantiation}}{}
 	bts, _ := v.{{.MethodPrefix}}MarshalMsg(nil)
 	b.ReportAllocs()
 	b.SetBytes(int64(len(bts)))
@@ -136,7 +136,7 @@ func BenchmarkUnmarshal{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
 `))
 
 	template.Must(encodeTestTempl.Parse(`func TestEncodeDecode{{.TypeName}}{{.MethodPrefix}}(t *testing.T) {
-	v := {{.TypeName}}{}
+	v := {{.TypeName}}{{.GenericInstantiation}}{}
 	var buf bytes.Buffer
 	msgp.Encode(&buf, &v)
 
@@ -145,7 +145,7 @@ func BenchmarkUnmarshal{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
 		t.Logf("WARNING: {{.MethodPrefix}}Msgsize() for %v is inaccurate", v)
 	}
 
-	vn := {{.TypeName}}{}
+	vn := {{.TypeName}}{{.GenericInstantiation}}{}
 	err := msgp.Decode(&buf, &vn)
 	if err != nil {
 		t.Error(err)
@@ -160,7 +160,7 @@ func BenchmarkUnmarshal{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
 }
 
 func BenchmarkEncode{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
-	v := {{.TypeName}}{}
+	v := {{.TypeName}}{{.GenericInstantiation}}{}
 	var buf bytes.Buffer 
 	msgp.Encode(&buf, &v)
 	b.SetBytes(int64(buf.Len()))
@@ -174,7 +174,7 @@ func BenchmarkEncode{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
 }
 
 func BenchmarkDecode{{.TypeName}}{{.MethodPrefix}}(b *testing.B) {
-	v := {{.TypeName}}{}
+	v := {{.TypeName}}{{.GenericInstantiation}}{}
 	var buf bytes.Buffer
 	msgp.Encode(&buf, &v)
 	b.SetBytes(int64(buf.Len()))

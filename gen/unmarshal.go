@@ -58,6 +58,7 @@ func (u *unmarshalGen) Execute(p Elem) error {
 
 	vname := p.Varname()
 	methRcvr := methodReceiver(p)
+	//methRcvr := imutMethodReceiver(p) // generic, but no pointer, bad!
 	if u.cfg.ReadStringsFast {
 		u.p.printf("\nfunc (%s %s) %sUnmarshalMsg(bts []byte) (o []byte, err error) {\n cfg := &msgp.RuntimeConfig{UnsafeZeroCopy:true}; return %s.%sUnmarshalMsgWithCfg(bts, cfg)\n}", vname, methRcvr, u.cfg.MethodPrefix, vname, u.cfg.MethodPrefix)
 	} else {

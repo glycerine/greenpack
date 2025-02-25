@@ -2,6 +2,7 @@ package gen
 
 import (
 	"fmt"
+	"go/ast"
 	"strconv"
 	"strings"
 
@@ -149,8 +150,24 @@ type Common struct {
 	vname string
 	alias string
 
+	generic *Genric
+
 	hmp HasMethodPrefix
 	zid int64
+}
+
+func (c *Common) GenericInstantiation() string {
+	if c.generic == nil {
+		return ""
+	}
+	return "[int]"
+}
+
+func (c *Common) GenericBracket() string {
+	if c.generic == nil {
+		return ""
+	}
+	return c.generic.Bracket
 }
 
 func (c *Common) SetZid(zid int64) {
@@ -164,10 +181,24 @@ type HasMethodPrefix interface {
 	MethodPrefix() string
 }
 
-func (c *Common) SetVarname(s string) { c.vname = s }
-func (c *Common) Varname() string     { return c.vname }
-func (c *Common) Alias(typ string)    { c.alias = typ }
-func (c *Common) hidden()             {}
+func (c *Common) SetVarname(s string) {
+	if len(s) > 0 {
+		if s[0] == '(' {
+			//panic(fmt.Sprintf("where are we setting Varname to '%v'?", s))
+		}
+	}
+	c.vname = s
+}
+func (c *Common) Varname() string { return c.vname }
+func (c *Common) Alias(typ string, ric *Genric) {
+	c.alias = typ
+	c.generic = ric
+	if ric != nil {
+		fmt.Printf("debug genric: c.alias '%v' -> '%v'\n", c.alias, c.alias+ric.Bracket)
+	}
+}
+
+func (c *Common) hidden() {}
 func (c *Common) MethodPrefix() string {
 	if c.hmp == nil {
 		return ""
@@ -208,7 +239,9 @@ type Elem interface {
 	TypeName() string
 
 	// Alias sets a type (alias) name
-	Alias(typ string)
+	Alias(typ string, ric *Genric)
+
+	GenericBracket() string
 
 	// Copy should perform a deep copy of the object
 	Copy() Elem
@@ -250,15 +283,55 @@ type Elem interface {
 	hidden()
 }
 
+type Genric struct {
+	Name    string
+	Parm    map[string]int
+	Seq     []string
+	Bracket string
+
+	TypeParm *ast.FieldList
+}
+
+func Generics(name string, typeParm *ast.FieldList) (r *Genric) {
+	if typeParm == nil {
+		return nil
+	}
+	r = &Genric{
+		Name:     name,
+		Parm:     make(map[string]int),
+		TypeParm: typeParm,
+	}
+	generic := "["
+	n := len(typeParm.List)
+	for i, lst := range typeParm.List {
+		p := lst.Names[0].Name
+		r.Parm[p] = i
+		r.Seq = append(r.Seq, p)
+		generic += p
+		if i < n-1 {
+			generic += ","
+		}
+	}
+	generic += "]"
+	r.Bracket = generic
+	vv("Generics sees %v %v", name, r.Bracket)
+	return r
+}
+
 // Ident returns the *BaseElem that corresponds
 // to the provided identity.
-func Ident(id string, isIface bool) *BaseElem {
+// Called by parser/getast.go:863 (Ident), :1013 (selector)
+func Ident(id string, isIface bool, ric *Genric) *BaseElem {
+
+	if ric != nil {
+		vv("Ident(id='%v'). generics = '%v'\n%v\n", id, ric.Bracket, stack())
+	}
 	p, ok := primitives[id]
 	if ok {
 		return &BaseElem{Value: p, isIface: isIface}
 	}
 	be := &BaseElem{Value: IDENT, isIface: isIface}
-	be.Alias(id)
+	be.Alias(id, ric)
 	return be
 }
 
@@ -307,7 +380,7 @@ func (a *Array) TypeName() string {
 	if a.Common.alias != "" {
 		return a.Common.alias
 	}
-	a.Common.Alias(fmt.Sprintf("[%s]%s", a.SizeNamed, a.Els.TypeName()))
+	a.Common.Alias(fmt.Sprintf("[%s]%s", a.SizeNamed, a.Els.TypeName()), nil)
 	return a.Common.alias
 }
 
@@ -406,7 +479,7 @@ func (m *Map) TypeName() string {
 	if m.Common.alias != "" {
 		return m.Common.alias
 	}
-	m.Common.Alias("map[" + m.KeyDeclTyp + "]" + m.Value.TypeName())
+	m.Common.Alias("map["+m.KeyDeclTyp+"]"+m.Value.TypeName(), nil)
 	return m.Common.alias
 }
 
@@ -468,7 +541,7 @@ func (s *Slice) TypeName() string {
 	if s.Common.alias != "" {
 		return s.Common.alias
 	}
-	s.Common.Alias("[]" + s.Els.TypeName())
+	s.Common.Alias("[]"+s.Els.TypeName(), nil)
 	return s.Common.alias
 }
 
@@ -552,7 +625,7 @@ func (s *Ptr) TypeName() string {
 	if s.Common.alias != "" {
 		return s.Common.alias
 	}
-	s.Common.Alias("*" + s.Value.TypeName())
+	s.Common.Alias("*"+s.Value.TypeName(), nil)
 	return s.Common.alias
 }
 
@@ -579,6 +652,7 @@ type Struct struct {
 	KeyTyp           string
 
 	SkipCount int
+	Genric    *Genric
 }
 
 func (s *Struct) IsInterface() bool {
@@ -617,7 +691,7 @@ func (s *Struct) TypeName() string {
 		str += s.Fields[i].FieldName + " " + s.Fields[i].FieldElem.TypeName() + ";\n"
 	}
 	str += "}"
-	s.Common.Alias(str)
+	s.Common.Alias(str, nil)
 	return s.Common.alias
 }
 
@@ -706,8 +780,8 @@ func (s *BaseElem) GetZtype() (r green.Ztype) {
 
 func (s *BaseElem) Printable() bool { return !s.mustinline }
 
-func (s *BaseElem) Alias(typ string) {
-	s.Common.Alias(typ)
+func (s *BaseElem) Alias(typ string, ric *Genric) {
+	s.Common.Alias(typ, ric)
 	if s.Value != IDENT {
 		s.Convert = true
 	}
@@ -738,7 +812,7 @@ func (s *BaseElem) TypeName() string {
 	if s.Common.alias != "" {
 		return s.Common.alias
 	}
-	s.Common.Alias(s.BaseType())
+	s.Common.Alias(s.BaseType(), nil)
 	return s.Common.alias
 }
 
