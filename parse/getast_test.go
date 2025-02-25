@@ -177,7 +177,7 @@ func Test003OrderFieldsByZid(t *testing.T) {
 		fs, err := File(&cfg)
 		if len(fs.Identities) > 0 {
 			rct := fs.Identities["Flint"].(*gen.Struct)
-			fmt.Printf("\n debug: spec[flint]='%#v'\n", rct)
+			//fmt.Printf("\n debug: spec[flint]='%#v'\n", rct)
 			//			lastZid := -1
 			seenNeg := false
 			for i, fld := range rct.Fields {
