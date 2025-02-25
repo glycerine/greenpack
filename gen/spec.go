@@ -305,13 +305,13 @@ func methodReceiver(p Elem) string {
 	// dereferenced automatically,
 	// so no need to alter varname
 	case *Struct, *Array:
-		return "*" + p.TypeName()
+		return "*" + p.TypeName() + p.GenericBracket()
 	// set variable name to
 	// *varname
 	default:
 		p.SetVarname("(*" + p.Varname() + ")") // has not changed for CustomBytes
 		//vv("using default for p='%#v': returning '*%v'", p, p.TypeName())
-		return "*" + p.TypeName()
+		return "*" + p.TypeName() + p.GenericBracket()
 	}
 }
 
