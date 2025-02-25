@@ -88,7 +88,6 @@ func (d *decodeGen) Execute(p Elem) error {
 	// ARG! Varname() must be called BEFORE methodReceiver() !!!
 	varname := p.Varname()
 	methodRcvr := methodReceiver(p)
-	//methodRcvr := imutMethodReceiver(p) // generic, but no pointer?!?
 
 	d.p.comment(fmt.Sprintf("%sDecodeMsg implements msgp.Decodable", d.cfg.MethodPrefix))
 	d.p.comment("We treat empty fields as if we read a Nil from the wire.")

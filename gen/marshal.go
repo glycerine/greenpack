@@ -50,8 +50,10 @@ func (m *marshalGen) Execute(p Elem) error {
 	// calling methodReceiver so
 	// that z.Msgsize() is printed correctly
 	c := p.Varname()
+	rcvr := imutMethodReceiver(p)
+	//rcvr := methodReceiver(p)
 
-	m.p.printf("\nfunc (%s %s) %sMarshalMsg(b []byte) (o []byte, err error) {", p.Varname(), imutMethodReceiver(p), m.cfg.MethodPrefix)
+	m.p.printf("\nfunc (%s %s) %sMarshalMsg(b []byte) (o []byte, err error) {", c, rcvr, m.cfg.MethodPrefix)
 	hasPtr := false
 	if hasPointersOrInterfaces(p) {
 		hasPtr = true

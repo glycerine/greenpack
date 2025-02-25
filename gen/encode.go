@@ -66,7 +66,13 @@ func (e *encodeGen) Execute(p Elem) error {
 
 	e.p.comment(fmt.Sprintf("%sEncodeMsg implements msgp.Encodable", e.cfg.MethodPrefix))
 
-	e.p.printf("\nfunc (%s %s) %sEncodeMsg(en *msgp.Writer) (err error) {", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	varname := p.Varname()
+	rcvr := imutMethodReceiver(p)
+	//rcvr := methodReceiver(p)
+
+	//e.p.printf("\nfunc (%s %s) %sEncodeMsg(en *msgp.Writer) (err error) {", p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
+	e.p.printf("\nfunc (%s %s) %sEncodeMsg(en *msgp.Writer) (err error) {", varname, rcvr, e.cfg.MethodPrefix)
+
 	hasPtr := false
 	if hasPointersOrInterfaces(p) {
 		hasPtr = true
@@ -155,7 +161,7 @@ func (e *encodeGen) structmap(s *Struct) {
 
 	if !e.cfg.NoEmbeddedStructNames {
 		// record the struct name under integer key -1
-		recv := s.TypeName() // imutMethodReceiver(s)
+		recv := s.TypeName() // imutMethodReceiver(s)?
 		e.p.printf("\n// runtime struct type identification for '%s'\n", recv)
 		hexname := ""
 		for i := range recv {
