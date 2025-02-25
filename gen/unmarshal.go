@@ -328,7 +328,7 @@ func (u *unmarshalGen) gPtr(p *Ptr, x *extra) {
 
 	base, isBase := p.Value.(*BaseElem)
 	if isBase {
-		u.p.printf("\n // unmarshalGen.gPtr(): we have a BaseElem. \n", base)
+		u.p.printf("\n // unmarshalGen.gPtr(): we have a BaseElem. \n")
 		switch base.Value {
 		case IDENT:
 			u.p.printf("\n // unmarshalGen.gPtr(): we have an IDENT: \n") // TODO, recomment

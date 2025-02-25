@@ -280,7 +280,7 @@ func (z *Big) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		o = append(o, 0xaf, 0x53, 0x6c, 0x69, 0x63, 0x65, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x30, 0x5f, 0x73, 0x6c, 0x63)
 		o = msgp.AppendArrayHeader(o, uint32(len(z.Slice)))
 		for zgensym_58b5c2649cecee38_2 := range z.Slice {
-			o, err = z.Slice[zgensym_58b5c2649cecee38_2].MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
+			o, err = z.Slice[zgensym_58b5c2649cecee38_2].MSGPMarshalMsg(o) // not is.iface
 			if err != nil {
 				return
 			}
@@ -300,7 +300,7 @@ func (z *Big) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 			} else {
 				// hmm.. no en, no place to check en.DedupWriteIsDup(z)
 
-				o, err = zgensym_58b5c2649cecee38_4.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
+				o, err = zgensym_58b5c2649cecee38_4.MSGPMarshalMsg(o) // not is.iface
 				if err != nil {
 					return
 				}
@@ -318,7 +318,7 @@ func (z *Big) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		} else {
 			// hmm.. no en, no place to check en.DedupWriteIsDup(z)
 
-			o, err = z.Myptr.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
+			o, err = z.Myptr.MSGPMarshalMsg(o) // not is.iface
 			if err != nil {
 				return
 			}
@@ -465,7 +465,7 @@ doneWithStruct7zgensym_58b5c2649cecee38_8:
 					if err != nil {
 						return
 					}
-					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"zgensym_58b5c2649cecee38_4", alias:"S2", generic:(*gen.Genric)(nil), hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+					// unmarshalGen.gPtr(): we have a BaseElem.
 
 					// unmarshalGen.gPtr(): we have an IDENT:
 
@@ -498,7 +498,7 @@ doneWithStruct7zgensym_58b5c2649cecee38_8:
 			}
 		case "Myptr_zid02_ptr":
 			found7zgensym_58b5c2649cecee38_8[2] = true
-			// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Myptr", alias:"S2", generic:(*gen.Genric)(nil), hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+			// unmarshalGen.gPtr(): we have a BaseElem.
 
 			// unmarshalGen.gPtr(): we have an IDENT:
 
@@ -876,7 +876,7 @@ func (z *S2) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		} else {
 			// hmm.. no en, no place to check en.DedupWriteIsDup(z)
 
-			o, err = z.MyTree.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
+			o, err = z.MyTree.MSGPMarshalMsg(o) // not is.iface
 			if err != nil {
 				return
 			}
@@ -1038,7 +1038,7 @@ doneWithStruct18zgensym_58b5c2649cecee38_19:
 			}
 		case "MyTree_zid07_ptr":
 			found18zgensym_58b5c2649cecee38_19[7] = true
-			// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.MyTree", alias:"Tree", generic:(*gen.Genric)(nil), hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+			// unmarshalGen.gPtr(): we have a BaseElem.
 
 			// unmarshalGen.gPtr(): we have an IDENT:
 
@@ -1296,7 +1296,7 @@ func (z *Tree) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		o = append(o, 0xae, 0x43, 0x68, 0x6c, 0x64, 0x5f, 0x7a, 0x69, 0x64, 0x30, 0x30, 0x5f, 0x73, 0x6c, 0x63)
 		o = msgp.AppendArrayHeader(o, uint32(len(z.Chld)))
 		for zgensym_58b5c2649cecee38_24 := range z.Chld {
-			o, err = z.Chld[zgensym_58b5c2649cecee38_24].MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
+			o, err = z.Chld[zgensym_58b5c2649cecee38_24].MSGPMarshalMsg(o) // not is.iface
 			if err != nil {
 				return
 			}
@@ -1319,7 +1319,7 @@ func (z *Tree) MSGPMarshalMsg(b []byte) (o []byte, err error) {
 		} else {
 			// hmm.. no en, no place to check en.DedupWriteIsDup(z)
 
-			o, err = z.Par.MSGPMarshalMsg(o) // not is.iface, gen/marshal.go:243
+			o, err = z.Par.MSGPMarshalMsg(o) // not is.iface
 			if err != nil {
 				return
 			}
@@ -1426,7 +1426,7 @@ doneWithStruct25zgensym_58b5c2649cecee38_26:
 			}
 		case "Par_zid02_ptr":
 			found25zgensym_58b5c2649cecee38_26[2] = true
-			// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Par", alias:"S2", generic:(*gen.Genric)(nil), hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+			// unmarshalGen.gPtr(): we have a BaseElem.
 
 			// unmarshalGen.gPtr(): we have an IDENT:
 

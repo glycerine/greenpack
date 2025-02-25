@@ -417,7 +417,7 @@ func (z *Tr) MarshalMsg(b []byte) (o []byte, err error) {
 			} else {
 				// hmm.. no en, no place to check en.DedupWriteIsDup(z)
 
-				o, err = z.Setm[zgensym_72ba5d454ae3d9dd_4].MarshalMsg(o) // not is.iface, gen/marshal.go:243
+				o, err = z.Setm[zgensym_72ba5d454ae3d9dd_4].MarshalMsg(o) // not is.iface
 				if err != nil {
 					return
 				}
@@ -602,7 +602,7 @@ doneWithStruct12zgensym_72ba5d454ae3d9dd_13:
 					z.Setm = make([]*inn, zgensym_72ba5d454ae3d9dd_16)
 				}
 				for zgensym_72ba5d454ae3d9dd_4 := range z.Setm {
-					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"z.Setm[zgensym_72ba5d454ae3d9dd_4]", alias:"inn", generic:(*gen.Genric)(nil), hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+					// unmarshalGen.gPtr(): we have a BaseElem.
 
 					// unmarshalGen.gPtr(): we have an IDENT:
 
@@ -1364,7 +1364,7 @@ func (z *u) MarshalMsg(b []byte) (o []byte, err error) {
 			} else {
 				// hmm.. no en, no place to check en.DedupWriteIsDup(z)
 
-				o, err = zgensym_72ba5d454ae3d9dd_28.MarshalMsg(o) // not is.iface, gen/marshal.go:243
+				o, err = zgensym_72ba5d454ae3d9dd_28.MarshalMsg(o) // not is.iface
 				if err != nil {
 					return
 				}
@@ -1483,7 +1483,7 @@ doneWithStruct34zgensym_72ba5d454ae3d9dd_35:
 					if err != nil {
 						return
 					}
-					// unmarshalGen.gPtr(): we have a BaseElem: &gen.BaseElem{Common:gen.Common{vname:"zgensym_72ba5d454ae3d9dd_28", alias:"Tr", generic:(*gen.Genric)(nil), hmp:gen.HasMethodPrefix(nil), zid:0}, ShimToBase:"", ShimFromBase:"", Value:0x16, Convert:false, mustinline:false, needsref:false, isIface:false, isInIfaceSlice:false}
+					// unmarshalGen.gPtr(): we have a BaseElem.
 
 					// unmarshalGen.gPtr(): we have an IDENT:
 
