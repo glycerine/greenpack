@@ -45,6 +45,7 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 		Cfg:                c,
 		InterfaceTypeNames: make(map[string]bool),
 		GenericTypeParams:  make(map[string]*gen.Genric),
+		Instan:             make(map[string][]*gen.Instan),
 	}
 
 	fset := token.NewFileSet()
@@ -71,6 +72,7 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 				ast.FileExports(fl)
 			}
 			fs.getTypeSpecs(fl)
+			fs.getTemplateInstantiations(fl)
 			popstate()
 		}
 	} else {
@@ -86,6 +88,7 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 			ast.FileExports(f)
 		}
 		fs.getTypeSpecs(f)
+		fs.getTemplateInstantiations(f)
 	}
 
 	if len(fs.Specs) == 0 {

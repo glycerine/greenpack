@@ -62,6 +62,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 
 	name := c.GoFile
 	pushstate(name)
+	vv("File top for name '%v'", name)
 	defer popstate()
 	fs := &FileSet{
 		Specs:              make(map[string]*ast.TypeSpec),
