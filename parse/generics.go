@@ -98,7 +98,7 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 		// Look through type information for generic instantiations
 
 		// more of these than Syntax, so use Syntax below
-		if false {
+		if true {
 			//vv("looking through %v of info.Types", len(info.Types))
 			for expr, tv := range info.Types {
 				if inst, ok := tv.Type.(*types.Named); ok {
@@ -120,51 +120,54 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 						TypeArgNames: typeArgNames,
 						Position:     pkg.Fset.Position(expr.Pos()),
 					}
-					vv("attempt 1 instan-> %v with %v", nm, info.TypeArgNames)
+					//vv("attempt 1 instan-> %v with %v", nm, info.TypeArgNames)
 					generics[nm] = append(generics[nm], info)
 				}
 			}
 		}
-		// They both work, this has fewer pkg.Syntax (1).
-		// Visit all AST nodes
-		vv("looking through %v of pkg.Syntax", len(pkg.Syntax))
-		for _, file := range pkg.Syntax {
-			ast.Inspect(file, func(n ast.Node) bool {
-				// Look for IndexExpr which is used
-				// for generic type instantiation
 
-				indexExpr, ok := n.(*ast.IndexExpr)
-				if !ok {
-					return true
-				}
+		if false {
+			// They both work, this has fewer pkg.Syntax (1).
+			// Visit all AST nodes
+			vv("looking through %v of pkg.Syntax", len(pkg.Syntax))
+			for _, file := range pkg.Syntax {
+				ast.Inspect(file, func(n ast.Node) bool {
+					// Look for IndexExpr which is used
+					// for generic type instantiation
 
-				// Get type information for the expression
-				if t, ok := info.Types[indexExpr]; ok {
-					if inst, ok := t.Type.(*types.Named); ok {
-						// Get the type arguments
-						n := inst.TypeArgs().Len()
-						if n == 0 {
-							return true
-						}
-						typeArgs := make([]types.Type, n)
-						typeArgNames := make([]string, n)
-						for i := 0; i < inst.TypeArgs().Len(); i++ {
-							typeArgs[i] = inst.TypeArgs().At(i)
-							typeArgNames[i] = typeArgs[i].String()
-						}
-						nm := inst.Obj().Name()
-						info := &gen.Instan{
-							TypeName:     nm,
-							TypeArgs:     typeArgs,
-							TypeArgNames: typeArgNames,
-							Position:     pkg.Fset.Position(indexExpr.Pos()),
-						}
-						vv("attempt 2 instan-> %v with %v", nm, info.TypeArgNames)
-						generics[nm] = append(generics[nm], info)
+					indexExpr, ok := n.(*ast.IndexExpr)
+					if !ok {
+						return true
 					}
-				}
-				return true
-			})
+
+					// Get type information for the expression
+					if t, ok := info.Types[indexExpr]; ok {
+						if inst, ok := t.Type.(*types.Named); ok {
+							// Get the type arguments
+							n := inst.TypeArgs().Len()
+							if n == 0 {
+								return true
+							}
+							typeArgs := make([]types.Type, n)
+							typeArgNames := make([]string, n)
+							for i := 0; i < inst.TypeArgs().Len(); i++ {
+								typeArgs[i] = inst.TypeArgs().At(i)
+								typeArgNames[i] = typeArgs[i].String()
+							}
+							nm := inst.Obj().Name()
+							info := &gen.Instan{
+								TypeName:     nm,
+								TypeArgs:     typeArgs,
+								TypeArgNames: typeArgNames,
+								Position:     pkg.Fset.Position(indexExpr.Pos()),
+							}
+							vv("attempt 2 instan-> %v with %v", nm, info.TypeArgNames)
+							generics[nm] = append(generics[nm], info)
+						}
+					}
+					return true
+				})
+			}
 		}
 	}
 
