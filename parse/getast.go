@@ -366,7 +366,7 @@ func (f *FileSet) PrintTo(p *gen.Printer) error {
 }
 
 func (fs *FileSet) getTemplateInstantiations(f *ast.File) {
-
+	vv("top getTemplateInstantiations")
 	nm := f.Name.Name
 	generics, err := analyzeGenericTypes(nm)
 	panicOn(err)

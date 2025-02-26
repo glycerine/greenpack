@@ -229,7 +229,7 @@ func Test005GenericsNotMarshalled(t *testing.T) {
 package hasgenerics
 
 type Addable interface {
-	~complex128 | ~float64
+	~complex128 | ~float64 | ~int32
 }
 type Matrix[T Addable] struct {
 	Nrow int
@@ -242,7 +242,7 @@ type HasMatrix struct {
 }
 
 func doInstan() {
-   var m Matrix[float64]
+   var m Matrix[int32]
    _ = m
 }
 `

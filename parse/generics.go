@@ -70,7 +70,7 @@ func analyzeGenericTypes(filepath string) (generics map[string]*instan, err erro
 	if err != nil {
 		return nil, err
 	}
-	vv("back from Load okay.")
+	vv("back from Load okay. len(pkgs)=%v", len(pkgs))
 	// parent type key
 	generics = make(map[string]*instan)
 
@@ -78,6 +78,36 @@ func analyzeGenericTypes(filepath string) (generics map[string]*instan, err erro
 	for _, pkg := range pkgs {
 		info := pkg.TypesInfo
 
+		// attempt 1
+
+		// Look through type information for generic instantiations
+		for expr, tv := range info.Types {
+			_ = expr
+			// tv is go/types.TypeAndValue
+			if inst, ok := tv.Type.(*types.Named); ok {
+
+				// Get the type arguments
+				n := inst.TypeArgs().Len()
+				typeArgs := make([]types.Type, n)
+				typeArgNames := make([]string, n)
+				for i := 0; i < inst.TypeArgs().Len(); i++ {
+					typeArgs[i] = inst.TypeArgs().At(i)
+					typeArgNames[i] = typeArgs[i].String()
+				}
+				nm := inst.Obj().Name()
+				info := &instan{
+					typeName:     nm,
+					typeArgs:     typeArgs,
+					typeArgNames: typeArgNames,
+					position:     pkg.Fset.Position(expr.Pos()),
+				}
+				vv("attempt 1 instan-> %v with %v", nm, info.typeArgNames)
+				generics[nm] = info
+			}
+
+		}
+
+		// attempt 2:
 		// Visit all AST nodes
 		for _, file := range pkg.Syntax {
 			ast.Inspect(file, func(n ast.Node) bool {
@@ -107,7 +137,7 @@ func analyzeGenericTypes(filepath string) (generics map[string]*instan, err erro
 							typeArgNames: typeArgNames,
 							position:     pkg.Fset.Position(indexExpr.Pos()),
 						}
-						vv("instan-> %v with %v", nm, info.typeArgNames)
+						vv("attempt 2 instan-> %v with %v", nm, info.typeArgNames)
 						generics[nm] = info
 					}
 				}
