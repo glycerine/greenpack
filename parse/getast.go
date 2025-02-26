@@ -584,6 +584,7 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 	var omitempty bool
 
 	var skip bool
+	var needsReflection bool // for generic fields.
 	var deprecated bool
 	var showzero bool
 	var zebraId int64 = -1
@@ -692,7 +693,8 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 	if err == ErrSkipGenerics {
 		typnm := extractTypeName(f.Type)
 		fmt.Printf("skipping generic field: name='%v' typnm='%v'\n", name, typnm)
-		skip = true
+		//skip = true
+		needsReflection = true
 		err = nil
 	}
 	if err != nil {
@@ -729,6 +731,7 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 	sf[0].ShowZero = showzero
 	sf[0].IsIface = isIface
 	sf[0].IsPointer = isPointer
+	sf[0].NeedsReflection = needsReflection
 
 	// parse field name
 	switch len(f.Names) {
@@ -752,6 +755,7 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 				FieldTagZidClue: msgp.Clue2Field(nm.Name, ex.TypeClue(), zebraId),
 				IsIface:         isIface,
 				IsPointer:       isPointer,
+				NeedsReflection: needsReflection,
 			})
 		}
 		return sf, nil

@@ -760,6 +760,8 @@ type StructField struct {
 	// for dedup
 	IsPointer bool // the field is a pointer
 
+	NeedsReflection bool // generic field
+
 	// ZebraId defaults to -1, meaning not-tagged with a zebra id.
 	// if ZebraId >= 0, then the tag `zebra:"N"` was found, with ZebraId == N.
 	ZebraId int64
