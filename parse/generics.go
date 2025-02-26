@@ -79,6 +79,8 @@ func analyzeGenericTypes(filepath string) (generics map[string][]*instan, err er
 
 		// attempt 1
 		// Look through type information for generic instantiations
+
+		vv("looking through %v of info.Types", len(info.Types))
 		for expr, tv := range info.Types {
 			if inst, ok := tv.Type.(*types.Named); ok {
 				// Get the type arguments
@@ -106,6 +108,7 @@ func analyzeGenericTypes(filepath string) (generics map[string][]*instan, err er
 
 		// attempt 2:
 		// Visit all AST nodes
+		vv("looking through %v of pkg.Syntax", len(pkg.Syntax))
 		for _, file := range pkg.Syntax {
 			ast.Inspect(file, func(n ast.Node) bool {
 				// Look for IndexExpr which is used
