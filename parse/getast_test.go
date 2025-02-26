@@ -330,6 +330,7 @@ type HasAny struct {
 
 }
 `
-		cv.So(testCodeModule("hasany", s, nil), cv.ShouldBeNil)
+		err := testCodeModule("hasany", s, nil)
+		cv.So(err, cv.ShouldBeNil)
 	})
 }
