@@ -27,7 +27,6 @@ func genericTypeParam(path string) (generics map[string]string, err error) {
 
 		// Look through type information for generic instantiations
 		for expr, tv := range info.Types {
-			_ = expr
 			// tv is go/types.TypeAndValue
 			if named, ok := tv.Type.(*types.Named); ok {
 
@@ -58,7 +57,7 @@ type instan struct {
 	position     token.Position
 }
 
-func analyzeGenericTypes(filepath string) (generics map[string]*instan, err error) {
+func analyzeGenericTypes(filepath string) (generics map[string][]*instan, err error) {
 	vv("top analyzeGenericTypes")
 	// Configure package loading
 	cfg := &packages.Config{
@@ -71,23 +70,22 @@ func analyzeGenericTypes(filepath string) (generics map[string]*instan, err erro
 		return nil, err
 	}
 	vv("back from Load okay. len(pkgs)=%v", len(pkgs))
-	// parent type key
-	generics = make(map[string]*instan)
+	// parent type key -> slice of instantiations
+	generics = make(map[string][]*instan)
 
 	// Analyze each package
 	for _, pkg := range pkgs {
 		info := pkg.TypesInfo
 
 		// attempt 1
-
 		// Look through type information for generic instantiations
 		for expr, tv := range info.Types {
-			_ = expr
-			// tv is go/types.TypeAndValue
 			if inst, ok := tv.Type.(*types.Named); ok {
-
 				// Get the type arguments
 				n := inst.TypeArgs().Len()
+				if n == 0 {
+					continue
+				}
 				typeArgs := make([]types.Type, n)
 				typeArgNames := make([]string, n)
 				for i := 0; i < inst.TypeArgs().Len(); i++ {
@@ -102,9 +100,8 @@ func analyzeGenericTypes(filepath string) (generics map[string]*instan, err erro
 					position:     pkg.Fset.Position(expr.Pos()),
 				}
 				vv("attempt 1 instan-> %v with %v", nm, info.typeArgNames)
-				generics[nm] = info
+				generics[nm] = append(generics[nm], info)
 			}
-
 		}
 
 		// attempt 2:
@@ -138,7 +135,7 @@ func analyzeGenericTypes(filepath string) (generics map[string]*instan, err erro
 							position:     pkg.Fset.Position(indexExpr.Pos()),
 						}
 						vv("attempt 2 instan-> %v with %v", nm, info.typeArgNames)
-						generics[nm] = info
+						generics[nm] = append(generics[nm], info)
 					}
 				}
 				return true

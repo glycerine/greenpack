@@ -45,7 +45,7 @@ type FileSet struct {
 	InterfaceTypeNames map[string]bool // so we can heuristically identify interfaces.
 
 	GenericTypeParams map[string]*gen.Genric // type params, or nil
-	Instan            map[string]map[string]*instan
+	Instan            map[string]map[string][]*instan
 }
 
 // File parses a file at the relative path
@@ -69,7 +69,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 		Cfg:                c,
 		InterfaceTypeNames: make(map[string]bool),
 		GenericTypeParams:  make(map[string]*gen.Genric),
-		Instan:             make(map[string]map[string]*instan),
+		Instan:             make(map[string]map[string][]*instan),
 	}
 
 	var filenames []string
