@@ -930,8 +930,7 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 		if err == ErrSkipGenerics {
 			fmt.Printf("See ErrSkipGenerics here! in ArrayType! Elt = '%#v'\n", e.Elt)
 			// use reflection now
-			// let propagate higher.
-			//err = nil
+			err = nil
 		}
 		if err != nil {
 			return nil, err

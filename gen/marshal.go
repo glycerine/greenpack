@@ -143,6 +143,8 @@ func (m *marshalGen) mapstruct(s *Struct) {
 		}
 		if s.Fields[i].NeedsReflection {
 			m.p.printf("\n// '%s' generic => reflection\n", s.Fields[i].FieldName)
+			m.Fuse(data)
+			m.fuseHook()
 			continue
 		}
 

@@ -182,6 +182,8 @@ func (e *encodeGen) structmap(s *Struct) {
 		}
 		if s.Fields[i].NeedsReflection {
 			e.p.printf("\n// '%s' generic => reflection\n", s.Fields[i].FieldName)
+			e.Fuse(data)
+			e.fuseHook()
 			continue
 		}
 		if !e.p.ok() {
