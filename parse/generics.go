@@ -95,36 +95,37 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 	for _, pkg := range pkgs {
 		info := pkg.TypesInfo
 
-		// attempt 1
 		// Look through type information for generic instantiations
 
-		vv("looking through %v of info.Types", len(info.Types))
-		for expr, tv := range info.Types {
-			if inst, ok := tv.Type.(*types.Named); ok {
-				// Get the type arguments
-				n := inst.TypeArgs().Len()
-				if n == 0 {
-					continue
+		// more of these than Syntax, so use Syntax below
+		if false {
+			//vv("looking through %v of info.Types", len(info.Types))
+			for expr, tv := range info.Types {
+				if inst, ok := tv.Type.(*types.Named); ok {
+					// Get the type arguments
+					n := inst.TypeArgs().Len()
+					if n == 0 {
+						continue
+					}
+					typeArgs := make([]types.Type, n)
+					typeArgNames := make([]string, n)
+					for i := 0; i < inst.TypeArgs().Len(); i++ {
+						typeArgs[i] = inst.TypeArgs().At(i)
+						typeArgNames[i] = typeArgs[i].String()
+					}
+					nm := inst.Obj().Name()
+					info := &gen.Instan{
+						TypeName:     nm,
+						TypeArgs:     typeArgs,
+						TypeArgNames: typeArgNames,
+						Position:     pkg.Fset.Position(expr.Pos()),
+					}
+					vv("attempt 1 instan-> %v with %v", nm, info.TypeArgNames)
+					generics[nm] = append(generics[nm], info)
 				}
-				typeArgs := make([]types.Type, n)
-				typeArgNames := make([]string, n)
-				for i := 0; i < inst.TypeArgs().Len(); i++ {
-					typeArgs[i] = inst.TypeArgs().At(i)
-					typeArgNames[i] = typeArgs[i].String()
-				}
-				nm := inst.Obj().Name()
-				info := &gen.Instan{
-					TypeName:     nm,
-					TypeArgs:     typeArgs,
-					TypeArgNames: typeArgNames,
-					Position:     pkg.Fset.Position(expr.Pos()),
-				}
-				vv("attempt 1 instan-> %v with %v", nm, info.TypeArgNames)
-				generics[nm] = append(generics[nm], info)
 			}
 		}
-
-		// attempt 2:
+		// They both work, this has fewer pkg.Syntax (1).
 		// Visit all AST nodes
 		vv("looking through %v of pkg.Syntax", len(pkg.Syntax))
 		for _, file := range pkg.Syntax {
