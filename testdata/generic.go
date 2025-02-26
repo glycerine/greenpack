@@ -13,7 +13,9 @@ type Addable interface {
 		~int8 | ~int16 | ~int32 | ~int64 | ~int
 }
 
-// should be ignored (because has generic type parameter)
+// Dat field should be ignored
+// (because has generic type parameter);
+// the rest of the struct should be serialized.
 type Matrix[T Addable] struct {
 	Dat  []T
 	Nrow int
