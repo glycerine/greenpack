@@ -72,8 +72,6 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 		GenericTypeParams:  make(map[string]*gen.Genric),
 		Instan:             make(map[string][]*gen.Instan),
 	}
-	// the alias for interface{}
-	fs.InterfaceTypeNames["any"] = true
 
 	var filenames []string
 	var err error
@@ -881,6 +879,10 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 		return nil, nil
 
 	case *ast.Ident:
+		if e.Name == "any" {
+			// any: match the interface{} support below.
+			return &gen.BaseElem{Value: gen.Intf}, nil
+		}
 		if !isIface && e.Obj != nil && fs != nil && fs.PackageInfo != nil &&
 			len(fs.PackageInfo.Info.Types) > 0 {
 
