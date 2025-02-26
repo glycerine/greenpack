@@ -240,6 +240,11 @@ type HasMatrix struct {
     M128 Matrix[complex128]
     M64 Matrix[float64]
 }
+
+func doInstan() {
+   var m Matrix[float64]
+   _ = m
+}
 `
 		cv.So(testCode(s, nil), cv.ShouldBeNil)
 	})

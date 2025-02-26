@@ -59,6 +59,7 @@ type instan struct {
 }
 
 func analyzeGenericTypes(filepath string) (generics map[string]*instan, err error) {
+	vv("top analyzeGenericTypes")
 	// Configure package loading
 	cfg := &packages.Config{
 		Mode:  packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax,
@@ -106,7 +107,7 @@ func analyzeGenericTypes(filepath string) (generics map[string]*instan, err erro
 							typeArgNames: typeArgNames,
 							position:     pkg.Fset.Position(indexExpr.Pos()),
 						}
-						vv("%v -> %v", nm, info.typeArgNames)
+						vv("instan-> %v with %v", nm, info.typeArgNames)
 						generics[nm] = info
 					}
 				}
