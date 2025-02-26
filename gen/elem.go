@@ -3,6 +3,8 @@ package gen
 import (
 	"fmt"
 	"go/ast"
+	"go/token"
+	"go/types"
 	"strconv"
 	"strings"
 
@@ -160,7 +162,7 @@ func (c *Common) GenericInstantiation() string {
 	if c.generic == nil {
 		return ""
 	}
-	return "[int]"
+	return c.generic.Instan
 }
 
 func (c *Common) GenericBracket() string {
@@ -288,18 +290,30 @@ type Genric struct {
 	Parm    map[string]int
 	Seq     []string
 	Bracket string
+	Instan  string // example instantiated type, for _test.go
 
 	TypeParm *ast.FieldList
 }
 
-func Generics(name string, typeParm *ast.FieldList) (r *Genric) {
+// Instan (TypeInstantiationInfo) holds information
+// about a generic type instantiation
+type Instan struct {
+	TypeName     string
+	TypeArgs     []types.Type
+	TypeArgNames []string
+	Position     token.Position
+}
+
+func Generics(name string, typeParm *ast.FieldList, instan map[string][]*Instan) (r *Genric) {
 	if typeParm == nil {
 		return nil
 	}
+
 	r = &Genric{
 		Name:     name,
 		Parm:     make(map[string]int),
 		TypeParm: typeParm,
+		Instan:   "int",
 	}
 	generic := "["
 	n := len(typeParm.List)

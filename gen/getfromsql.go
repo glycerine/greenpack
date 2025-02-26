@@ -223,7 +223,7 @@ func (e *getFromSqlGen) structmap(s *Struct) {
 	}
 
 	sel += " from \" + dbName + \".\" + tableName "
-	e.p.printf(sel)
+	e.p.printf("%v", sel)
 	e.p.printf("\nsqlSel = strings.ReplaceAll(sqlSel, \"”\", \"`\") + \" \" + where")
 	e.p.printf(`
 }

@@ -225,7 +225,7 @@ func (d *decodeGen) structAsMap(s *Struct) {
 	d.p.printf("\n const maxFields%s = %d\n", nStr, n)
 
 	found := "found" + nStr
-	d.p.printf(tmpl)
+	d.p.printf("%v", tmpl)
 	// after printing tmpl, we are at this point:
 	// switch curField_ {
 	// -- templateDecodeMsg ends here --

@@ -162,7 +162,7 @@ func (u *unmarshalGen) mapstruct(s *Struct) {
 	u.p.printf("\n const maxFields%s = %d\n", nStr, n)
 
 	found := "found" + nStr
-	u.p.printf(tmpl)
+	u.p.printf("%v", tmpl)
 
 	for i := range s.Fields {
 		if s.Fields[i].Skip {

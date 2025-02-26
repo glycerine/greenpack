@@ -4,10 +4,11 @@ import (
 	"go/ast"
 	//"go/parser"
 	"fmt"
-	"go/token"
+	//"go/token"
 	"go/types"
 	"path/filepath"
 
+	"github.com/glycerine/greenpack/gen"
 	"golang.org/x/tools/go/packages"
 )
 
@@ -49,16 +50,7 @@ func genericTypeParam(path string) (generics map[string]string, err error) {
 	return
 }
 
-// instan (TypeInstantiationInfo) holds information
-// about a generic type instantiation
-type instan struct {
-	typeName     string
-	typeArgs     []types.Type
-	typeArgNames []string
-	position     token.Position
-}
-
-func analyzeGenericTypes(path string) (generics map[string][]*instan, err error) {
+func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err error) {
 	vv("top analyzeGenericTypes")
 
 	// Get the absolute directory path of the file
@@ -97,7 +89,7 @@ func analyzeGenericTypes(path string) (generics map[string][]*instan, err error)
 		}
 	}
 	// parent type key -> slice of instantiations
-	generics = make(map[string][]*instan)
+	generics = make(map[string][]*gen.Instan)
 
 	// Analyze each package
 	for _, pkg := range pkgs {
@@ -121,13 +113,13 @@ func analyzeGenericTypes(path string) (generics map[string][]*instan, err error)
 					typeArgNames[i] = typeArgs[i].String()
 				}
 				nm := inst.Obj().Name()
-				info := &instan{
-					typeName:     nm,
-					typeArgs:     typeArgs,
-					typeArgNames: typeArgNames,
-					position:     pkg.Fset.Position(expr.Pos()),
+				info := &gen.Instan{
+					TypeName:     nm,
+					TypeArgs:     typeArgs,
+					TypeArgNames: typeArgNames,
+					Position:     pkg.Fset.Position(expr.Pos()),
 				}
-				vv("attempt 1 instan-> %v with %v", nm, info.typeArgNames)
+				vv("attempt 1 instan-> %v with %v", nm, info.TypeArgNames)
 				generics[nm] = append(generics[nm], info)
 			}
 		}
@@ -160,13 +152,13 @@ func analyzeGenericTypes(path string) (generics map[string][]*instan, err error)
 							typeArgNames[i] = typeArgs[i].String()
 						}
 						nm := inst.Obj().Name()
-						info := &instan{
-							typeName:     nm,
-							typeArgs:     typeArgs,
-							typeArgNames: typeArgNames,
-							position:     pkg.Fset.Position(indexExpr.Pos()),
+						info := &gen.Instan{
+							TypeName:     nm,
+							TypeArgs:     typeArgs,
+							TypeArgNames: typeArgNames,
+							Position:     pkg.Fset.Position(indexExpr.Pos()),
 						}
-						vv("attempt 2 instan-> %v with %v", nm, info.typeArgNames)
+						vv("attempt 2 instan-> %v with %v", nm, info.TypeArgNames)
 						generics[nm] = append(generics[nm], info)
 					}
 				}

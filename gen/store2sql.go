@@ -317,7 +317,7 @@ func (e *storeToSqlGen) structmap(s *Struct) {
 
 	values = "(" + values + ")"
 	ins += ") values " + values + "\"\n"
-	e.p.printf(ins)
+	e.p.printf("%v", ins)
 	e.p.printf("sqlIns = strings.ReplaceAll(sqlIns, \"”\", \"`\")")
 
 	e.p.printf(`
