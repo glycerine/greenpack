@@ -45,7 +45,7 @@ type Struct2 struct {
 }
 
 func mkTestStruct() *Struct2 {
-	v1 := &Struct1{
+	s1 := &Struct1{
 		String: "msgpack",
 		I:      math.MaxInt,
 		Imin:   math.MinInt,
@@ -64,14 +64,14 @@ func mkTestStruct() *Struct2 {
 		U64:    math.MaxUint64,
 		By:     []byte("bytes!"),
 	}
-	v2 := &Struct2{
-		S1: v1,
+	s2 := &Struct2{
+		S1: s1,
 		S2: &Struct2{
 			By2: []byte("DEEPer By2"),
 		},
 		By2: []byte("I'm a By2"),
 	}
-	return v2
+	return s2
 }
 
 func TestReflectionSerz(t *testing.T) {
@@ -100,18 +100,21 @@ func TestReflectionSerz(t *testing.T) {
 		panic(err)
 	}
 	fmt.Printf("v2.S1.By = '%v'\n", string(v2.S1.By))
-	fmt.Printf("v3.S1.By = '%v'\n", string(v3.S1.By))
+	// v2.S1.By = 'bytes!'
 
-	if !reflect.DeepEqual(v, v3) {
-		goon.Dump(v)
+	fmt.Printf("versus v3.S1.By = '%v'\n", string(v3.S1.By))
+	// v3.S1.By = 'I'm a '
+
+	if !reflect.DeepEqual(v2, v3) {
+		goon.Dump(v2)
 		fmt.Printf("versus got back v3:\n")
 		goon.Dump(v3)
-		t.Fatalf("expected '%#v', got '%#v'", v, v3) //red
+		t.Fatalf("expected '%#v', got '%#v'", v2, v3) //red
 	}
 }
 
 /*
-jaten@Js-MacBook-Pro ~/greenpack/gen (reflect) $ diff -b v v3
+$ diff -b v v3
 5,10c5,10
 (*gen.Struct2)(&gen.Struct2{
 	S1: (*gen.Struct1)(&gen.Struct1{
