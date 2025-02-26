@@ -51,7 +51,7 @@ func genericTypeParam(path string) (generics map[string]string, err error) {
 }
 
 func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err error) {
-	vv("top analyzeGenericTypes")
+	//vv("top analyzeGenericTypes")
 
 	// Get the absolute directory path of the file
 	absPath, err := filepath.Abs(path)
