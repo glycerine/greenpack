@@ -196,7 +196,7 @@ func (c *Common) Alias(typ string, ric *Genric) {
 	c.alias = typ
 	c.generic = ric
 	if ric != nil {
-		fmt.Printf("debug genric: c.alias '%v' -> '%v'\n", c.alias, c.alias+ric.Bracket)
+		//fmt.Printf("debug genric: c.alias '%v' -> '%v'\n", c.alias, c.alias+ric.Bracket)
 	}
 }
 
@@ -346,7 +346,7 @@ func Generics(name string, typeParm *ast.FieldList, instan []*Instan) (r *Genric
 func Ident(id string, isIface bool, ric *Genric) *BaseElem {
 
 	if ric != nil {
-		vv("Ident(id='%v'). generics = '%v'\n%v\n", id, ric.Bracket, stack())
+		//vv("Ident(id='%v'). generics = '%v'\n%v\n", id, ric.Bracket, stack())
 	}
 	p, ok := primitives[id]
 	if ok {
