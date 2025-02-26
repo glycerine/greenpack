@@ -105,6 +105,9 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error in getast.go: loader.Load() error: '%v'", err)
 	}
+
+	vv("lprog = '%#v'", lprog)
+
 	fs.LoadedProg = lprog
 	pkgInfo := lprog.Package(packageName)
 	if pkgInfo == nil {
@@ -139,6 +142,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 				ast.FileExports(fl)
 			}
 			fs.getTypeSpecs(fl)
+			fs.getTemplateInstantiations(fl)
 			popstate()
 		}
 	} else {
@@ -154,6 +158,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 			ast.FileExports(f)
 		}
 		fs.getTypeSpecs(f)
+		fs.getTemplateInstantiations(f)
 	}
 
 	if len(fs.Specs) == 0 {
@@ -356,6 +361,54 @@ func (f *FileSet) PrintTo(p *gen.Printer) error {
 		}
 	}
 	return nil
+}
+
+func (fs *FileSet) getTemplateInstantiations(f *ast.File) {
+
+	kinds := make(map[string]bool)
+	for name, obj := range f.Scope.Objects {
+		vv("object named '%v' = '%#v' -> '%v'",
+			name, obj, obj.Kind.String())
+		kinds[obj.Kind.String()] = true
+	}
+	vv("kinds = '%#v'", kinds) // "type" for all.
+
+	// check all declarations...
+	for i := range f.Decls {
+
+		vv("%v=i decl = '%#v'", i, f.Decls[i])
+
+		switch g := f.Decls[i].(type) {
+		case *ast.GenDecl:
+			// and check the specs...
+			for _, s := range g.Specs {
+
+				// for ast.TypeSpecs....
+
+				vv("spec s = '%#v'", s)
+				switch ts := s.(type) {
+				case *ast.TypeSpec:
+					// is it generic?
+					if ts.TypeParams != nil {
+						// it is generic
+						fmt.Printf("generic type '%v'; TypeParams: '%#v'; .List[0].Names[0].Name='%#v'; Obj.Decl.Type.Name='%#v'; TypeSpec.Type='%#v'", ts.Name.Name, ts.TypeParams, ts.TypeParams.List[0].Names[0].Name, ts.TypeParams.List[0].Names[0].Obj.Decl.(*ast.Field).Type.(*ast.Ident).Name, ts.Type)
+					}
+					switch ts.Type.(type) {
+
+					// this is the list of parse-able
+					// type specs
+					case *ast.StructType,
+						*ast.ArrayType,
+						*ast.StarExpr,
+						*ast.MapType,
+						*ast.Ident:
+
+					}
+
+				}
+			}
+		}
+	}
 }
 
 // getTypeSpecs extracts all of the *ast.TypeSpecs in the file
