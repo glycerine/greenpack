@@ -61,15 +61,35 @@ func analyzeGenericTypes(filepath string) (generics map[string][]*instan, err er
 	vv("top analyzeGenericTypes")
 	// Configure package loading
 	cfg := &packages.Config{
-		Mode:  packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax,
+		Mode: packages.NeedTypes |
+			packages.NeedTypesInfo |
+			packages.NeedSyntax |
+			packages.NeedFiles |
+			packages.NeedDeps |
+			packages.NeedImports,
 		Tests: false,
+		//Dir:   ".",  // Set current directory as root
 	}
 	vv("about to load filepath '%v'", filepath)
-	pkgs, err := packages.Load(cfg, filepath)
+	// Load both the package and the test package
+	pkgs, err := packages.Load(cfg,
+		filepath, // original package
+		//filepath+"_test", // test package
+		//"./...",          // all packages in current directory and subdirectories
+	)
 	if err != nil {
 		return nil, err
 	}
 	vv("back from Load okay. len(pkgs)=%v", len(pkgs))
+	for _, pkg := range pkgs {
+		vv("package %v has %v syntax files and %v types",
+			pkg.ID,
+			len(pkg.Syntax),
+			len(pkg.TypesInfo.Types))
+		if len(pkg.Errors) > 0 {
+			vv("package had errors: %v", pkg.Errors)
+		}
+	}
 	// parent type key -> slice of instantiations
 	generics = make(map[string][]*instan)
 

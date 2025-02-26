@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"sort"
 
 	cv "github.com/glycerine/goconvey/convey"
@@ -139,6 +140,58 @@ func testCode(code string, out []byte) error {
 	return err
 }
 
+// testCodeModule is a helper for checking for
+// generics instantiation.
+func testCodeModule(pkgname, code string, out []byte) error {
+	// Create a temporary directory for our test module
+	tmpDir, err := ioutil.TempDir(".", "tmp-test-")
+	panicOn(err)
+	defer os.RemoveAll(tmpDir)
+
+	tmpDir2 := filepath.Join(tmpDir, pkgname)
+	err = os.MkdirAll(tmpDir2, 0755)
+	panicOn(err)
+
+	// Create go.mod file
+	modFile := filepath.Join(tmpDir2, "go.mod")
+	err = ioutil.WriteFile(modFile, []byte(fmt.Sprintf("module %v\n\ngo 1.24\n", pkgname)), 0644)
+	panicOn(err)
+
+	// Write the test code
+	gofile := filepath.Join(tmpDir2, "main.go")
+	err = ioutil.WriteFile(gofile, []byte(code), 0644)
+	panicOn(err)
+
+	ofile := gofile + ".out"
+
+	fmt.Printf("\n in file '%s', checking:\n%v\n", gofile, code)
+
+	cfg := cfg.GreenConfig{
+		Out:        ofile,
+		GoFile:     gofile,
+		Encode:     true,
+		Marshal:    true,
+		Tests:      true,
+		Unexported: false,
+	}
+	fileSet, err := File(&cfg)
+
+	if len(out) > 0 {
+		if len(fileSet.Identities) > 0 {
+			err := fileSet.SaveMsgpackFile(gofile, ofile)
+			if err != nil {
+				panic(err)
+			}
+		}
+		o, err := ioutil.ReadFile(ofile + ".json")
+		if err != nil {
+			panic(err)
+		}
+		copy(out, o)
+	}
+	return err
+}
+
 // write out fields in zid order: re-order the
 // field sequence to match the zid-based order.
 // This allows for consistent and reproducible
@@ -246,6 +299,6 @@ func doInstan() {
    _ = m
 }
 `
-		cv.So(testCode(s, nil), cv.ShouldBeNil)
+		cv.So(testCodeModule("hasgenerics", s, nil), cv.ShouldBeNil)
 	})
 }
