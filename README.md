@@ -1,6 +1,26 @@
 greenpack news, December 2024 
 ===============
 
+### Partial generics support
+
+2025 February 26: In v0.530.0 I've added more support
+for generics. Previously we had simply skipped any
+generic struct. Now we process generic structs, and
+serialize any non-generic fields. Generic (type
+parameterized) fields will require reflection to
+serialize them, and so they are skipped. 
+
+* work-around in the absence of full generics support
+
+I may add automatic reflection support for generic
+fields in the future, but for now there is a
+pretty easy, manual, work-around. 
+
+The pre and post commit hooks can be used to 
+manually use reflection and serialize 
+your generic fields into a reserved []byte field
+that you add to your structs for this purpose.
+
 ### Automatic pointer Dedup off by default for now.
 
 2025 January 12: In v0.529.0 I have turned off pointer dedup by default because
