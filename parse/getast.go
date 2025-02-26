@@ -149,7 +149,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 			popstate()
 		}
 	} else {
-		vv("have file not dir")
+		//vv("have file not dir")
 		if len(pkgInfo.Files) != 1 {
 			fmt.Printf("debug: expected single file, but got: len(pkgInfo.Files) = %v\n", len(pkgInfo.Files))
 			panic("huh?!? what to do with multiple or zero files here?")

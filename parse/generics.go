@@ -59,7 +59,7 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 		return nil, err
 	}
 	dir := filepath.Dir(absPath)
-
+	_ = dir
 	// Configure package loading
 	cfg := &packages.Config{
 		Mode: packages.NeedTypes |
@@ -71,7 +71,7 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 		Tests: false,
 		Dir:   absPath, // Set working directory to the module directory
 	}
-	vv("about to load path '%v' from dir '%v'", path, dir)
+	//vv("about to load path '%v' from dir '%v'", path, dir)
 
 	// Load using the package pattern
 	pkgs, err := packages.Load(cfg, ".") // Use "." to load package in current dir
