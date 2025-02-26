@@ -381,6 +381,7 @@ func (fs *FileSet) getTemplateInstantiations(f *ast.File) {
 	}
 	panicOn(err)
 	//fs.Instan[nm] = generics
+	// merge
 	for k, v := range generics {
 		slc := fs.Instan[k]
 		slc = append(slc, v...)
