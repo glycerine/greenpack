@@ -86,7 +86,7 @@ func TestReflectionSerz(t *testing.T) {
 		panic(err)
 	}
 	if !reflect.DeepEqual(v, v2) {
-		t.Fatalf("expected '%#v', got '%#v'", v, v2)
+		t.Fatalf("expected '%#v', got '%#v'", v, v2) // green
 	}
 
 	// streaming
@@ -99,10 +99,55 @@ func TestReflectionSerz(t *testing.T) {
 	if err := shamaton2.UnmarshalRead(buf, v3); err != nil {
 		panic(err)
 	}
+	fmt.Printf("v2.S1.By = '%v'\n", string(v2.S1.By))
+	fmt.Printf("v3.S1.By = '%v'\n", string(v3.S1.By))
+
 	if !reflect.DeepEqual(v, v3) {
 		goon.Dump(v)
 		fmt.Printf("versus got back v3:\n")
 		goon.Dump(v3)
-		t.Fatalf("expected '%#v', got '%#v'", v, v3)
+		t.Fatalf("expected '%#v', got '%#v'", v, v3) //red
 	}
 }
+
+/*
+jaten@Js-MacBook-Pro ~/greenpack/gen (reflect) $ diff -b v v3
+5,10c5,10
+(*gen.Struct2)(&gen.Struct2{
+	S1: (*gen.Struct1)(&gen.Struct1{
+		String: (string)("msgpack"),
+		By: ([]uint8)([]uint8{
+< 			(uint8)(98),
+< 			(uint8)(121),
+< 			(uint8)(116),
+< 			(uint8)(101),
+< 			(uint8)(115),
+< 			(uint8)(33),
+---
+(*gen.Struct2)(&gen.Struct2{
+	S1: (*gen.Struct1)(&gen.Struct1{
+		String: (string)("msgpack"),
+		By: ([]uint8)([]uint8{
+> 			(uint8)(73),
+> 			(uint8)(39),
+> 			(uint8)(109),
+> 			(uint8)(32),
+> 			(uint8)(97),
+> 			(uint8)(32),
+32,37c32,34
+< 			(uint8)(68),
+< 			(uint8)(69),
+< 			(uint8)(69),
+< 			(uint8)(80),
+< 			(uint8)(101),
+< 			(uint8)(114),
+---
+> 			(uint8)(73),
+> 			(uint8)(39),
+> 			(uint8)(109),
+38a36,37
+> 			(uint8)(97),
+> 			(uint8)(32),
+40a40
+> 			(uint8)(50),
+*/
