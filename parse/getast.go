@@ -552,7 +552,7 @@ func (fs *FileSet) parseFieldList(name string, fl *ast.FieldList, ric *gen.Genri
 		for i := range zidSet {
 			if skip[zidSet[i].origPos] {
 				// leave out the fields containing type parameters.
-				fmt.Printf("skipping generic field: '%v'\n", zidSet[i].origPos)
+				//fmt.Printf("skipping generic field: '%v'\n", zidSet[i].origPos)
 			} else {
 				sortedOut[next] = out[zidSet[i].origPos]
 				next++
@@ -689,7 +689,8 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 	ex, err := fs.parseExpr(name, f.Type, isIface, ric)
 	if err == ErrSkipGenerics {
 		typnm := extractTypeName(f.Type)
-		fmt.Printf("skipping generic field: name='%v' typnm='%v'\n", name, typnm)
+		_ = typnm
+		//fmt.Printf("skipping generic field: name='%v' typnm='%v'\n", name, typnm)
 		skip = true
 		needsReflection = true
 		err = nil
@@ -897,10 +898,9 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 				if ric != nil {
 					_, isTypeParm := ric.Parm[e.Name]
 					if isTypeParm {
-						warnf("recognized ric '%v'\n", e.Name)
+						//warnf("recognized ric '%v'\n", e.Name)
 
 						//fmt.Printf("\n returning ErrSkipGenerics; stack=\n%v\n", string(debug.Stack()))
-						//return nil, ErrSkipGenerics
 						return b, ErrSkipGenerics
 					}
 				}
@@ -925,10 +925,9 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 		}
 		els, err := fs.parseExpr(nm, e.Elt, isIface, ric)
 		if err == ErrSkipGenerics {
-			fmt.Printf("See ErrSkipGenerics here! in ArrayType! Elt = '%#v'\n", e.Elt)
+			//fmt.Printf("See ErrSkipGenerics here! in ArrayType! Elt = '%#v'\n", e.Elt)
 			// TODO: use reflection?
-			//err = nil
-			return nil, err // prevent generic field gen.
+			return nil, err // prevent generic field gen for now.
 		}
 		if err != nil {
 			return nil, err

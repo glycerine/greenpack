@@ -314,7 +314,7 @@ func Generics(name string, typeParm *ast.FieldList, instan []*Instan) (r *Genric
 	inst := "[int]"
 	if len(instan) > 0 {
 		inst = "[" + instan[0].TypeArgNames[0] + "]"
-		vv("using example generic inst '%v'", inst)
+		//vv("using example generic inst '%v'", inst)
 	}
 
 	r = &Genric{
@@ -336,7 +336,7 @@ func Generics(name string, typeParm *ast.FieldList, instan []*Instan) (r *Genric
 	}
 	generic += "]"
 	r.Bracket = generic
-	vv("Generics sees %v %v", name, r.Bracket)
+	//vv("Generics sees %v %v", name, r.Bracket)
 	return r
 }
 
