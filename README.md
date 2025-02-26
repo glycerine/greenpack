@@ -24,7 +24,7 @@ that you add to your structs for this purpose.
 ### Automatic pointer Dedup off by default for now.
 
 2025 January 12: In v0.529.0 I have turned off pointer dedup by default because
-it Encode/Decode was producing some errors that I have not had time to track down.
+the dedup Encode/Decode was producing some errors that I have not had time to track down.
 For now you'll want to manually dedup pointers. Marshal/Unmarshal has
 never supported pointer dedup so it was never affected.
 The env var GREENPACK_DEDUP can be set (to true) to 
