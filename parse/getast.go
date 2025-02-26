@@ -903,7 +903,8 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 						warnf("recognized ric '%v'\n", e.Name)
 
 						//fmt.Printf("\n returning ErrSkipGenerics; stack=\n%v\n", string(debug.Stack()))
-						return nil, ErrSkipGenerics
+						//return nil, ErrSkipGenerics
+						return b, ErrSkipGenerics
 					}
 				}
 			}
