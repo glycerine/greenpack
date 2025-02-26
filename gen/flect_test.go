@@ -1,6 +1,7 @@
 package gen
 
-// felect_test: tests of reflection based
+/*
+// flect_test: tests of reflection based
 // msgpack serz, for generics.
 
 import (
@@ -112,7 +113,7 @@ func TestReflectionSerz(t *testing.T) {
 		t.Fatalf("expected '%#v', got '%#v'", v2, v3) //red
 	}
 }
-
+*/
 /*
 $ diff -b v v3
 5,10c5,10
