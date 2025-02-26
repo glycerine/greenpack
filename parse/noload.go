@@ -47,6 +47,7 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 		GenericTypeParams:  make(map[string]*gen.Genric),
 		Instan:             make(map[string][]*gen.Instan),
 	}
+	fs.InterfaceTypeNames["any"] = true
 
 	fset := token.NewFileSet()
 	if isDir {

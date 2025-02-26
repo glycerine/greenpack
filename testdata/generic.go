@@ -34,7 +34,4 @@ type StructThatHasFieldsWithGenerics struct {
 
 type CompareToIgnoredFields struct {
 	IgnoreMe int `msg:"-"`
-
-	// interface{} works, but any was borken.
-	Inside any `zid:"0"`
 }

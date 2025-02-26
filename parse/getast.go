@@ -72,6 +72,8 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 		GenericTypeParams:  make(map[string]*gen.Genric),
 		Instan:             make(map[string][]*gen.Instan),
 	}
+	// the alias for interface{}
+	fs.InterfaceTypeNames["any"] = true
 
 	var filenames []string
 	var err error
