@@ -16,7 +16,7 @@ I may add automatic reflection support for generic
 fields in the future, but for now there is a
 pretty easy, manual, work-around. 
 
-The pre and post commit hooks can be used to 
+The pre and post serialization hooks can be used to 
 manually use reflection and serialize 
 your generic fields into a reserved []byte field
 that you add to your structs for this purpose.
