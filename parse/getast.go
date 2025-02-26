@@ -693,7 +693,7 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 	if err == ErrSkipGenerics {
 		typnm := extractTypeName(f.Type)
 		fmt.Printf("skipping generic field: name='%v' typnm='%v'\n", name, typnm)
-		//skip = true
+		skip = true
 		needsReflection = true
 		err = nil
 	}
@@ -929,8 +929,9 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 		els, err := fs.parseExpr(nm, e.Elt, isIface, ric)
 		if err == ErrSkipGenerics {
 			fmt.Printf("See ErrSkipGenerics here! in ArrayType! Elt = '%#v'\n", e.Elt)
-			// use reflection now
-			err = nil
+			// TODO: use reflection?
+			//err = nil
+			return nil, err // prevent generic field gen.
 		}
 		if err != nil {
 			return nil, err
