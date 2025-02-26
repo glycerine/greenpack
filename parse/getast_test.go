@@ -151,7 +151,7 @@ func testCodeModule(pkgname, code string, out []byte) error {
 	tmpDir2 := filepath.Join(cwd, pkgname)
 	err = os.MkdirAll(tmpDir2, 0755)
 	panicOn(err)
-	//defer os.RemoveAll(tmpDir)
+	defer os.RemoveAll(tmpDir2)
 
 	// Create go.mod file
 	modFile := filepath.Join(tmpDir2, "go.mod")
