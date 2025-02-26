@@ -144,13 +144,14 @@ func testCode(code string, out []byte) error {
 // generics instantiation.
 func testCodeModule(pkgname, code string, out []byte) error {
 	// Create a temporary directory for our test module
-	tmpDir, err := ioutil.TempDir(".", "tmp-test-")
-	panicOn(err)
-	//defer os.RemoveAll(tmpDir)
 
-	tmpDir2 := filepath.Join(tmpDir, pkgname)
+	cwd, err := os.Getwd()
+	panicOn(err)
+
+	tmpDir2 := filepath.Join(cwd, pkgname)
 	err = os.MkdirAll(tmpDir2, 0755)
 	panicOn(err)
+	//defer os.RemoveAll(tmpDir)
 
 	// Create go.mod file
 	modFile := filepath.Join(tmpDir2, "go.mod")

@@ -69,7 +69,7 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 			packages.NeedDeps |
 			packages.NeedImports,
 		Tests: false,
-		Dir:   dir, // Set working directory to the module directory
+		Dir:   absPath, // Set working directory to the module directory
 	}
 	vv("about to load path '%v' from dir '%v'", path, dir)
 
