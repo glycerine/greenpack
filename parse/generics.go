@@ -78,14 +78,16 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 	if err != nil {
 		return nil, err
 	}
-	vv("back from Load okay. len(pkgs)=%v", len(pkgs))
+	//vv("back from Load okay. len(pkgs)=%v", len(pkgs))
 	for _, pkg := range pkgs {
-		vv("package %v has %v syntax files and %v types",
-			pkg.ID,
-			len(pkg.Syntax),
-			len(pkg.TypesInfo.Types))
+		if false {
+			vv("package %v has %v syntax files and %v types",
+				pkg.ID,
+				len(pkg.Syntax),
+				len(pkg.TypesInfo.Types))
+		}
 		if len(pkg.Errors) > 0 {
-			vv("package had errors: %v", pkg.Errors)
+			alwaysPrintf("analyze generics: package had errors: %v", pkg.Errors)
 		}
 	}
 	// parent type key -> slice of instantiations
