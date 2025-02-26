@@ -99,7 +99,9 @@ func testCode(code string, out []byte) error {
 	panicOn(err)
 	ofile := gofile.Name() + ".out"
 
-	fmt.Fprintf(gofile, code)
+	_, err = gofile.Write([]byte(code))
+	panicOn(err)
+	//fmt.Fprintf(gofile, code)
 	gofile.Close()
 
 	fmt.Printf("\n in file '%s', checking:\n%v\n", gofile.Name(),
@@ -160,7 +162,10 @@ func Test003OrderFieldsByZid(t *testing.T) {
 			os.Remove(ofile)
 		}()
 
-		fmt.Fprintf(gofile, code)
+		//fmt.Fprintf(gofile, code)
+		_, err = gofile.Write([]byte(code))
+		panicOn(err)
+
 		gofile.Close()
 
 		fmt.Printf("\n in file '%s', checking:\n%v\n", gofile.Name(),

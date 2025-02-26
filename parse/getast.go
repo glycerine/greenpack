@@ -69,6 +69,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 		Cfg:                c,
 		InterfaceTypeNames: make(map[string]bool),
 		GenericTypeParams:  make(map[string]*gen.Genric),
+		Instan:             make(map[string]map[string]*instan),
 	}
 
 	var filenames []string
