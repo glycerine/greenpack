@@ -49,15 +49,16 @@ func genericTypeParam(path string) (generics map[string]string, err error) {
 	return
 }
 
-// TypeInstantiationInfo holds information about a generic type instantiation
-type TypeInstantiationInfo struct {
-	TypeName     string
-	TypeArgs     []types.Type
-	TypeArgNames []string
-	Position     token.Position
+// instan (TypeInstantiationInfo) holds information
+// about a generic type instantiation
+type instan struct {
+	typeName     string
+	typeArgs     []types.Type
+	typeArgNames []string
+	position     token.Position
 }
 
-func AnalyzeGenericTypes(filepath string) (generics map[string]*TypeInstantiationInfo, err error) {
+func analyzeGenericTypes(filepath string) (generics map[string]*instan, err error) {
 	// Configure package loading
 	cfg := &packages.Config{
 		Mode:  packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax,
@@ -70,7 +71,7 @@ func AnalyzeGenericTypes(filepath string) (generics map[string]*TypeInstantiatio
 	}
 	vv("back from Load okay.")
 	// parent type key
-	generics = make(map[string]*TypeInstantiationInfo)
+	generics = make(map[string]*instan)
 
 	// Analyze each package
 	for _, pkg := range pkgs {
@@ -98,14 +99,15 @@ func AnalyzeGenericTypes(filepath string) (generics map[string]*TypeInstantiatio
 							typeArgs[i] = inst.TypeArgs().At(i)
 							typeArgNames[i] = typeArgs[i].String()
 						}
-
-						info := &TypeInstantiationInfo{
-							TypeName:     inst.Obj().Name(),
-							TypeArgs:     typeArgs,
-							TypeArgNames: typeArgNames,
-							Position:     pkg.Fset.Position(indexExpr.Pos()),
+						nm := inst.Obj().Name()
+						info := &instan{
+							typeName:     nm,
+							typeArgs:     typeArgs,
+							typeArgNames: typeArgNames,
+							position:     pkg.Fset.Position(indexExpr.Pos()),
 						}
-						generics[info.TypeName] = info
+						vv("%v -> %v", nm, info.typeArgNames)
+						generics[nm] = info
 					}
 				}
 				return true

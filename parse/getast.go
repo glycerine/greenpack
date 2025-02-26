@@ -45,6 +45,7 @@ type FileSet struct {
 	InterfaceTypeNames map[string]bool // so we can heuristically identify interfaces.
 
 	GenericTypeParams map[string]*gen.Genric // type params, or nil
+	Instan            map[string]map[string]*instan
 }
 
 // File parses a file at the relative path
@@ -365,50 +366,10 @@ func (f *FileSet) PrintTo(p *gen.Printer) error {
 
 func (fs *FileSet) getTemplateInstantiations(f *ast.File) {
 
-	kinds := make(map[string]bool)
-	for name, obj := range f.Scope.Objects {
-		vv("object named '%v' = '%#v' -> '%v'",
-			name, obj, obj.Kind.String())
-		kinds[obj.Kind.String()] = true
-	}
-	vv("kinds = '%#v'", kinds) // "type" for all.
-
-	// check all declarations...
-	for i := range f.Decls {
-
-		vv("%v=i decl = '%#v'", i, f.Decls[i])
-
-		switch g := f.Decls[i].(type) {
-		case *ast.GenDecl:
-			// and check the specs...
-			for _, s := range g.Specs {
-
-				// for ast.TypeSpecs....
-
-				vv("spec s = '%#v'", s)
-				switch ts := s.(type) {
-				case *ast.TypeSpec:
-					// is it generic?
-					if ts.TypeParams != nil {
-						// it is generic
-						fmt.Printf("generic type '%v'; TypeParams: '%#v'; .List[0].Names[0].Name='%#v'; Obj.Decl.Type.Name='%#v'; TypeSpec.Type='%#v'", ts.Name.Name, ts.TypeParams, ts.TypeParams.List[0].Names[0].Name, ts.TypeParams.List[0].Names[0].Obj.Decl.(*ast.Field).Type.(*ast.Ident).Name, ts.Type)
-					}
-					switch ts.Type.(type) {
-
-					// this is the list of parse-able
-					// type specs
-					case *ast.StructType,
-						*ast.ArrayType,
-						*ast.StarExpr,
-						*ast.MapType,
-						*ast.Ident:
-
-					}
-
-				}
-			}
-		}
-	}
+	nm := f.Name.Name
+	generics, err := analyzeGenericTypes(nm)
+	panicOn(err)
+	fs.Instan[nm] = generics
 }
 
 // getTypeSpecs extracts all of the *ast.TypeSpecs in the file
