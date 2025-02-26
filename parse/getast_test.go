@@ -303,3 +303,33 @@ func doInstan() {
 		cv.So(testCodeModule("hasgenerics", s, nil), cv.ShouldBeNil)
 	})
 }
+
+func Test006EmptyInterface(t *testing.T) {
+
+	cv.Convey("interface{} works ", t, func() {
+		s := `
+package hasempty
+
+type HasEmpty struct {
+    Empty interface{}
+
+}
+`
+		cv.So(testCodeModule("hasempty", s, nil), cv.ShouldBeNil)
+	})
+}
+
+func Test007AnyInterface(t *testing.T) {
+
+	cv.Convey("interface{} works but the alias 'any' was borken", t, func() {
+		s := `
+package hasany
+
+type HasAny struct {
+    Many any
+
+}
+`
+		cv.So(testCodeModule("hasany", s, nil), cv.ShouldBeNil)
+	})
+}

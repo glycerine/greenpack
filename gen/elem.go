@@ -344,7 +344,7 @@ func Generics(name string, typeParm *ast.FieldList, instan []*Instan) (r *Genric
 // to the provided identity.
 // Called by parser/getast.go:863 (Ident), :1013 (selector)
 func Ident(id string, isIface bool, ric *Genric) *BaseElem {
-
+	vv("Ident id='%v', isIface='%v'", id, isIface)
 	if ric != nil {
 		//vv("Ident(id='%v'). generics = '%v'\n%v\n", id, ric.Bracket, stack())
 	}
