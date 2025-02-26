@@ -62,7 +62,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 
 	name := c.GoFile
 	pushstate(name)
-	vv("File top for name '%v'", name)
+	//vv("File top for name '%v'", name)
 	defer popstate()
 	fs := &FileSet{
 		Specs:              make(map[string]*ast.TypeSpec),
@@ -109,7 +109,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 		return nil, fmt.Errorf("error in getast.go: loader.Load() error: '%v'", err)
 	}
 
-	vv("lprog = '%#v'", lprog)
+	//vv("lprog = '%#v'", lprog)
 
 	fs.LoadedProg = lprog
 	pkgInfo := lprog.Package(packageName)
@@ -239,7 +239,7 @@ func (f *FileSet) resolve(ls linkset) {
 				progress = true
 				nt := real.Copy()
 				ric := f.GenericTypeParams[elem.TypeName()]
-				vv("resolve(): Alias(name='%v', typeParm='%#v'", name, ric)
+				//vv("resolve(): Alias(name='%v', typeParm='%#v'", name, ric)
 				nt.Alias(name, ric)
 				f.Identities[name] = nt
 				delete(ls, name)
@@ -411,11 +411,8 @@ func (fs *FileSet) getTypeSpecs(f *ast.File) {
 				case *ast.TypeSpec:
 					// is it generic?
 					if ts.TypeParams != nil {
-						// it is generic
-						warnln(fmt.Sprintf("generic type '%v'; TypeParams: '%#v'; .List[0].Names[0].Name='%#v'; Obj.Decl.Type.Name='%#v'; TypeSpec.Type='%#v'", ts.Name.Name, ts.TypeParams, ts.TypeParams.List[0].Names[0].Name, ts.TypeParams.List[0].Names[0].Obj.Decl.(*ast.Field).Type.(*ast.Ident).Name, ts.Type))
-						//genericXtra = "[" + ts.TypeParams.List[0].Names[0].Name + "]"
-						//warnln(fmt.Sprintf("ignoring generic type '%v'; greenpack does not support generics (at this point), so we ignore them.", ts.Name.Name))
-						//continue // ignore these
+						// it is generic type parameterized!
+						//warnln(fmt.Sprintf("generic type '%v'; TypeParams: '%#v'; .List[0].Names[0].Name='%#v'; Obj.Decl.Type.Name='%#v'; TypeSpec.Type='%#v'", ts.Name.Name, ts.TypeParams, ts.TypeParams.List[0].Names[0].Name, ts.TypeParams.List[0].Names[0].Obj.Decl.(*ast.Field).Type.(*ast.Ident).Name, ts.Type))
 					}
 					switch ts.Type.(type) {
 
@@ -489,7 +486,7 @@ func (fs *FileSet) parseFieldList(name string, fl *ast.FieldList, ric *gen.Genri
 	sz := fl.NumFields()
 	skip := make(map[int]bool)
 	if ric != nil {
-		vv("debug parseFieldList for '%v' sees generics = '%v'\n", name, ric.Bracket)
+		//vv("debug parseFieldList for '%v' sees generics = '%v'\n", name, ric.Bracket)
 
 		// subtrack off (cannot serialize) generic fields
 		for i, fld := range fl.List {
