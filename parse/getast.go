@@ -45,7 +45,7 @@ type FileSet struct {
 	InterfaceTypeNames map[string]bool // so we can heuristically identify interfaces.
 
 	GenericTypeParams map[string]*gen.Genric // type params, or nil
-	Instan            map[string]map[string][]*gen.Instan
+	Instan            map[string][]*gen.Instan
 }
 
 // File parses a file at the relative path
@@ -69,7 +69,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 		Cfg:                c,
 		InterfaceTypeNames: make(map[string]bool),
 		GenericTypeParams:  make(map[string]*gen.Genric),
-		Instan:             make(map[string]map[string][]*gen.Instan),
+		Instan:             make(map[string][]*gen.Instan),
 	}
 
 	var filenames []string
@@ -261,9 +261,12 @@ parse:
 	for name, def := range f.Specs {
 		pushstate(name)
 
-		vv("name '%v' -> Instan '%#v'", name, f.Instan[name])
+		inst := f.Instan[name]
+		//for _, ins := range inst {
+		//	vv("name '%v' -> Instan '%#v'", name, ins)
+		//}
 
-		ric := gen.Generics(name, def.TypeParams, f.Instan[name])
+		ric := gen.Generics(name, def.TypeParams, inst)
 		f.GenericTypeParams[name] = ric
 
 		el, err := f.parseExpr(name, def.Type, false, ric)
@@ -372,8 +375,17 @@ func (fs *FileSet) getTemplateInstantiations(f *ast.File) {
 	vv("top getTemplateInstantiations")
 	nm := f.Name.Name
 	generics, err := analyzeGenericTypes(nm)
+	if err != nil {
+		// likely just no directory; happens alot.
+		return
+	}
 	panicOn(err)
-	fs.Instan[nm] = generics
+	//fs.Instan[nm] = generics
+	for k, v := range generics {
+		slc := fs.Instan[k]
+		slc = append(slc, v...)
+		fs.Instan[k] = slc
+	}
 }
 
 // getTypeSpecs extracts all of the *ast.TypeSpecs in the file

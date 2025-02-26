@@ -304,16 +304,23 @@ type Instan struct {
 	Position     token.Position
 }
 
-func Generics(name string, typeParm *ast.FieldList, instan map[string][]*Instan) (r *Genric) {
+func Generics(name string, typeParm *ast.FieldList, instan []*Instan) (r *Genric) {
 	if typeParm == nil {
 		return nil
+	}
+
+	// for tests, use an actual found instantiation,
+	// if we can.
+	inst := "[int]"
+	if len(instan) > 0 {
+		inst = "[" + instan[0].TypeArgNames[0] + "]"
 	}
 
 	r = &Genric{
 		Name:     name,
 		Parm:     make(map[string]int),
 		TypeParm: typeParm,
-		Instan:   "int",
+		Instan:   inst,
 	}
 	generic := "["
 	n := len(typeParm.List)
