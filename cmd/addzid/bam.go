@@ -876,7 +876,6 @@ func ExtractGoToCapnCode(src string, goName string) string {
 //
 // src has to be string, []byte, or io.Reader, as in parser.ParseFile(). src
 // can be nil if fname is provided. See http://golang.org/pkg/go/parser/#ParseFile
-//
 func ExtractStructs(fname string, src interface{}, x *Extractor) ([]byte, error) {
 	if x == nil {
 		x = NewExtractor()
@@ -1447,7 +1446,7 @@ func (x *Extractor) CapnpCompileFragment(in []byte) ([]byte, error) {
 	compiled, combinedOut, err := CapnpCompilePath(f.Name())
 	if err != nil {
 		errmsg := fmt.Sprintf("error compiling the generated capnp code: '%s'; error: '%s'\n", debug, err) + string(combinedOut)
-		return []byte(errmsg), fmt.Errorf(errmsg)
+		return []byte(errmsg), fmt.Errorf("%v", errmsg)
 	}
 
 	return compiled, nil
