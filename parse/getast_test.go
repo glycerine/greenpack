@@ -117,7 +117,7 @@ func testCode(code string, out []byte) error {
 		Unexported: false,
 	}
 	fileSet, err := File(&cfg)
-	fmt.Printf("fileSet.Identities = '%#v'\n", fileSet.Identities)
+	//fmt.Printf("fileSet.Identities = '%#v'\n", fileSet.Identities)
 	//for k, v := range fileSet.Identities {
 	//	fmt.Printf("k = '%v'; v= '%#v'\n", k, v)
 	//}
@@ -146,7 +146,7 @@ func testCodeModule(pkgname, code string, out []byte) error {
 	// Create a temporary directory for our test module
 	tmpDir, err := ioutil.TempDir(".", "tmp-test-")
 	panicOn(err)
-	defer os.RemoveAll(tmpDir)
+	//defer os.RemoveAll(tmpDir)
 
 	tmpDir2 := filepath.Join(tmpDir, pkgname)
 	err = os.MkdirAll(tmpDir2, 0755)
