@@ -116,7 +116,7 @@ func testCode(code string, out []byte) error {
 		Unexported: false,
 	}
 	fileSet, err := File(&cfg)
-	//fmt.Printf("fileSet.Identities = '%#v'\n", fileSet.Identities)
+	fmt.Printf("fileSet.Identities = '%#v'\n", fileSet.Identities)
 	//for k, v := range fileSet.Identities {
 	//	fmt.Printf("k = '%v'; v= '%#v'\n", k, v)
 	//}
@@ -221,9 +221,9 @@ func Test004OrderFieldsByZid(t *testing.T) {
 	})
 }
 
-func Test005GenericsNotMarshalled(t *testing.T) {
+func Test005GenericsDetected(t *testing.T) {
 
-	cv.Convey("uninstantiated generic structs and fields (e.g. struct Gen[T any]{ my T }; ) shouldn't be marshalled", t, func() {
+	cv.Convey("uninstantiated generic structs and fields (e.g. struct Gen[T any]{ my T }; ) should be detected; instantiations too.", t, func() {
 
 		s := `
 package hasgenerics
