@@ -1,4 +1,4 @@
-greenpack news, December 2024 
+greenpack news, February 2025
 ===============
 
 ### Partial generics support
