@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go/token"
 	"go/types"
+	"path/filepath"
 
 	"golang.org/x/tools/go/packages"
 )
@@ -57,8 +58,16 @@ type instan struct {
 	position     token.Position
 }
 
-func analyzeGenericTypes(filepath string) (generics map[string][]*instan, err error) {
+func analyzeGenericTypes(path string) (generics map[string][]*instan, err error) {
 	vv("top analyzeGenericTypes")
+
+	// Get the absolute directory path of the file
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+	dir := filepath.Dir(absPath)
+
 	// Configure package loading
 	cfg := &packages.Config{
 		Mode: packages.NeedTypes |
@@ -68,15 +77,12 @@ func analyzeGenericTypes(filepath string) (generics map[string][]*instan, err er
 			packages.NeedDeps |
 			packages.NeedImports,
 		Tests: false,
-		//Dir:   ".",  // Set current directory as root
+		Dir:   dir, // Set working directory to the module directory
 	}
-	vv("about to load filepath '%v'", filepath)
-	// Load both the package and the test package
-	pkgs, err := packages.Load(cfg,
-		filepath, // original package
-		//filepath+"_test", // test package
-		//"./...",          // all packages in current directory and subdirectories
-	)
+	vv("about to load path '%v' from dir '%v'", path, dir)
+
+	// Load using the package pattern
+	pkgs, err := packages.Load(cfg, ".") // Use "." to load package in current dir
 	if err != nil {
 		return nil, err
 	}
@@ -144,6 +150,9 @@ func analyzeGenericTypes(filepath string) (generics map[string][]*instan, err er
 					if inst, ok := t.Type.(*types.Named); ok {
 						// Get the type arguments
 						n := inst.TypeArgs().Len()
+						if n == 0 {
+							return true
+						}
 						typeArgs := make([]types.Type, n)
 						typeArgNames := make([]string, n)
 						for i := 0; i < inst.TypeArgs().Len(); i++ {
