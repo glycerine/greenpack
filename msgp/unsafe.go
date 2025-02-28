@@ -1,3 +1,4 @@
+//go:build !appengine
 // +build !appengine
 
 package msgp
@@ -24,6 +25,9 @@ const (
 // THIS IS EVIL CODE.
 // YOU HAVE BEEN WARNED.
 func UnsafeString(b []byte) string {
+	if len(b) == 0 {
+		return ""
+	}
 	return *(*string)(unsafe.Pointer(&reflect.StringHeader{Data: uintptr(unsafe.Pointer(&b[0])), Len: len(b)}))
 }
 
