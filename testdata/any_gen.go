@@ -109,7 +109,7 @@ func (z *HasAny) fieldsNotEmpty(isempty []bool) uint32 {
 		return 1
 	}
 	var fieldsInUse uint32 = 1
-	isempty[0] = false
+	isempty[0] = (z.Inside == nil) // interface, omitempty
 	if isempty[0] {
 		fieldsInUse--
 	}
