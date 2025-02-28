@@ -251,7 +251,7 @@ func (m *marshalGen) gBase(b *BaseElem, x *extra) {
 	switch b.Value {
 	case IDENT:
 		echeck = true
-		if b.isIface {
+		if b.IsIface {
 			echeck = true
 			m.p.printf("\no, err = msgp.AppendIntf(o, %s) // is.iface", vname)
 		} else {

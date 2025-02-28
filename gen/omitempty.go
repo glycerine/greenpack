@@ -51,7 +51,7 @@ func (s *omitEmpty) gBase(b *BaseElem, x *extra) {
 		return
 	}
 
-	if b.isIface {
+	if b.IsIface {
 		s.p.printf("%s", IsNilInterface(b.Varname()))
 		return
 	}

@@ -173,6 +173,7 @@ func (s *sizeGen) gArray(a *Array, x *extra) {
 	if !s.p.ok() {
 		return
 	}
+	vv("gArray called; a.Els = '%#v'", a.Els)
 
 	s.addConstant(builtinSize(arrayHeader))
 
@@ -292,7 +293,7 @@ func basesizeExpr(b *BaseElem, s *sizeGen) string {
 	if b.Convert {
 		vname = tobaseConvert(b)
 	}
-	if b.isIface {
+	if b.IsIface {
 		return "msgp.GuessSize(" + vname + ")"
 	}
 

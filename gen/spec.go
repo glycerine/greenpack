@@ -492,6 +492,7 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 	myzid := parent.GetZid()
 
 	if inner.IsInterface() {
+		//vv("we notice inner is iface! inner.TypeName()='%v'", inner.TypeName())
 		inner.SetIsInInterfaceSlice()
 		target, concreteName := gensym(), gensym()
 		cfac := gensym()

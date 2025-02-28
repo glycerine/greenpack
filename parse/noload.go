@@ -31,6 +31,7 @@ import (
 // inconvient to have to meet
 // the compiler's demands just yet.
 func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
+	//vv("FileNoLoad top")
 	ok, isDir := fileOrDir(c.GoFile)
 	if !ok {
 		return nil, fmt.Errorf("error: path '%s' does not exist", c.GoFile)
@@ -47,6 +48,7 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 		GenericTypeParams:  make(map[string]*gen.Genric),
 		Instan:             make(map[string][]*gen.Instan),
 	}
+	fs.InterfaceTypeNames["any"] = true
 
 	fset := token.NewFileSet()
 	if isDir {
