@@ -72,6 +72,7 @@ func File(c *cfg.GreenConfig) (*FileSet, error) {
 		GenericTypeParams:  make(map[string]*gen.Genric),
 		Instan:             make(map[string][]*gen.Instan),
 	}
+	fs.InterfaceTypeNames["any"] = true
 
 	var filenames []string
 	var err error
@@ -373,11 +374,12 @@ func (f *FileSet) PrintTo(p *gen.Printer) error {
 }
 
 func (fs *FileSet) getTemplateInstantiations(f *ast.File) {
-	//vv("top getTemplateInstantiations")
 	nm := f.Name.Name
-	generics, err := analyzeGenericTypes(nm)
+	//vv("top getTemplateInstantiations nm='%v'", nm)
+	generics, ifaces, err := analyzeGenericTypes(nm)
 	if err != nil {
 		// likely just no directory; happens alot.
+		vv("err = '%v'", err)
 		return
 	}
 	panicOn(err)
@@ -387,6 +389,18 @@ func (fs *FileSet) getTemplateInstantiations(f *ast.File) {
 		slc := fs.Instan[k]
 		slc = append(slc, v...)
 		fs.Instan[k] = slc
+	}
+	//vv("len ifaces = %v: '%#v'", len(ifaces), ifaces)
+	// "github.com/glycerine/greenpack/testdata.Node"
+	// needs to be chomped down the "Node"
+	for nm := range ifaces {
+		base := filepath.Base(nm)
+		idx := strings.Index(base, ".")
+		if idx >= 0 {
+			//vv("nm: '%v' -> '%v'", nm, base[idx+1:])
+			nm = base[idx+1:]
+		}
+		fs.InterfaceTypeNames[nm] = true
 	}
 }
 
@@ -680,16 +694,16 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 		typnm := extractTypeName(f.Type)
 		//fmt.Printf("\n DEBUG: extracted type name '%s'\n", typnm)
 		if fs.InterfaceTypeNames[typnm] {
-			//fmt.Printf("\n DEBUG: detected that f.Names[0]='%s' is an interface\n", typnm)
+			fmt.Printf("\n DEBUG: detected that f.Names[0]='%s' is an interface\n", typnm)
 			isIface = true
 		}
 	}
 
 	// we are in getField() here.
 	ex, err := fs.parseExpr(name, f.Type, isIface, ric)
+	typnm := extractTypeName(f.Type)
+	_ = typnm
 	if err == ErrSkipGenerics {
-		typnm := extractTypeName(f.Type)
-		_ = typnm
 		//fmt.Printf("skipping generic field: name='%v' typnm='%v'\n", name, typnm)
 		skip = true
 		needsReflection = true
@@ -719,8 +733,10 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 
 		if tv, ok := fs.PackageInfo.Info.Types[f.Type]; ok {
 			isIface = types.IsInterface(tv.Type)
+			//vv("typnm='%v' -> isIface=%v; tv.Type = '%#v'", typnm, isIface, tv.Type)
 		}
 	}
+	//vv("typnm='%v' -> isIface=%v", typnm, isIface)
 
 	sf[0].Deprecated = deprecated
 	sf[0].OmitEmpty = omitempty
@@ -881,7 +897,7 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 	case *ast.Ident:
 		if e.Name == "any" {
 			// any: match the interface{} support below.
-			return &gen.BaseElem{Value: gen.Intf}, nil
+			return &gen.BaseElem{Value: gen.Intf, IsIface: true}, nil
 		}
 		if !isIface && e.Obj != nil && fs != nil && fs.PackageInfo != nil &&
 			len(fs.PackageInfo.Info.Types) > 0 {
@@ -1046,9 +1062,10 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 		return gen.Ident(stringify(e), isIface, ric), nil
 
 	case *ast.InterfaceType:
+		vv("see ast.InterfaceType e = '%#v'", e)
 		// support `interface{}`
 		if len(e.Methods.List) == 0 {
-			return &gen.BaseElem{Value: gen.Intf}, nil
+			return &gen.BaseElem{Value: gen.Intf, IsIface: true}, nil
 		}
 		return nil, nil
 
