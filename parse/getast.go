@@ -273,9 +273,9 @@ parse:
 		pushstate(name)
 
 		inst := f.Instan[name]
-		for _, ins := range inst {
-			vv("name '%v' -> Instan '%#v'", name, ins)
-		}
+		//for _, ins := range inst {
+		//vv("name '%v' -> Instan '%#v'", name, ins)
+		//}
 
 		ric := gen.Generics(name, def.TypeParams, inst)
 		f.GenericTypeParams[name] = ric
@@ -706,7 +706,7 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 		typnm := extractTypeName(f.Type)
 		//fmt.Printf("\n DEBUG: extracted type name '%s'\n", typnm)
 		if fs.InterfaceTypeNames[typnm] {
-			fmt.Printf("\n DEBUG: detected that f.Names[0]='%s' is an interface\n", typnm)
+			//fmt.Printf("\n DEBUG: detected that f.Names[0]='%s' is an interface\n", typnm)
 			isIface = true
 		}
 	}
