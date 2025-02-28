@@ -575,6 +575,17 @@ func (p *printer) unmarshalRangeBlock(idx string, parent Elem, t traversal, inne
 		p.printf("\n for %s := range %s {\n", idx, iter)
 
 		p.printf(`
+            // detect and skip null slots in
+            // the array/slice of interfaces.
+            if msgp.IsNil(bts) {
+                 bts, err = msgp.Skip(bts)
+                 if err != nil {
+                     return
+                 } 
+                 continue
+            }
+        `)
+		p.printf(`
         var concreteName_%s string
 		concreteName_%s, bts = nbs.NextStructName(bts)
         `, concreteName, concreteName)

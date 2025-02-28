@@ -877,6 +877,16 @@ doneWithStruct21zgensym_29db2bb3a798cb07_22:
 				//  fill target with the concrete implementation
 				for zgensym_29db2bb3a798cb07_12 := range z.Children {
 
+					// detect and skip null slots in
+					// the array/slice of interfaces.
+					if msgp.IsNil(bts) {
+						bts, err = msgp.Skip(bts)
+						if err != nil {
+							return
+						}
+						continue
+					}
+
 					var concreteName_zgensym_29db2bb3a798cb07_25 string
 					concreteName_zgensym_29db2bb3a798cb07_25, bts = nbs.NextStructName(bts)
 					target_zgensym_29db2bb3a798cb07_24 := z.Children[zgensym_29db2bb3a798cb07_12]
@@ -2093,6 +2103,16 @@ doneWithStruct56zgensym_29db2bb3a798cb07_57:
 				//  fill target with the concrete implementation
 				for zgensym_29db2bb3a798cb07_27 := range z.Slice {
 
+					// detect and skip null slots in
+					// the array/slice of interfaces.
+					if msgp.IsNil(bts) {
+						bts, err = msgp.Skip(bts)
+						if err != nil {
+							return
+						}
+						continue
+					}
+
 					var concreteName_zgensym_29db2bb3a798cb07_70 string
 					concreteName_zgensym_29db2bb3a798cb07_70, bts = nbs.NextStructName(bts)
 					target_zgensym_29db2bb3a798cb07_69 := z.Slice[zgensym_29db2bb3a798cb07_27]
@@ -2601,6 +2621,16 @@ doneWithStruct84zgensym_29db2bb3a798cb07_85:
 				// NB: we have a slice of interfaces, so we need to
 				//  fill target with the concrete implementation
 				for zgensym_29db2bb3a798cb07_75 := range z.Slc {
+
+					// detect and skip null slots in
+					// the array/slice of interfaces.
+					if msgp.IsNil(bts) {
+						bts, err = msgp.Skip(bts)
+						if err != nil {
+							return
+						}
+						continue
+					}
 
 					var concreteName_zgensym_29db2bb3a798cb07_88 string
 					concreteName_zgensym_29db2bb3a798cb07_88, bts = nbs.NextStructName(bts)
