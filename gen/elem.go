@@ -350,9 +350,9 @@ func Ident(id string, isIface bool, ric *Genric) *BaseElem {
 	}
 	p, ok := primitives[id]
 	if ok {
-		return &BaseElem{Value: p, isIface: isIface}
+		return &BaseElem{Value: p, IsIface: isIface}
 	}
-	be := &BaseElem{Value: IDENT, isIface: isIface}
+	be := &BaseElem{Value: IDENT, IsIface: isIface}
 	be.Alias(id, ric)
 	return be
 }
@@ -366,14 +366,20 @@ type Array struct {
 }
 
 func (s *Array) IsInterface() bool {
-	return false
+	// slice does this:
+	return s.Els.IsInterface()
+	//return false
 }
 
 func (s *Array) IsInInterfaceSlice() bool {
 	return false
 }
 
-func (s *Array) SetIsInInterfaceSlice() {}
+func (s *Array) SetIsInInterfaceSlice() {
+	// do we need to add this?
+	vv("Array.SetIsInInterfaceSlice called.")
+	s.Els.SetIsInInterfaceSlice()
+}
 
 func (a *Array) TypeClue() string {
 	return "ary"
@@ -784,12 +790,12 @@ type BaseElem struct {
 	Convert        bool      // should we do an explicit conversion?
 	mustinline     bool      // must inline; not printable
 	needsref       bool      // needs reference for shim
-	isIface        bool
+	IsIface        bool
 	isInIfaceSlice bool
 }
 
 func (s *BaseElem) IsInterface() bool {
-	return s.isIface
+	return s.IsIface
 }
 
 func (s *BaseElem) GetZtype() (r green.Ztype) {

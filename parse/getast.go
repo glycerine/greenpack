@@ -1062,7 +1062,7 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 		return gen.Ident(stringify(e), isIface, ric), nil
 
 	case *ast.InterfaceType:
-		vv("see ast.InterfaceType e = '%#v'", e)
+		//vv("see ast.InterfaceType e = '%#v'", e)
 		// support `interface{}`
 		if len(e.Methods.List) == 0 {
 			return &gen.BaseElem{Value: gen.Intf, IsIface: true}, nil
