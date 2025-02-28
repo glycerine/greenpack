@@ -2,11 +2,15 @@ package testdata
 
 import (
 	"fmt"
+
+	"github.com/glycerine/greenpack/msgp"
 )
 
 //go:generate greenpack
 
-type Node any
+type Node interface {
+	msgp.Serz
+}
 
 // sizer code was crashing on node interface being nil.
 type Helper struct {
