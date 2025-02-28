@@ -535,7 +535,7 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 		if !p.cfg.NoDedup {
 			p.printf("\n dc.DedupIndexEachPtr(%s[%s])\n", iter, idx) // dedup, 3 of 3.
 		}
-		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:511. IsInInterfaceSlice: %v", iter, idx, inner.IsInInterfaceSlice())
+		p.printf("\n if %s[%s] != nil { \nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:538. IsInInterfaceSlice: %v\n if err != nil {	return }\n }\n", iter, idx, iter, idx, inner.IsInInterfaceSlice())
 
 		next(t, inner, nil)
 	} else {

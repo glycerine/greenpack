@@ -660,7 +660,13 @@ doneWithStruct13zgensym_29db2bb3a798cb07_14:
 					continue
 				}
 
-				err = z.Children[zgensym_29db2bb3a798cb07_12].DecodeMsg(dc) // from decodeRangeBlock in spec.go:511. IsInInterfaceSlice: true
+				if z.Children[zgensym_29db2bb3a798cb07_12] != nil {
+					err = z.Children[zgensym_29db2bb3a798cb07_12].DecodeMsg(dc) // from decodeRangeBlock in spec.go:538. IsInInterfaceSlice: true
+					if err != nil {
+						return
+					}
+				}
+
 				if err != nil {
 					return
 				}
@@ -1230,7 +1236,13 @@ doneWithStruct29zgensym_29db2bb3a798cb07_30:
 					continue
 				}
 
-				err = z.Slice[zgensym_29db2bb3a798cb07_27].DecodeMsg(dc) // from decodeRangeBlock in spec.go:511. IsInInterfaceSlice: true
+				if z.Slice[zgensym_29db2bb3a798cb07_27] != nil {
+					err = z.Slice[zgensym_29db2bb3a798cb07_27].DecodeMsg(dc) // from decodeRangeBlock in spec.go:538. IsInInterfaceSlice: true
+					if err != nil {
+						return
+					}
+				}
+
 				if err != nil {
 					return
 				}
@@ -2361,7 +2373,13 @@ doneWithStruct76zgensym_29db2bb3a798cb07_77:
 					continue
 				}
 
-				err = z.Slc[zgensym_29db2bb3a798cb07_75].DecodeMsg(dc) // from decodeRangeBlock in spec.go:511. IsInInterfaceSlice: true
+				if z.Slc[zgensym_29db2bb3a798cb07_75] != nil {
+					err = z.Slc[zgensym_29db2bb3a798cb07_75].DecodeMsg(dc) // from decodeRangeBlock in spec.go:538. IsInInterfaceSlice: true
+					if err != nil {
+						return
+					}
+				}
+
 				if err != nil {
 					return
 				}
