@@ -1118,7 +1118,7 @@ func (z *Sys) MSGPfieldsNotEmpty(isempty []bool) uint32 {
 		return 1
 	}
 	var fieldsInUse uint32 = 1
-	isempty[0] = (z.F == nil) // interface, omitempty
+	isempty[0] = false
 	if isempty[0] {
 		fieldsInUse--
 	}

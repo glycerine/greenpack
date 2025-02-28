@@ -909,7 +909,13 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 	case *ast.Ident:
 		if e.Name == "any" {
 			// any: match the interface{} support below.
-			return &gen.BaseElem{Value: gen.Intf, IsIface: true}, nil
+
+			// arg. Doing IsIface:true brings back problems
+			// in _generate/mapsomething_test.go that
+			// were from ages ago (2017).
+			// https://github.com/glycerine/greenpack/issues/1
+			// Leave it false here and below.
+			return &gen.BaseElem{Value: gen.Intf, IsIface: false}, nil
 		}
 		if !isIface && e.Obj != nil && fs != nil && fs.PackageInfo != nil &&
 			len(fs.PackageInfo.Info.Types) > 0 {
@@ -1077,7 +1083,7 @@ func (fs *FileSet) parseExpr(name string, e ast.Expr, isIface bool, ric *gen.Gen
 		//vv("see ast.InterfaceType e = '%#v'", e)
 		// support `interface{}`
 		if len(e.Methods.List) == 0 {
-			return &gen.BaseElem{Value: gen.Intf, IsIface: true}, nil
+			return &gen.BaseElem{Value: gen.Intf, IsIface: false}, nil
 		}
 		return nil, nil
 
