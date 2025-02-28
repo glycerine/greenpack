@@ -17,7 +17,7 @@ func Test999_how_are_generics_instantiated_for_gen_tests(t *testing.T) {
 	cv.Convey("If we know how generics are instantiated we can generate tests for them", t, func() {
 
 		path := "."
-		instantiations, err := analyzeGenericTypes(path)
+		instantiations, _, err := analyzeGenericTypes(path)
 		if err != nil {
 			t.Fatalf("AnalyzeGenericTypes on path '%v' gave err='%v'", path, err)
 		}

@@ -28,6 +28,11 @@ func genericTypeParam(path string) (generics map[string]string, err error) {
 		info := pkg.TypesInfo
 
 		// Look through type information for generic instantiations
+		// info.Types is map[ast.Expr]TypeAndValue
+		// TypeAndValue { // in go/types is
+		//    Type  Type
+		//    Value constant.Value
+		// }
 		for expr, tv := range info.Types {
 			// tv is go/types.TypeAndValue
 			if named, ok := tv.Type.(*types.Named); ok {
@@ -50,13 +55,13 @@ func genericTypeParam(path string) (generics map[string]string, err error) {
 	return
 }
 
-func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err error) {
+func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, ifaces map[string]bool, err error) {
 	//vv("top analyzeGenericTypes")
 
 	// Get the absolute directory path of the file
 	absPath, err := filepath.Abs(path)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	dir := filepath.Dir(absPath)
 	_ = dir
@@ -64,19 +69,32 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 	cfg := &packages.Config{
 		Mode: packages.NeedTypes |
 			packages.NeedTypesInfo |
-			packages.NeedSyntax |
-			packages.NeedFiles |
-			packages.NeedDeps |
-			packages.NeedImports,
+			packages.NeedSyntax,
+		// can we get away with less... was very slow with:
+		//| packages.NeedFiles |
+		//packages.NeedDeps |
+		//packages.NeedImports,
 		Tests: false,
 		Dir:   absPath, // Set working directory to the module directory
 	}
-	//vv("about to load path '%v' from dir '%v'", path, dir)
 
-	// Load using the package pattern
-	pkgs, err := packages.Load(cfg, ".") // Use "." to load package in current dir
-	if err != nil {
-		return nil, err
+	// try both absPath and then dir, if need be.
+	var pkgs []*packages.Package
+	for i := 0; i < 2; i++ {
+
+		//vv("about to load path '%v' with cfg.Dir='%v'", path, cfg.Dir)
+		// Load using the package pattern
+		pkgs, err = packages.Load(cfg, ".") // Use "." to load package in current dir?
+		if err != nil {
+			if i == 0 {
+				// try again here, up one.
+				cfg.Dir = dir
+				continue
+			}
+			return nil, nil, err
+		} else {
+			break
+		}
 	}
 	//vv("back from Load okay. len(pkgs)=%v", len(pkgs))
 	for _, pkg := range pkgs {
@@ -87,12 +105,13 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 				len(pkg.TypesInfo.Types))
 		}
 		if len(pkg.Errors) > 0 {
-			alwaysPrintf("analyze generics: package had errors: %v", pkg.Errors)
+			// too noisy.
+			//alwaysPrintf("analyze generics: package had errors: %v", pkg.Errors)
 		}
 	}
 	// parent type key -> slice of instantiations
 	generics = make(map[string][]*gen.Instan)
-
+	ifaces = make(map[string]bool)
 	// Analyze each package
 	for _, pkg := range pkgs {
 		info := pkg.TypesInfo
@@ -103,6 +122,11 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, err er
 		if true {
 			//vv("looking through %v of info.Types", len(info.Types))
 			for expr, tv := range info.Types {
+				//vv("looking at tv.Type: '%v'", tv.Type.String())
+				if types.IsInterface(tv.Type) {
+					//vv("found interface '%v'", tv.Type.String())
+					ifaces[tv.Type.String()] = true
+				}
 				if inst, ok := tv.Type.(*types.Named); ok {
 					// Get the type arguments
 					n := inst.TypeArgs().Len()
