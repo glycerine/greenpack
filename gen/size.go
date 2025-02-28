@@ -173,7 +173,7 @@ func (s *sizeGen) gArray(a *Array, x *extra) {
 	if !s.p.ok() {
 		return
 	}
-	vv("gArray called; a.Els = '%#v'", a.Els)
+	//vv("gArray called; a.Els = '%#v'", a.Els)
 
 	s.addConstant(builtinSize(arrayHeader))
 
