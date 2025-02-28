@@ -133,11 +133,20 @@ func analyzeGenericTypes(path string) (generics map[string][]*gen.Instan, ifaces
 					if n == 0 {
 						continue
 					}
-					typeArgs := make([]types.Type, n)
-					typeArgNames := make([]string, n)
-					for i := 0; i < inst.TypeArgs().Len(); i++ {
-						typeArgs[i] = inst.TypeArgs().At(i)
-						typeArgNames[i] = typeArgs[i].String()
+					var typeArgs []types.Type
+					var typeArgNames []string
+
+					ita := inst.TypeArgs()
+					for i := 0; i < ita.Len(); i++ {
+						cur := ita.At(i)
+						_, isTypeParam := cur.(*types.TypeParam)
+						if isTypeParam {
+							// Matrix[T]; not Matrix[float64] i.e.
+							// a template, not instantiation.
+							continue
+						}
+						typeArgs = append(typeArgs, cur)
+						typeArgNames = append(typeArgNames, cur.String())
 					}
 					nm := inst.Obj().Name()
 					info := &gen.Instan{

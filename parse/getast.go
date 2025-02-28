@@ -273,9 +273,9 @@ parse:
 		pushstate(name)
 
 		inst := f.Instan[name]
-		//for _, ins := range inst {
-		//	vv("name '%v' -> Instan '%#v'", name, ins)
-		//}
+		for _, ins := range inst {
+			vv("name '%v' -> Instan '%#v'", name, ins)
+		}
 
 		ric := gen.Generics(name, def.TypeParams, inst)
 		f.GenericTypeParams[name] = ric
