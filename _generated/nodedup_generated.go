@@ -644,6 +644,16 @@ doneWithStruct13zgensym_29db2bb3a798cb07_14:
 			//  fill target with the concrete implementation
 			for zgensym_29db2bb3a798cb07_12 := range z.Children {
 
+				// e.g. if the [3]iface is nil, we must
+				// continue to the next element, skipping the nil.
+				if dc.IsNil() {
+					err = dc.ReadNil()
+					if err != nil {
+						return
+					}
+					continue
+				}
+
 				concreteName_zgensym_29db2bb3a798cb07_17 := dc.NextStructName()
 				target_zgensym_29db2bb3a798cb07_16 := z.Children[zgensym_29db2bb3a798cb07_12]
 				if concreteName_zgensym_29db2bb3a798cb07_17 != "" {
@@ -1215,6 +1225,16 @@ doneWithStruct29zgensym_29db2bb3a798cb07_30:
 			// NB: we have a slice of interfaces, so we need to
 			//  fill target with the concrete implementation
 			for zgensym_29db2bb3a798cb07_27 := range z.Slice {
+
+				// e.g. if the [3]iface is nil, we must
+				// continue to the next element, skipping the nil.
+				if dc.IsNil() {
+					err = dc.ReadNil()
+					if err != nil {
+						return
+					}
+					continue
+				}
 
 				concreteName_zgensym_29db2bb3a798cb07_43 := dc.NextStructName()
 				target_zgensym_29db2bb3a798cb07_42 := z.Slice[zgensym_29db2bb3a798cb07_27]
@@ -2348,6 +2368,16 @@ doneWithStruct76zgensym_29db2bb3a798cb07_77:
 			// NB: we have a slice of interfaces, so we need to
 			//  fill target with the concrete implementation
 			for zgensym_29db2bb3a798cb07_75 := range z.Slc {
+
+				// e.g. if the [3]iface is nil, we must
+				// continue to the next element, skipping the nil.
+				if dc.IsNil() {
+					err = dc.ReadNil()
+					if err != nil {
+						return
+					}
+					continue
+				}
 
 				concreteName_zgensym_29db2bb3a798cb07_80 := dc.NextStructName()
 				target_zgensym_29db2bb3a798cb07_79 := z.Slc[zgensym_29db2bb3a798cb07_75]

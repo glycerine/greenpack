@@ -502,6 +502,18 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 
 		p.printf("\n for %s := range %s {\n", idx, iter)
 
+		p.printf(`
+				// e.g. if the [3]iface is nil, we must
+				// continue to the next element, skipping the nil.
+				if dc.IsNil() {
+					err = dc.ReadNil()
+					if err != nil {
+						return
+					}
+					continue
+				}
+       `)
+
 		var dedupIndexLine0 string
 		if !p.cfg.NoDedup {
 			dedupIndexLine0 = fmt.Sprintf(`dc.DedupIndexEachPtr(target_%s)`, target)
@@ -511,6 +523,7 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 					continue
              }`, iter, idx, inner.TypeName(), iter, idx, inner.TypeName())
 		}
+
 		p.printf(`
 		concreteName_%s := dc.NextStructName()
         `, concreteName)
@@ -535,7 +548,7 @@ func (p *printer) decodeRangeBlock(idx string, parent Elem, t traversal, inner E
 		if !p.cfg.NoDedup {
 			p.printf("\n dc.DedupIndexEachPtr(%s[%s])\n", iter, idx) // dedup, 3 of 3.
 		}
-		//p.printf("\n if %s[%s] != nil { \nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:538. IsInInterfaceSlice: %v\n if err != nil {	return }\n }\n", iter, idx, iter, idx, inner.IsInInterfaceSlice())
+
 		p.printf("\nerr = %s[%s].DecodeMsg(dc) // from decodeRangeBlock in spec.go:538. IsInInterfaceSlice: %v\n", iter, idx, inner.IsInInterfaceSlice())
 
 		next(t, inner, nil)
@@ -581,8 +594,6 @@ func (p *printer) unmarshalRangeBlock(idx string, parent Elem, t traversal, inne
                 continue
               }
         `, iter, idx, target)
-
-		//p.printf("\nif %s[%s] != nil {\n\nbts, err = %s[%s].UnmarshalMsg(bts) // from unmarshalRangeBlock in spec.go:584. IsInInterfaceSlice: %v\n if err != nil {\n return \n }\n}\n", iter, idx, iter, idx, inner.IsInInterfaceSlice())
 
 		p.printf("\nbts, err = %s[%s].UnmarshalMsg(bts) // from unmarshalRangeBlock in spec.go:584. IsInInterfaceSlice: %v\n", iter, idx, inner.IsInInterfaceSlice())
 
