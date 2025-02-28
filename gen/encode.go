@@ -305,7 +305,11 @@ func (e *encodeGen) gBase(b *BaseElem, x *extra) {
 		}
 		if !dup {`, vname)
 		}
-		e.p.printf("\nerr = %s.%sEncodeMsg(en)", vname, e.cfg.MethodPrefix)
+		if b.IsIface {
+			e.p.printf("\nerr = en.WriteIntf(%s)", vname)
+		} else {
+			e.p.printf("\nerr = %s.%sEncodeMsg(en)", vname, e.cfg.MethodPrefix)
+		}
 		e.p.print(errcheck)
 		if !e.cfg.NoDedup {
 			e.p.closeblock()

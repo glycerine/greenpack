@@ -743,7 +743,7 @@ func (z *Middle2) EncodeMsg(en *msgp.Writer) (err error) {
 			return
 		}
 		for zgensym_29db2bb3a798cb07_12 := range z.Children {
-			err = z.Children[zgensym_29db2bb3a798cb07_12].EncodeMsg(en)
+			err = en.WriteIntf(z.Children[zgensym_29db2bb3a798cb07_12])
 			if err != nil {
 				return
 			}
@@ -1537,7 +1537,7 @@ func (z *NoDedup) EncodeMsg(en *msgp.Writer) (err error) {
 		if err != nil {
 			return err
 		}
-		err = z.MyIface0.EncodeMsg(en)
+		err = en.WriteIntf(z.MyIface0)
 		if err != nil {
 			return
 		}
@@ -1549,7 +1549,7 @@ func (z *NoDedup) EncodeMsg(en *msgp.Writer) (err error) {
 		if err != nil {
 			return err
 		}
-		err = z.MyIface1.EncodeMsg(en)
+		err = en.WriteIntf(z.MyIface1)
 		if err != nil {
 			return
 		}
@@ -1566,7 +1566,7 @@ func (z *NoDedup) EncodeMsg(en *msgp.Writer) (err error) {
 			return
 		}
 		for zgensym_29db2bb3a798cb07_27 := range z.Slice {
-			err = z.Slice[zgensym_29db2bb3a798cb07_27].EncodeMsg(en)
+			err = en.WriteIntf(z.Slice[zgensym_29db2bb3a798cb07_27])
 			if err != nil {
 				return
 			}
@@ -2444,7 +2444,7 @@ func (z *Outer2) EncodeMsg(en *msgp.Writer) (err error) {
 			return
 		}
 		for zgensym_29db2bb3a798cb07_75 := range z.Slc {
-			err = z.Slc[zgensym_29db2bb3a798cb07_75].EncodeMsg(en)
+			err = en.WriteIntf(z.Slc[zgensym_29db2bb3a798cb07_75])
 			if err != nil {
 				return
 			}
