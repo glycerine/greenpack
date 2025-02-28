@@ -261,6 +261,15 @@ func (f *FileSet) process() error {
 	deferred := make(linkset)
 parse:
 	for name, def := range f.Specs {
+
+		// We cannot define methods on
+		// a pointer to an interface; must
+		// skip them.
+		if f.InterfaceTypeNames[name] {
+			//vv("skipping interface '%v'", name)
+			continue
+		}
+
 		pushstate(name)
 
 		inst := f.Instan[name]
@@ -439,8 +448,11 @@ func (fs *FileSet) getTypeSpecs(f *ast.File) {
 						*ast.Ident:
 						//fs.Specs[ts.Name.Name] = ts.Type
 						// can we save the generic type param too?
-						fs.Specs[ts.Name.Name] = ts
 
+						// we should be skipping interfaces
+						// but its too early here; we don't know them
+						//vv("adding to spec list '%v'", ts.Name.Name)
+						fs.Specs[ts.Name.Name] = ts
 					}
 
 				}
