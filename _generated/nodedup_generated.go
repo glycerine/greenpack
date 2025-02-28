@@ -2010,7 +2010,11 @@ doneWithStruct56zgensym_29db2bb3a798cb07_57:
 				bts = bts[1:]
 				continue
 			}
-			bts, err = z.MyIface0.UnmarshalMsg(bts)
+			if z.MyIface0 == nil {
+				bts, err = msgp.Skip(bts) // skip next object in stream.
+			} else {
+				bts, err = z.MyIface0.UnmarshalMsg(bts)
+			}
 
 			if err != nil {
 				return
@@ -2037,7 +2041,11 @@ doneWithStruct56zgensym_29db2bb3a798cb07_57:
 				bts = bts[1:]
 				continue
 			}
-			bts, err = z.MyIface1.UnmarshalMsg(bts)
+			if z.MyIface1 == nil {
+				bts, err = msgp.Skip(bts) // skip next object in stream.
+			} else {
+				bts, err = z.MyIface1.UnmarshalMsg(bts)
+			}
 
 			if err != nil {
 				return

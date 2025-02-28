@@ -240,9 +240,12 @@ func (u *unmarshalGen) gBase(b *BaseElem, x *extra) {
        bts = bts[1:]
        continue
     }
-    bts, err = %s.%sUnmarshalMsg(bts)
-	
-`, conc, conc, conc, fact, fact, fact, targ, fact, b.GetZid(), conc, b.BaseType(), targ, vname, targ, vname, u.cfg.MethodPrefix)
+    if %s == nil {
+       bts, err = msgp.Skip(bts) // skip next object in stream.
+    } else {
+       bts, err = %s.%sUnmarshalMsg(bts)
+	}
+`, conc, conc, conc, fact, fact, fact, targ, fact, b.GetZid(), conc, b.BaseType(), targ, vname, targ, vname, vname, u.cfg.MethodPrefix)
 
 			} else {
 
