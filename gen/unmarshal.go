@@ -122,7 +122,32 @@ func (u *unmarshalGen) tuple(s *Struct) {
 		if !u.p.ok() {
 			return
 		}
-		next(u, s.Fields[i].FieldElem, nil)
+		fieldElem := s.Fields[i].FieldElem
+		if s.Fields[i].HasTagPart("zerocopy") {
+			// turn state on.
+			setRecursiveZC(fieldElem, true)
+		}
+		next(u, fieldElem, nil)
+		// jea: why after too? to turn stat off (using false instead of true).
+		if s.Fields[i].HasTagPart("zerocopy") {
+			setRecursiveZC(fieldElem, false)
+		}
+	}
+}
+
+// setRecursiveZC will alloc zerocopy for byte fields that are present.
+func setRecursiveZC(e Elem, enable bool) {
+	if base, ok := e.(*BaseElem); ok {
+		base.zerocopy = enable
+	}
+	if el, ok := e.(*Slice); ok {
+		setRecursiveZC(el.Els, enable)
+	}
+	if el, ok := e.(*Array); ok {
+		setRecursiveZC(el.Els, enable)
+	}
+	if el, ok := e.(*Map); ok {
+		setRecursiveZC(el.Value, enable)
 	}
 }
 
@@ -173,10 +198,17 @@ func (u *unmarshalGen) mapstruct(s *Struct) {
 			fld = s.Fields[i].FieldTag
 		}
 
+		fieldElem := s.Fields[i].FieldElem
 		u.p.printf("\ncase \"%s\":", fld)
 		u.p.printf("\n%s[%d]=true;", found, i)
 		u.depth++
-		next(u, s.Fields[i].FieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})
+		if s.Fields[i].HasTagPart("zerocopy") {
+			setRecursiveZC(fieldElem, true)
+		}
+		next(u, fieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})
+		if s.Fields[i].HasTagPart("zerocopy") {
+			setRecursiveZC(fieldElem, false)
+		}
 		u.depth--
 		if !u.p.ok() {
 			return
@@ -207,7 +239,12 @@ func (u *unmarshalGen) gBase(b *BaseElem, x *extra) {
 
 	switch b.Value {
 	case Bytes:
-		u.p.printf("\n if nbs.AlwaysNil || msgp.IsNil(bts) {\n if !nbs.AlwaysNil { bts = bts[1:]  }\n  %s = %s[:0]} else { %s, bts, err = nbs.ReadBytesBytes(bts, %s)\n", refname, refname, refname, lowered)
+		if b.zerocopy {
+			//u.p.printf("\n%s, bts, err = msgp.ReadBytesZC(bts)", refname)
+			u.p.printf("\n if nbs.AlwaysNil || msgp.IsNil(bts) {\n if !nbs.AlwaysNil { bts = bts[1:]  }\n  %s = %s[:0]} else { %s, bts, err = nbs.ReadBytesZC(bts)\n", refname, refname, refname)
+		} else {
+			u.p.printf("\n if nbs.AlwaysNil || msgp.IsNil(bts) {\n if !nbs.AlwaysNil { bts = bts[1:]  }\n  %s = %s[:0]} else { %s, bts, err = nbs.ReadBytesBytes(bts, %s)\n", refname, refname, refname, lowered)
+		}
 		u.p.print(errcheck)
 		u.p.closeblock()
 	case Ext:

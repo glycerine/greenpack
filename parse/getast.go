@@ -648,6 +648,8 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 		if len(tags[0]) > 0 {
 			sf[0].FieldTag = tags[0]
 		}
+		sf[0].FieldTagParts = tags
+		sf[0].RawTag = f.Tag.Value
 
 		// check deprecated
 		dep := alltags.Get("deprecated")
@@ -789,6 +791,12 @@ func (fs *FileSet) getField(name string, f *ast.Field, ric *gen.Genric) ([]gen.S
 	sf[0].FieldElem = ex
 	if sf[0].FieldTag == "" {
 		sf[0].FieldTag = sf[0].FieldName
+		// jea: not sure we need/want this, from upstream tinylib.
+		if len(sf[0].FieldTagParts) <= 1 {
+			sf[0].FieldTagParts = []string{sf[0].FieldTag}
+		} else {
+			sf[0].FieldTagParts = append([]string{sf[0].FieldName}, sf[0].FieldTagParts[1:]...)
+		}
 	}
 	if !skip {
 		sf[0].FieldTagZidClue = msgp.Clue2Field(sf[0].FieldTag, ex.TypeClue(), zebraId)

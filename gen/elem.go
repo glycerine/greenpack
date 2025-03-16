@@ -773,6 +773,10 @@ type StructField struct {
 	ZebraId int64
 
 	FieldTagZidClue string
+
+	// partially redundant since merged from upstream tinylib/msgp later.
+	FieldTagParts []string // the string inside the `msg:""` tag split by commas
+	RawTag        string   // the full struct tag
 }
 
 func (s *StructField) IsInterface() bool {
@@ -792,6 +796,7 @@ type BaseElem struct {
 	needsref       bool      // needs reference for shim
 	IsIface        bool
 	isInIfaceSlice bool
+	zerocopy       bool // Allow zerocopy for byte slices in unmarshal.
 }
 
 func (s *BaseElem) IsInterface() bool {
@@ -1031,4 +1036,42 @@ func writeStructFields(s []StructField, name string) {
 			s[i].FieldElem.SetVarname(fmt.Sprintf("%s.%s", name, s[i].FieldName))
 		}
 	}
+}
+
+// from upstream tinylib/msgp
+// https://github.com/tinylib/msgp/commit/490d90d0e69181d9cfedd28343d876cd361adcc3
+// https://github.com/tinylib/msgp/commit/490d90d0e69181d9cfedd28343d876cd361adcc3#diff-621918fe1eb210b6e253c8452e10c4d349a90df9f8a6b84b7931b3e509eee595
+
+// AnyHasTagPart returns true if HasTagPart(p) is true for any field.
+func (s *Struct) AnyHasTagPart(pname string) bool {
+	for _, sf := range s.Fields {
+		if sf.HasTagPart(pname) {
+			return true
+		}
+	}
+	return false
+}
+
+// CountFieldTagPart the count of HasTagPart(p) is true for any field.
+func (s *Struct) CountFieldTagPart(pname string) int {
+	var n int
+	for _, sf := range s.Fields {
+		if sf.HasTagPart(pname) {
+			n++
+		}
+	}
+	return n
+}
+
+// HasTagPart returns true if the specified tag part (option) is present.
+func (sf *StructField) HasTagPart(pname string) bool {
+	if len(sf.FieldTagParts) < 2 {
+		return false
+	}
+	for _, p := range sf.FieldTagParts[1:] {
+		if p == pname {
+			return true
+		}
+	}
+	return false
 }
