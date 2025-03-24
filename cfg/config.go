@@ -50,7 +50,7 @@ func (c *GreenConfig) DefineFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&c.Msgpack2, "msgpack2", false, "(alias for -omit-clue) don't append zid and clue to field name (makes things just like msgpack2 traditional encoding, without version + type clue)")
 	fs.BoolVar(&c.ShowVersion, "version", false, "print version info and exit")
 	fs.BoolVar(&c.NoEmbeddedStructNames, "no-structnames-onwire", false, "don't embed the name of the struct in the serialized greenpack. Skipping the embedded struct names saves time and space and matches what protocol buffers/thrift/capnproto/msgpack do. You must know the type on the wire you expect; or embed a type tag in one universal wrapper struct. Embedded struct names are a feature of GreenPack to help with dynamic language bindings and unmarshalling interface types. Given an interface, without the concrete type, we don't know what to unmarshal.")
-	fs.BoolVar(&c.NoDedup, "no-dedup", true, "don't de-duplicate pointers within a struct. (2025-Jan-12 update: this is now true by default b/c of some issues with dedup we saw)")
+	fs.BoolVar(&c.NoDedup, "no-dedup", true, "don't de-duplicate pointers within a struct. (2025-Jan-12 update: this is now true by default b/c of some issues with dedup we saw. The env var GREENPACK_DEDUP can be used to override this)")
 }
 
 // call c.ValidateConfig() after myflags.Parse()
