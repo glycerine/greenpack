@@ -21,12 +21,22 @@ manually use reflection and serialize
 your generic fields into a reserved []byte field
 that you add to your structs for this purpose.
 
-Update 2025-March-24, v0.535.0: Ouch! generics processing requires a whole lot
-more (slow!) code parsing, and it significantly slows
+Update 2025-March-24, v0.535.0: Ouch! Finding
+the generic instantiations requires a whole lot
+more (slow!) code analysis, and it significantly slows
 down greenpack on codebases that don't need it. I've
-made the default to be generics off for now. Generics
-support can be activated with the `-generics` flag
-which defaults to false.
+turned this part of generics support off for now. 
+Full(er) generics support can be re-activated 
+with the `-generics=true` flag, but the default
+is now false. So, while the non-generic fields 
+of a generic struct are still serialized, and pre/post 
+load hooks still called, without -generics=true
+we (a) don't attempt to locate instantiations; we 
+(b) don't automagically write test code for the first
+instantiation; and (c) we skip serializing generic 
+fields (those with type parameters) in generic structs.
+Via the hooks, you can of course still implement
+the workaround described just above.
 
 ### Automatic pointer Dedup off by default for now.
 
