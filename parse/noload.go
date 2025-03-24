@@ -74,7 +74,9 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 				ast.FileExports(fl)
 			}
 			fs.getTypeSpecs(fl)
-			fs.getTemplateInstantiations(fl)
+			if c.SerzGenerics {
+				fs.getTemplateInstantiations(fl)
+			}
 			popstate()
 		}
 	} else {
@@ -90,7 +92,9 @@ func FileNoLoad(c *cfg.GreenConfig) (*FileSet, error) {
 			ast.FileExports(f)
 		}
 		fs.getTypeSpecs(f)
-		fs.getTemplateInstantiations(f)
+		if c.SerzGenerics {
+			fs.getTemplateInstantiations(f)
+		}
 	}
 
 	if len(fs.Specs) == 0 {

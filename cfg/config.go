@@ -27,10 +27,13 @@ type GreenConfig struct {
 	NoDedup bool
 
 	StoreToSQL string
+
+	SerzGenerics bool
 }
 
 // call DefineFlags before myflags.Parse()
 func (c *GreenConfig) DefineFlags(fs *flag.FlagSet) {
+	fs.BoolVar(&c.SerzGenerics, "generics", false, "skip generics if false, otherwise provide some serialization support for generics (warning: much slower!)")
 	fs.StringVar(&c.Out, "o", "", "output file (default is {input_file}_gen.go")
 	fs.StringVar(&c.GoFile, "file", "", "input file (or directory); default is $GOFILE, which is set by the `go generate` command.")
 	fs.StringVar(&c.StoreToSQL, "sql", "", "create StoreToSQL methods for this database")
