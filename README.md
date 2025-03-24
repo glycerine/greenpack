@@ -21,6 +21,13 @@ manually use reflection and serialize
 your generic fields into a reserved []byte field
 that you add to your structs for this purpose.
 
+Update 2025-March-24, v0.535.0: Ouch! generics processing requires a whole lot
+more (slow!) code parsing, and it significantly slows
+down greenpack on codebases that don't need it. I've
+made the default to be generics off for now. Generics
+support can be activated with the `-generics` flag
+which defaults to false.
+
 ### Automatic pointer Dedup off by default for now.
 
 2025 January 12: In v0.529.0 I have turned off pointer dedup by default because
