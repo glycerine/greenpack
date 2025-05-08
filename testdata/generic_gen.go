@@ -574,8 +574,8 @@ func (z *Matrix[T]) Msgsize() (s int) {
 func (z *Matrix[T]) Gstring() (r string) {
 
 	r = "Matrix{"
-	r += fmt.Sprintf("    Nrow: %v,\n", z.Nrow)
-	r += fmt.Sprintf("    Ncol: %v,\n", z.Ncol)
+	r += fmt.Sprintf("Nrow: %v,\n", z.Nrow)
+	r += fmt.Sprintf("Ncol: %v,\n", z.Ncol)
 	r += "}\n"
 	return
 }

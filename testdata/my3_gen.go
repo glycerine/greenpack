@@ -324,8 +324,8 @@ func (z *OmitClueTestStruct) Msgsize() (s int) {
 func (z *OmitClueTestStruct) Gstring() (r string) {
 
 	r = "OmitClueTestStruct{"
-	r += fmt.Sprintf("    S: %v,\n", z.S)
-	r += fmt.Sprintf("    N: %v,\n", z.N)
+	r += fmt.Sprintf("S: %v,\n", z.S)
+	r += fmt.Sprintf("N: %v,\n", z.N)
 	r += "}\n"
 	return
 }

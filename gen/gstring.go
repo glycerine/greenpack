@@ -3,6 +3,7 @@ package gen
 import (
 	//"fmt"
 	"io"
+	"strings"
 
 	"github.com/glycerine/greenpack/cfg"
 )
@@ -109,6 +110,13 @@ func (e *gstringGen) structmap(s *Struct) {
 
 	//recv := s.TypeName() // imutMethodReceiver(s)
 
+	longest := 0
+	for i := range s.Fields {
+		x := len(s.Fields[i].FieldName)
+		if x > longest {
+			longest = x
+		}
+	}
 	for i := range s.Fields {
 		if s.Fields[i].Skip {
 			continue
@@ -118,8 +126,9 @@ func (e *gstringGen) structmap(s *Struct) {
 		}
 
 		f := s.Fields[i].FieldName
-		e.p.printf(`r += fmt.Sprintf("    %v: %%v,\n", %v.%v)
-`, f, s.Varname(), f)
+		spaces := strings.Repeat(" ", longest-len(f))
+		e.p.printf(`r += fmt.Sprintf("%v%v: %%v,\n", %v.%v)
+`, spaces, f, s.Varname(), f)
 
 		// type-switch dispatch to the correct method
 		//next(e, s.Fields[i].FieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})

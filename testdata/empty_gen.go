@@ -292,7 +292,7 @@ func (z *HasEmptyInterface) Msgsize() (s int) {
 func (z *HasEmptyInterface) Gstring() (r string) {
 
 	r = "HasEmptyInterface{"
-	r += fmt.Sprintf("    EmptyIface: %v,\n", z.EmptyIface)
+	r += fmt.Sprintf("EmptyIface: %v,\n", z.EmptyIface)
 	r += "}\n"
 	return
 }

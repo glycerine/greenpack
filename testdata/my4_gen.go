@@ -123,8 +123,8 @@ func (z *TupleByDefaultTestStruct) Msgsize() (s int) {
 func (z *TupleByDefaultTestStruct) Gstring() (r string) {
 
 	r = "TupleByDefaultTestStruct{"
-	r += fmt.Sprintf("    S: %v,\n", z.S)
-	r += fmt.Sprintf("    N: %v,\n", z.N)
+	r += fmt.Sprintf("S: %v,\n", z.S)
+	r += fmt.Sprintf("N: %v,\n", z.N)
 	r += "}\n"
 	return
 }
