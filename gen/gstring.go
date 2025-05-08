@@ -74,7 +74,7 @@ func (e *gstringGen) Execute(p Elem) error {
 `, p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 
 	e.p.printf(`
-		r = "%v{"
+		r = "&%v{"
 	`, p.TypeName())
 
 	next(e, p, nil)
