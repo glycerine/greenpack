@@ -74,7 +74,7 @@ func (e *gstringGen) Execute(p Elem) error {
 `, p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 
 	e.p.printf(`
-		r = "&%v{"
+		r = "&%v{\n"
 	`, p.TypeName())
 
 	next(e, p, nil)
@@ -106,10 +106,8 @@ func (e *gstringGen) appendraw(bts []byte) {
 }
 
 func (e *gstringGen) structmap(s *Struct) {
-	//nfields := len(s.Fields) - s.SkipCount
 
-	//recv := s.TypeName() // imutMethodReceiver(s)
-
+	// align ":" in output like R.
 	longest := 0
 	for i := range s.Fields {
 		x := len(s.Fields[i].FieldName)

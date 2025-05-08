@@ -235,7 +235,7 @@ func (z *A) MSGPMsgsize() (s int) {
 }
 func (z *A) MSGPGstring() (r string) {
 
-	r = "A{"
+	r = "&A{\n"
 	r += fmt.Sprintf("  Name: \"%v\",\n", z.Name)
 	r += fmt.Sprintf("  Bday: %v,\n", z.Bday)
 	r += fmt.Sprintf(" Phone: \"%v\",\n", z.Phone)
@@ -646,7 +646,7 @@ func (z *Big) MSGPMsgsize() (s int) {
 }
 func (z *Big) MSGPGstring() (r string) {
 
-	r = "Big{"
+	r = "&Big{\n"
 	r += fmt.Sprintf("    Slice: %v,\n", z.Slice)
 	r += fmt.Sprintf("Transform: %v,\n", z.Transform)
 	r += fmt.Sprintf("    Myptr: %v,\n", z.Myptr)
@@ -798,7 +798,7 @@ func (z *S) MSGPMsgsize() (s int) {
 }
 func (z *S) MSGPGstring() (r string) {
 
-	r = "S{"
+	r = "&S{\n"
 	r += fmt.Sprintf("Placeholder: %v,\n", z.Placeholder)
 	r += "}\n"
 	return
@@ -1145,7 +1145,7 @@ func (z *S2) MSGPMsgsize() (s int) {
 }
 func (z *S2) MSGPGstring() (r string) {
 
-	r = "S2{"
+	r = "&S2{\n"
 	r += fmt.Sprintf("     B: \"%v\",\n", z.B)
 	r += fmt.Sprintf("     R: %v,\n", z.R)
 	r += fmt.Sprintf("     P: %v,\n", z.P)
@@ -1302,7 +1302,7 @@ func (z *Sys) MSGPMsgsize() (s int) {
 }
 func (z *Sys) MSGPGstring() (r string) {
 
-	r = "Sys{"
+	r = "&Sys{\n"
 	r += fmt.Sprintf("F: %v,\n", z.F)
 	r += "}\n"
 	return
@@ -1549,7 +1549,7 @@ func (z *Tree) MSGPMsgsize() (s int) {
 }
 func (z *Tree) MSGPGstring() (r string) {
 
-	r = "Tree{"
+	r = "&Tree{\n"
 	r += fmt.Sprintf("Chld: %v,\n", z.Chld)
 	r += fmt.Sprintf(" Str: \"%v\",\n", z.Str)
 	r += fmt.Sprintf(" Par: %v,\n", z.Par)

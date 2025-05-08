@@ -253,7 +253,7 @@ func (z *CompareToIgnoredFields) Msgsize() (s int) {
 }
 func (z *CompareToIgnoredFields) Gstring() (r string) {
 
-	r = "CompareToIgnoredFields{"
+	r = "&CompareToIgnoredFields{\n"
 	r += "}\n"
 	return
 }
@@ -573,7 +573,7 @@ func (z *Matrix[T]) Msgsize() (s int) {
 }
 func (z *Matrix[T]) Gstring() (r string) {
 
-	r = "Matrix{"
+	r = "&Matrix{\n"
 	r += fmt.Sprintf("Nrow: %v,\n", z.Nrow)
 	r += fmt.Sprintf("Ncol: %v,\n", z.Ncol)
 	r += "}\n"
@@ -825,7 +825,7 @@ func (z *StructThatHasFieldsWithGenerics) Msgsize() (s int) {
 }
 func (z *StructThatHasFieldsWithGenerics) Gstring() (r string) {
 
-	r = "StructThatHasFieldsWithGenerics{"
+	r = "&StructThatHasFieldsWithGenerics{\n"
 	r += "}\n"
 	return
 }
