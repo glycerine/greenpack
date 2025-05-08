@@ -3,6 +3,8 @@
 package testdata
 
 import (
+	"fmt"
+
 	"github.com/glycerine/greenpack/msgp"
 )
 
@@ -247,6 +249,12 @@ var unmarshalMsgFieldSkip4zgensym_d02da37b485b84ca_5 = []bool{true}
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *CompareToIgnoredFields) Msgsize() (s int) {
 	s = 1
+	return
+}
+func (z *CompareToIgnoredFields) Gstring() (r string) {
+
+	r = "CompareToIgnoredFields{"
+	r += "}\n"
 	return
 }
 
@@ -563,6 +571,14 @@ func (z *Matrix[T]) Msgsize() (s int) {
 	s = 1 + 10 + msgp.IntSize + 10 + msgp.IntSize
 	return
 }
+func (z *Matrix[T]) Gstring() (r string) {
+
+	r = "Matrix{"
+	r += fmt.Sprintf("    Nrow: %v,\n", z.Nrow)
+	r += fmt.Sprintf("    Ncol: %v,\n", z.Ncol)
+	r += "}\n"
+	return
+}
 
 // DecodeMsg implements msgp.Decodable
 // We treat empty fields as if we read a Nil from the wire.
@@ -805,5 +821,11 @@ var unmarshalMsgFieldSkip16zgensym_d02da37b485b84ca_17 = []bool{true, true}
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *StructThatHasFieldsWithGenerics) Msgsize() (s int) {
 	s = 1
+	return
+}
+func (z *StructThatHasFieldsWithGenerics) Gstring() (r string) {
+
+	r = "StructThatHasFieldsWithGenerics{"
+	r += "}\n"
 	return
 }

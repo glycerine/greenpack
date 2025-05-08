@@ -29,6 +29,8 @@ type GreenConfig struct {
 	StoreToSQL string
 
 	SerzGenerics bool
+
+	Gstring bool
 }
 
 // call DefineFlags before myflags.Parse()
@@ -37,6 +39,7 @@ func (c *GreenConfig) DefineFlags(fs *flag.FlagSet) {
 	fs.StringVar(&c.Out, "o", "", "output file (default is {input_file}_gen.go")
 	fs.StringVar(&c.GoFile, "file", "", "input file (or directory); default is $GOFILE, which is set by the `go generate` command.")
 	fs.StringVar(&c.StoreToSQL, "sql", "", "create StoreToSQL methods for this database")
+	fs.BoolVar(&c.Gstring, "gstring", true, "create Gstring method")
 	fs.BoolVar(&c.Encode, "io", true, "create Encode and Decode methods")
 	fs.BoolVar(&c.Marshal, "marshal", true, "create Marshal and Unmarshal methods")
 	fs.BoolVar(&c.Tests, "tests", true, "create tests and benchmarks")

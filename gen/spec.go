@@ -52,9 +52,11 @@ func (m Method) String() string {
 		return "storeToSQL"
 	case GetFromSQL:
 		return "getFromSQL"
+	case Gstring:
+		return "gstring"
 	default:
 		// return e.g. "decode+encode+test"
-		modes := [...]Method{Decode, Encode, Marshal, Unmarshal, Size, Test, StoreToSQL}
+		modes := [...]Method{Decode, Encode, Marshal, Unmarshal, Size, Test, StoreToSQL, Gstring}
 		any := false
 		nm := ""
 		for _, mm := range modes {
@@ -92,6 +94,8 @@ func strtoMeth(s string) Method {
 		return StoreToSQL
 	case "getFromSQL":
 		return GetFromSQL
+	case "gstring":
+		return Gstring
 	default:
 		return 0
 	}
@@ -107,6 +111,7 @@ const (
 	FieldsEmpty                    // support omitempty tag
 	StoreToSQL                     // from struct to SQL database.
 	GetFromSQL                     // from SQL database to struct
+	Gstring                        // avoid colliding with pre-existing String()
 	invalidmeth                    // this isn't a method
 
 	encodetest  = Encode | Decode | Test | FieldsEmpty     // tests for Encodable and Decodable
@@ -148,6 +153,9 @@ func NewPrinter(m Method, out io.Writer, tests io.Writer, cfg *cfg.GreenConfig) 
 	}
 	if m.isset(GetFromSQL) {
 		gens = append(gens, getFromSQL(out, cfg))
+	}
+	if m.isset(Gstring) {
+		gens = append(gens, gstring(out, cfg))
 	}
 	if m.isset(marshaltest) {
 		gens = append(gens, mtest(tests, cfg))

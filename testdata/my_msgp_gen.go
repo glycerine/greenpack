@@ -3,6 +3,8 @@
 package testdata
 
 import (
+	"fmt"
+
 	"github.com/glycerine/greenpack/msgp"
 )
 
@@ -229,6 +231,18 @@ var unmarshalMsgFieldSkip0zgensym_58b5c2649cecee38_1 = []bool{false, false, fals
 // MSGPMsgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *A) MSGPMsgsize() (s int) {
 	s = 1 + 15 + msgp.StringPrefixSize + len(z.Name) + 15 + msgp.TimeSize + 16 + msgp.StringPrefixSize + len(z.Phone) + 15 + msgp.IntSize + 14 + msgp.Float64Size + 17 + msgp.BoolSize
+	return
+}
+func (z *A) MSGPGstring() (r string) {
+
+	r = "A{"
+	r += fmt.Sprintf("    Name: %v,\n", z.Name)
+	r += fmt.Sprintf("    Bday: %v,\n", z.Bday)
+	r += fmt.Sprintf("    Phone: %v,\n", z.Phone)
+	r += fmt.Sprintf("    Sibs: %v,\n", z.Sibs)
+	r += fmt.Sprintf("    GPA: %v,\n", z.GPA)
+	r += fmt.Sprintf("    Friend: %v,\n", z.Friend)
+	r += "}\n"
 	return
 }
 
@@ -630,6 +644,17 @@ func (z *Big) MSGPMsgsize() (s int) {
 	}
 	return
 }
+func (z *Big) MSGPGstring() (r string) {
+
+	r = "Big{"
+	r += fmt.Sprintf("    Slice: %v,\n", z.Slice)
+	r += fmt.Sprintf("    Transform: %v,\n", z.Transform)
+	r += fmt.Sprintf("    Myptr: %v,\n", z.Myptr)
+	r += fmt.Sprintf("    Myarray: %v,\n", z.Myarray)
+	r += fmt.Sprintf("    MySlice: %v,\n", z.MySlice)
+	r += "}\n"
+	return
+}
 
 // MSGPfieldsNotEmpty supports omitempty tags
 func (z *S) MSGPfieldsNotEmpty(isempty []bool) uint32 {
@@ -769,6 +794,13 @@ var unmarshalMsgFieldSkip13zgensym_58b5c2649cecee38_14 = []bool{false}
 // MSGPMsgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *S) MSGPMsgsize() (s int) {
 	s = 1 + 17 + msgp.IntSize
+	return
+}
+func (z *S) MSGPGstring() (r string) {
+
+	r = "S{"
+	r += fmt.Sprintf("    Placeholder: %v,\n", z.Placeholder)
+	r += "}\n"
 	return
 }
 
@@ -1111,6 +1143,19 @@ func (z *S2) MSGPMsgsize() (s int) {
 	}
 	return
 }
+func (z *S2) MSGPGstring() (r string) {
+
+	r = "S2{"
+	r += fmt.Sprintf("    B: %v,\n", z.B)
+	r += fmt.Sprintf("    R: %v,\n", z.R)
+	r += fmt.Sprintf("    P: %v,\n", z.P)
+	r += fmt.Sprintf("    Q: %v,\n", z.Q)
+	r += fmt.Sprintf("    T: %v,\n", z.T)
+	r += fmt.Sprintf("    Arr: %v,\n", z.Arr)
+	r += fmt.Sprintf("    MyTree: %v,\n", z.MyTree)
+	r += "}\n"
+	return
+}
 
 // MSGPfieldsNotEmpty supports omitempty tags
 func (z *Sys) MSGPfieldsNotEmpty(isempty []bool) uint32 {
@@ -1253,6 +1298,13 @@ var unmarshalMsgFieldSkip22zgensym_58b5c2649cecee38_23 = []bool{false}
 // MSGPMsgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *Sys) MSGPMsgsize() (s int) {
 	s = 1 + 12 + msgp.GuessSize(z.F)
+	return
+}
+func (z *Sys) MSGPGstring() (r string) {
+
+	r = "Sys{"
+	r += fmt.Sprintf("    F: %v,\n", z.F)
+	r += "}\n"
 	return
 }
 
@@ -1493,5 +1545,14 @@ func (z *Tree) MSGPMsgsize() (s int) {
 	} else {
 		s += z.Par.MSGPMsgsize()
 	}
+	return
+}
+func (z *Tree) MSGPGstring() (r string) {
+
+	r = "Tree{"
+	r += fmt.Sprintf("    Chld: %v,\n", z.Chld)
+	r += fmt.Sprintf("    Str: %v,\n", z.Str)
+	r += fmt.Sprintf("    Par: %v,\n", z.Par)
+	r += "}\n"
 	return
 }

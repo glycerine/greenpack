@@ -3,6 +3,8 @@
 package testdata
 
 import (
+	"fmt"
+
 	"github.com/glycerine/greenpack/msgp"
 )
 
@@ -285,5 +287,12 @@ var unmarshalMsgFieldSkip4zgensym_715cb1478ef04c9e_5 = []bool{false}
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *HasEmptyInterface) Msgsize() (s int) {
 	s = 1 + 21 + msgp.GuessSize(z.EmptyIface)
+	return
+}
+func (z *HasEmptyInterface) Gstring() (r string) {
+
+	r = "HasEmptyInterface{"
+	r += fmt.Sprintf("    EmptyIface: %v,\n", z.EmptyIface)
+	r += "}\n"
 	return
 }

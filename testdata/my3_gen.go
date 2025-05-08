@@ -3,6 +3,8 @@
 package testdata
 
 import (
+	"fmt"
+
 	"github.com/glycerine/greenpack/msgp"
 )
 
@@ -317,5 +319,13 @@ var unmarshalMsgFieldSkip4zgensym_cc028b3bcf246c08_5 = []bool{false, false}
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *OmitClueTestStruct) Msgsize() (s int) {
 	s = 1 + 2 + msgp.StringPrefixSize + len(z.S) + 2 + msgp.Int64Size
+	return
+}
+func (z *OmitClueTestStruct) Gstring() (r string) {
+
+	r = "OmitClueTestStruct{"
+	r += fmt.Sprintf("    S: %v,\n", z.S)
+	r += fmt.Sprintf("    N: %v,\n", z.N)
+	r += "}\n"
 	return
 }

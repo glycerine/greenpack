@@ -3,6 +3,8 @@
 package testdata
 
 import (
+	"fmt"
+
 	"github.com/glycerine/greenpack/msgp"
 )
 
@@ -116,5 +118,13 @@ func (z *TupleByDefaultTestStruct) UnmarshalMsgWithCfg(bts []byte, cfg *msgp.Run
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *TupleByDefaultTestStruct) Msgsize() (s int) {
 	s = 1 + msgp.StringPrefixSize + len(z.S) + msgp.Int64Size
+	return
+}
+func (z *TupleByDefaultTestStruct) Gstring() (r string) {
+
+	r = "TupleByDefaultTestStruct{"
+	r += fmt.Sprintf("    S: %v,\n", z.S)
+	r += fmt.Sprintf("    N: %v,\n", z.N)
+	r += "}\n"
 	return
 }

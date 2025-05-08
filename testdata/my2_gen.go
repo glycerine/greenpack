@@ -3,6 +3,8 @@
 package testdata
 
 import (
+	"fmt"
+
 	"github.com/glycerine/greenpack/msgp"
 )
 
@@ -687,6 +689,17 @@ func (z *Tr) Msgsize() (s int) {
 	}
 	return
 }
+func (z *Tr) Gstring() (r string) {
+
+	r = "Tr{"
+	r += fmt.Sprintf("    U: %v,\n", z.U)
+	r += fmt.Sprintf("    Nt: %v,\n", z.Nt)
+	r += fmt.Sprintf("    Snot: %v,\n", z.Snot)
+	r += fmt.Sprintf("    Notyet: %v,\n", z.Notyet)
+	r += fmt.Sprintf("    Setm: %v,\n", z.Setm)
+	r += "}\n"
+	return
+}
 
 // DecodeMsg implements msgp.Decodable
 // We treat empty fields as if we read a Nil from the wire.
@@ -1075,6 +1088,14 @@ func (z *inn) Msgsize() (s int) {
 		}
 	}
 	s += 12 + msgp.Int64Size
+	return
+}
+func (z *inn) Gstring() (r string) {
+
+	r = "inn{"
+	r += fmt.Sprintf("    j: %v,\n", z.j)
+	r += fmt.Sprintf("    e: %v,\n", z.e)
+	r += "}\n"
 	return
 }
 
@@ -1571,5 +1592,14 @@ func (z *u) Msgsize() (s int) {
 		}
 	}
 	s += 12 + msgp.StringPrefixSize + len(z.s) + 12 + msgp.Int64Size
+	return
+}
+func (z *u) Gstring() (r string) {
+
+	r = "u{"
+	r += fmt.Sprintf("    m: %v,\n", z.m)
+	r += fmt.Sprintf("    s: %v,\n", z.s)
+	r += fmt.Sprintf("    n: %v,\n", z.n)
+	r += "}\n"
 	return
 }

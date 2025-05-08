@@ -147,6 +147,9 @@ func main() {
 		mode |= gen.StoreToSQL
 		mode |= gen.GetFromSQL
 	}
+	if c.Gstring {
+		mode |= gen.Gstring
+	}
 
 	if mode&^gen.Test == 0 {
 		fmt.Println("No methods to generate; -io=false && -marshal=false")

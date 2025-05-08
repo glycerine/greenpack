@@ -3,6 +3,8 @@
 package testdata
 
 import (
+	"fmt"
+
 	"github.com/glycerine/greenpack/msgp"
 )
 
@@ -285,5 +287,12 @@ var unmarshalMsgFieldSkip4zgensym_2d652a5c3e53356f_5 = []bool{false}
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *HasAny) Msgsize() (s int) {
 	s = 1 + 17 + msgp.GuessSize(z.Inside)
+	return
+}
+func (z *HasAny) Gstring() (r string) {
+
+	r = "HasAny{"
+	r += fmt.Sprintf("    Inside: %v,\n", z.Inside)
+	r += "}\n"
 	return
 }

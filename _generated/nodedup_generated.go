@@ -3,6 +3,8 @@
 package _generated
 
 import (
+	"fmt"
+
 	"github.com/glycerine/greenpack/msgp"
 )
 
@@ -284,6 +286,13 @@ func (z *Greeter2) Msgsize() (s int) {
 	s = 1 + 11 + msgp.IntSize
 	return
 }
+func (z *Greeter2) Gstring() (r string) {
+
+	r = "Greeter2{"
+	r += fmt.Sprintf("    Style: %v,\n", z.Style)
+	r += "}\n"
+	return
+}
 
 // DecodeMsg implements msgp.Decodable
 // We treat empty fields as if we read a Nil from the wire.
@@ -561,6 +570,13 @@ var unmarshalMsgFieldSkip10zgensym_29db2bb3a798cb07_11 = []bool{false}
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *Inner2) Msgsize() (s int) {
 	s = 1 + 13 + msgp.IntSize
+	return
+}
+func (z *Inner2) Gstring() (r string) {
+
+	r = "Inner2{"
+	r += fmt.Sprintf("    Bubbles: %v,\n", z.Bubbles)
+	r += "}\n"
 	return
 }
 
@@ -943,6 +959,13 @@ func (z *Middle2) Msgsize() (s int) {
 	for zgensym_29db2bb3a798cb07_12 := range z.Children {
 		s += msgp.GuessSize(z.Children[zgensym_29db2bb3a798cb07_12])
 	}
+	return
+}
+func (z *Middle2) Gstring() (r string) {
+
+	r = "Middle2{"
+	r += fmt.Sprintf("    Children: %v,\n", z.Children)
+	r += "}\n"
 	return
 }
 
@@ -2308,6 +2331,18 @@ func (z *NoDedup) Msgsize() (s int) {
 	}
 	return
 }
+func (z *NoDedup) Gstring() (r string) {
+
+	r = "NoDedup{"
+	r += fmt.Sprintf("    MyPtr0: %v,\n", z.MyPtr0)
+	r += fmt.Sprintf("    MyPtr1: %v,\n", z.MyPtr1)
+	r += fmt.Sprintf("    MyIface0: %v,\n", z.MyIface0)
+	r += fmt.Sprintf("    MyIface1: %v,\n", z.MyIface1)
+	r += fmt.Sprintf("    Slice: %v,\n", z.Slice)
+	r += fmt.Sprintf("    SlicePtr: %v,\n", z.SlicePtr)
+	r += "}\n"
+	return
+}
 
 // DecodeMsg implements msgp.Decodable
 // We treat empty fields as if we read a Nil from the wire.
@@ -2690,6 +2725,13 @@ func (z *Outer2) Msgsize() (s int) {
 	}
 	return
 }
+func (z *Outer2) Gstring() (r string) {
+
+	r = "Outer2{"
+	r += fmt.Sprintf("    Slc: %v,\n", z.Slc)
+	r += "}\n"
+	return
+}
 
 // DecodeMsg implements msgp.Decodable
 // We treat empty fields as if we read a Nil from the wire.
@@ -2967,5 +3009,12 @@ var unmarshalMsgFieldSkip94zgensym_29db2bb3a798cb07_95 = []bool{false}
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *Target2) Msgsize() (s int) {
 	s = 1 + 8 + msgp.IntSize
+	return
+}
+func (z *Target2) Gstring() (r string) {
+
+	r = "Target2{"
+	r += fmt.Sprintf("    ID: %v,\n", z.ID)
+	r += "}\n"
 	return
 }
