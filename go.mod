@@ -1,6 +1,6 @@
 module github.com/glycerine/greenpack
 
-go 1.24.0
+go 1.24.2
 
 require (
 	4d63.com/tz v1.2.0
