@@ -127,9 +127,13 @@ func (e *gstringGen) structmap(s *Struct) {
 
 		f := s.Fields[i].FieldName
 		spaces := strings.Repeat(" ", longest-len(f))
-		e.p.printf(`r += fmt.Sprintf("%v%v: %%v,\n", %v.%v)
+		if s.Fields[i].FieldElem.TypeName() == "string" {
+			e.p.printf(`r += fmt.Sprintf("%v%v: \"%%v\",\n", %v.%v)
 `, spaces, f, s.Varname(), f)
-
+		} else {
+			e.p.printf(`r += fmt.Sprintf("%v%v: %%v,\n", %v.%v)
+`, spaces, f, s.Varname(), f)
+		}
 		// type-switch dispatch to the correct method
 		//next(e, s.Fields[i].FieldElem, &extra{pointerOrIface: s.Fields[i].IsPointer || s.Fields[i].IsIface})
 

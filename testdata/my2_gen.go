@@ -692,7 +692,7 @@ func (z *Tr) Msgsize() (s int) {
 func (z *Tr) Gstring() (r string) {
 
 	r = "Tr{"
-	r += fmt.Sprintf("     U: %v,\n", z.U)
+	r += fmt.Sprintf("     U: \"%v\",\n", z.U)
 	r += fmt.Sprintf("    Nt: %v,\n", z.Nt)
 	r += fmt.Sprintf("  Snot: %v,\n", z.Snot)
 	r += fmt.Sprintf("Notyet: %v,\n", z.Notyet)
@@ -1598,7 +1598,7 @@ func (z *u) Gstring() (r string) {
 
 	r = "u{"
 	r += fmt.Sprintf("m: %v,\n", z.m)
-	r += fmt.Sprintf("s: %v,\n", z.s)
+	r += fmt.Sprintf("s: \"%v\",\n", z.s)
 	r += fmt.Sprintf("n: %v,\n", z.n)
 	r += "}\n"
 	return
