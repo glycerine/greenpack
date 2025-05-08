@@ -11,4 +11,6 @@ testdata/my.z
 testdata/my.z.json
 testdata/my_gen.go
 testdata/my_gen_test.go
+testdata/arrayface_gen.go
+testdata/arrayface_gen_test.go
 gitcommit.go
