@@ -109,6 +109,9 @@ func (e *gstringGen) structmap(s *Struct) {
 	// align ":" in output like R.
 	longest := 0
 	for i := range s.Fields {
+		if s.Fields[i].Skip {
+			continue
+		}
 		x := len(s.Fields[i].FieldName)
 		if x > longest {
 			longest = x
