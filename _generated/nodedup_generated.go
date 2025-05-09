@@ -287,7 +287,6 @@ func (z *Greeter2) Msgsize() (s int) {
 	return
 }
 func (z *Greeter2) Gstring() (r string) {
-
 	r = "&Greeter2{\n"
 	r += fmt.Sprintf("Style: %v,\n", z.Style)
 	r += "}\n"
@@ -573,7 +572,6 @@ func (z *Inner2) Msgsize() (s int) {
 	return
 }
 func (z *Inner2) Gstring() (r string) {
-
 	r = "&Inner2{\n"
 	r += fmt.Sprintf("Bubbles: %v,\n", z.Bubbles)
 	r += "}\n"
@@ -962,7 +960,6 @@ func (z *Middle2) Msgsize() (s int) {
 	return
 }
 func (z *Middle2) Gstring() (r string) {
-
 	r = "&Middle2{\n"
 	r += fmt.Sprintf("Children: %v,\n", z.Children)
 	r += "}\n"
@@ -2332,7 +2329,6 @@ func (z *NoDedup) Msgsize() (s int) {
 	return
 }
 func (z *NoDedup) Gstring() (r string) {
-
 	r = "&NoDedup{\n"
 	r += fmt.Sprintf("  MyPtr0: %v,\n", z.MyPtr0)
 	r += fmt.Sprintf("  MyPtr1: %v,\n", z.MyPtr1)
@@ -2726,7 +2722,6 @@ func (z *Outer2) Msgsize() (s int) {
 	return
 }
 func (z *Outer2) Gstring() (r string) {
-
 	r = "&Outer2{\n"
 	r += fmt.Sprintf("Slc: %v,\n", z.Slc)
 	r += "}\n"
@@ -3012,7 +3007,6 @@ func (z *Target2) Msgsize() (s int) {
 	return
 }
 func (z *Target2) Gstring() (r string) {
-
 	r = "&Target2{\n"
 	r += fmt.Sprintf("ID: %v,\n", z.ID)
 	r += "}\n"

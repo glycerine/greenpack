@@ -290,7 +290,6 @@ func (z *HasAny) Msgsize() (s int) {
 	return
 }
 func (z *HasAny) Gstring() (r string) {
-
 	r = "&HasAny{\n"
 	r += fmt.Sprintf("Inside: %v,\n", z.Inside)
 	r += "}\n"

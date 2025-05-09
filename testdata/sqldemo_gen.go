@@ -643,7 +643,6 @@ func (z *StarShipFireAnt) GetFromSQL(
 	return
 }
 func (z *StarShipFireAnt) Gstring() (r string) {
-
 	r = "&StarShipFireAnt{\n"
 	r += fmt.Sprintf("               Captain: \"%v\",\n", z.Captain)
 	r += fmt.Sprintf("CargoAreaMetersSquared: %v,\n", z.CargoAreaMetersSquared)

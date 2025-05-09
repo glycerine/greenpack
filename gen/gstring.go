@@ -73,8 +73,7 @@ func (e *gstringGen) Execute(p Elem) error {
 	e.p.printf(`func (%s %s) %sGstring() (r string) {
 `, p.Varname(), imutMethodReceiver(p), e.cfg.MethodPrefix)
 
-	e.p.printf(`
-		r = "&%v{\n"
+	e.p.printf(`		r = "&%v{\n"
 	`, p.TypeName())
 
 	next(e, p, nil)
