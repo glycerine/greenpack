@@ -1043,7 +1043,6 @@ doneWithStruct29zgensym_29db2bb3a798cb07_30:
 				if z.MyPtr0 == nil {
 					z.MyPtr0 = new(Target2)
 				}
-				dc.DedupIndexEachPtr(z.MyPtr0)
 
 				const maxFields31zgensym_29db2bb3a798cb07_32 = 1
 
@@ -1125,7 +1124,6 @@ doneWithStruct29zgensym_29db2bb3a798cb07_30:
 				if z.MyPtr1 == nil {
 					z.MyPtr1 = new(Target2)
 				}
-				dc.DedupIndexEachPtr(z.MyPtr1)
 
 				const maxFields33zgensym_29db2bb3a798cb07_34 = 1
 
@@ -1312,7 +1310,6 @@ doneWithStruct29zgensym_29db2bb3a798cb07_30:
 					if z.SlicePtr[zgensym_29db2bb3a798cb07_28] == nil {
 						z.SlicePtr[zgensym_29db2bb3a798cb07_28] = new(Greeter2)
 					}
-					dc.DedupIndexEachPtr(z.SlicePtr[zgensym_29db2bb3a798cb07_28])
 
 					const maxFields46zgensym_29db2bb3a798cb07_47 = 1
 

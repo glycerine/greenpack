@@ -484,7 +484,9 @@ func (p *printer) initPtr(pt *Ptr, isDecode bool) {
 		vname := pt.Varname()
 		p.printf("\nif %s == nil { %s = new(%s); }\n", vname, vname, pt.Value.TypeName())
 		if isDecode {
-			p.printf("dc.DedupIndexEachPtr(%s)\n", vname)
+			if !p.cfg.NoDedup {
+				p.printf("dc.DedupIndexEachPtr(%s)\n", vname)
+			}
 		}
 	}
 }
