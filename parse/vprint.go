@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"4d63.com/tz"
+	_ "time/tzdata"
 )
 
 // for tons of debug output
@@ -32,15 +32,15 @@ func init() {
 	os.Setenv("TZ", "America/chicago")
 
 	var err error
-	chicago, err = tz.LoadLocation("America/Chicago")
+	chicago, err = time.LoadLocation("America/Chicago")
 	panicOn(err)
-	utcTz, err = tz.LoadLocation("UTC")
+	utcTz, err = time.LoadLocation("UTC")
 	panicOn(err)
-	nyc, err = tz.LoadLocation("America/New_York")
+	nyc, err = time.LoadLocation("America/New_York")
 	panicOn(err)
-	frankfurt, err = tz.LoadLocation("Europe/Berlin")
+	frankfurt, err = time.LoadLocation("Europe/Berlin")
 	panicOn(err)
-	londonTz, err = tz.LoadLocation("Europe/London")
+	londonTz, err = time.LoadLocation("Europe/London")
 	panicOn(err)
 
 	gtz = chicago
